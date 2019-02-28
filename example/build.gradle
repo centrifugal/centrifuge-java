@@ -1,0 +1,9 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation project(':centrifuge')
+    implementation 'ch.qos.logback:logback-classic:1.0.1'
+    implementation 'ch.qos.logback:logback-core:1.0.1'
+}
