@@ -56,3 +56,15 @@ Library is available under the MIT license. See LICENSE for details.
 ## Contributors
 
 * Thanks to [Maks Atygaev](https://github.com/atygaev) for initial library boilerplate
+
+## Release
+
+Bump version. Then run:
+
+```
+./gradlew uploadArchives
+```
+
+Then follow instructions:
+
+https://central.sonatype.org/pages/releasing-the-deployment.html
