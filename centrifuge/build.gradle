@@ -1,6 +1,28 @@
-plugins {
-    id 'java-library'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'java-library'
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
 }
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+group = "io.github.centrifugal"
+archivesBaseName = "centrifuge-java"
+version = "0.0.1"
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
@@ -9,4 +31,49 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
 
     testCompile 'junit:junit:4.12'
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Centrifuge Java'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description 'Android and General Java client for Centrifugo server and Centrifuge library'
+                url 'https://github.com/centrifugal/centrifuge-java'
+
+                scm {
+                    connection 'scm:git:git://github.com/centrifugal/centrifuge-java.git'
+                    developerConnection 'scm:git:ssh://github.com:centrifugal/centrifuge-java.git'
+                    url 'http://github.com/centrifugal/centrifuge-java'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'FZambia'
+                        name 'Alexander Emelin'
+                        email 'frvzmb@gmail.com'
+                    }
+                }
+            }
+        }
+    }
 }
