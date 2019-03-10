@@ -4,7 +4,11 @@ This is a Websocket client for Centrifugo and Centrifuge library. Client uses Pr
 
 ## Status of library
 
-Work in progress. Feedback and help much appreciated.
+This library is feature rich and supports almost all available Centrifuge/Centrifugo features (see matrix below). But it's very young and not tested in production application yet. Any help and feedback is very appreciated to make it production ready and update library status. Any report will give us an understanding that the library works, is useful and we should continue developing it. Please share your stories.
+
+## Installation
+
+Library available in Maven: https://search.maven.org/artifact/io.github.centrifugal/centrifuge-java
 
 ## CI status
 
