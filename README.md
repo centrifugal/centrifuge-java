@@ -10,6 +10,10 @@ This library is feature rich and supports almost all available Centrifuge/Centri
 
 Library available in Maven: https://search.maven.org/artifact/io.github.centrifugal/centrifuge-java
 
+## Javadoc online
+
+http://www.javadoc.io/doc/io.github.centrifugal/centrifuge-java
+
 ## CI status
 
 [![Build Status](https://travis-ci.org/centrifugal/centrifuge-java.svg)](https://travis-ci.org/centrifugal/centrifuge-java)
