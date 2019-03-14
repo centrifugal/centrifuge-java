@@ -353,7 +353,6 @@ public class Client {
         f.thenAccept(reply -> {
             this.handleUnsubscribeReply(channel, reply);
             this.futures.remove(cmd.getId());
-	    this.subs.remove(sub.getChannel());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.futures.remove(cmd.getId());
             e.printStackTrace();
@@ -380,11 +379,13 @@ public class Client {
     public Subscription subscribe(String channel, SubscriptionEventListener listener) throws DuplicateSubscriptionException {
         Subscription sub;
         synchronized (this.subs) {
-            if (this.subs.get(channel) != null) {
-                throw new DuplicateSubscriptionException();
-            }
-            sub = new Subscription(Client.this, channel, listener);
-            this.subs.put(channel, sub);
+	    Subscription fromMap = this.subs.get(channel);
+            if (fromMap != null) {
+                sub = fromMap;
+            } else {
+                sub = new Subscription(Client.this, channel, listener);
+                this.subs.put(channel, sub);
+	    }
         }
         this.executor.submit(() -> {
             if (Client.this.state != ConnectionState.CONNECTED) {
