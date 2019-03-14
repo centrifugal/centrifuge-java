@@ -353,6 +353,7 @@ public class Client {
         f.thenAccept(reply -> {
             this.handleUnsubscribeReply(channel, reply);
             this.futures.remove(cmd.getId());
+	    this.subs.remove(sub.getChannel());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.futures.remove(cmd.getId());
             e.printStackTrace();
