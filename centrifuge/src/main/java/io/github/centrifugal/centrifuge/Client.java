@@ -379,11 +379,14 @@ public class Client {
     public Subscription subscribe(String channel, SubscriptionEventListener listener) throws DuplicateSubscriptionException {
         Subscription sub;
         synchronized (this.subs) {
-            if (this.subs.get(channel) != null) {
-                throw new DuplicateSubscriptionException();
+            Subscription cached = getSub(channel);
+            if (cached != null) {
+                sub = cached;
+                sub.setListener(listener);
+            } else {
+                sub = new Subscription(Client.this, channel, listener);
+                this.subs.put(channel, sub);
             }
-            sub = new Subscription(Client.this, channel, listener);
-            this.subs.put(channel, sub);
         }
         this.executor.submit(() -> {
             if (Client.this.state != ConnectionState.CONNECTED) {

@@ -12,6 +12,7 @@ public class Subscription {
 
     private Client client;
     private String channel;
+
     private SubscriptionEventListener listener;
     private SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
     private Map<String, CompletableFuture<ReplyError>> futures = new ConcurrentHashMap<>();
@@ -31,8 +32,12 @@ public class Subscription {
         return channel;
     }
 
-    public SubscriptionEventListener getListener() {
+    SubscriptionEventListener getListener() {
         return listener;
+    }
+
+    void setListener(SubscriptionEventListener listener) {
+        this.listener = listener;
     }
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener) {
