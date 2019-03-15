@@ -372,7 +372,7 @@ public class Client {
         return stream.toByteArray();
     }
 
-    private Subscription getSub(String channel) {
+    public Subscription getSub(String channel) {
         return this.subs.get(channel);
     }
 

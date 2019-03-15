@@ -31,7 +31,7 @@ public class Subscription {
         return channel;
     }
 
-    SubscriptionEventListener getListener() {
+    public SubscriptionEventListener getListener() {
         return listener;
     }
 
