@@ -1,26 +1,14 @@
 package io.github.centrifugal.centrifuge;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.WebSocket;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocketListener;
-import okio.ByteString;
-
-import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
-import io.github.centrifugal.centrifuge.internal.proto.Protocol;
-
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +20,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
+import io.github.centrifugal.centrifuge.internal.proto.Protocol;
 import java8.util.concurrent.CompletableFuture;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
 
 public class Client {
     private WebSocket ws;
@@ -110,7 +107,7 @@ public class Client {
 
         Headers.Builder headers = new Headers.Builder();
         if (this.opts.getHeaders() != null) {
-            for (Map.Entry<String,String> entry : this.opts.getHeaders().entrySet()) {
+            for (Map.Entry<String, String> entry : this.opts.getHeaders().entrySet()) {
                 headers.add(entry.getKey(), entry.getValue());
             }
         }
@@ -226,7 +223,7 @@ public class Client {
         this.state = ConnectionState.DISCONNECTED;
         this.disconnecting = false;
 
-        for(Map.Entry<String, Subscription> entry: this.subs.entrySet()) {
+        for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
             Subscription sub = entry.getValue();
             SubscriptionState previousSubState = sub.getState();
             sub.moveToUnsubscribed();
@@ -239,7 +236,7 @@ public class Client {
             DisconnectEvent event = new DisconnectEvent();
             event.setReason(reason);
             event.setReconnect(shouldReconnect);
-            for(Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry: this.futures.entrySet()) {
+            for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
                 CompletableFuture f = entry.getValue();
                 f.completeExceptionally(new IOException());
             }
@@ -259,7 +256,7 @@ public class Client {
         this.reconnectExecutor.submit(() -> {
             try {
                 Thread.sleep(Client.this.backoff.duration());
-            } catch(InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
             Client.this.executor.submit(() -> {
@@ -331,11 +328,11 @@ public class Client {
         }
     }
 
-    void sendUnsubscribe(Subscription sub) {
-        this.executor.submit(() -> Client.this.sendUnsubscribeSynchronized(sub));
+    void sendUnsubscribe(Subscription sub, boolean shouldBeRemoved) {
+        this.executor.submit(() -> Client.this.sendUnsubscribeSynchronized(sub, shouldBeRemoved));
     }
 
-    private void sendUnsubscribeSynchronized(Subscription sub) {
+    private void sendUnsubscribeSynchronized(Subscription sub, boolean shouldBeRemoved) {
         String channel = sub.getChannel();
 
         Protocol.UnsubscribeRequest req = Protocol.UnsubscribeRequest.newBuilder()
@@ -353,6 +350,9 @@ public class Client {
         f.thenAccept(reply -> {
             this.handleUnsubscribeReply(channel, reply);
             this.futures.remove(cmd.getId());
+            if (shouldBeRemoved) {
+                this.subs.remove(channel);
+            }
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.futures.remove(cmd.getId());
             e.printStackTrace();
@@ -379,13 +379,11 @@ public class Client {
     public Subscription subscribe(String channel, SubscriptionEventListener listener) throws DuplicateSubscriptionException {
         Subscription sub;
         synchronized (this.subs) {
-	    Subscription fromMap = this.subs.get(channel);
-            if (fromMap != null) {
-                sub = fromMap;
-            } else {
-                sub = new Subscription(Client.this, channel, listener);
-                this.subs.put(channel, sub);
-	    }
+            if (this.subs.get(channel) != null) {
+                throw new DuplicateSubscriptionException();
+            }
+            sub = new Subscription(Client.this, channel, listener);
+            this.subs.put(channel, sub);
         }
         this.executor.submit(() -> {
             if (Client.this.state != ConnectionState.CONNECTED) {
@@ -437,16 +435,16 @@ public class Client {
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
-        f.thenAccept(reply -> {
-            this.futures.remove(cmd.getId());
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
-            this.executor.submit(() -> {
-                Client.this.futures.remove(cmd.getId());
-                String disconnectReason = "{\"reason\": \"no ping\", \"reconnect\": true}";
-                Client.this._disconnect(disconnectReason, true);
-            });
-            return null;
-        });
+        f.thenAccept(reply -> this.futures.remove(cmd.getId()))
+                .orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS)
+                .exceptionally(e -> {
+                    this.executor.submit(() -> {
+                        Client.this.futures.remove(cmd.getId());
+                        String disconnectReason = "{\"reason\": \"no ping\", \"reconnect\": true}";
+                        Client.this._disconnect(disconnectReason, true);
+                    });
+                    return null;
+                });
 
         boolean sent = this.ws.send(ByteString.of(this.serializeCommand(cmd)));
         if (!sent) {
@@ -471,7 +469,7 @@ public class Client {
             this.connecting = false;
             this.client = result.getClient();
             this.listener.onConnect(this, event);
-            for(Map.Entry<String, Subscription> entry: this.subs.entrySet()) {
+            for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
                 Subscription sub = entry.getValue();
                 if (sub.getNeedResubscribe()) {
                     this.sendSubscribe(sub);
@@ -479,7 +477,7 @@ public class Client {
             }
             this.backoff.reset();
 
-            for(Map.Entry<Integer, Protocol.Command> entry: this.connectCommands.entrySet()) {
+            for (Map.Entry<Integer, Protocol.Command> entry : this.connectCommands.entrySet()) {
                 // TODO: send in one frame?
                 Protocol.Command cmd = entry.getValue();
                 boolean sent = this.ws.send(ByteString.of(this.serializeCommand(cmd)));
@@ -492,7 +490,7 @@ public class Client {
             }
             this.connectCommands.clear();
 
-            for(Map.Entry<Integer, Protocol.Command> entry: this.connectAsyncCommands.entrySet()) {
+            for (Map.Entry<Integer, Protocol.Command> entry : this.connectAsyncCommands.entrySet()) {
                 // TODO: send in one frame?
                 Protocol.Command cmd = entry.getValue();
                 CompletableFuture<Protocol.Reply> f = this.futures.get(cmd.getId());
@@ -521,44 +519,43 @@ public class Client {
     }
 
     private void sendRefresh() {
-        this.executor.submit(() -> {
-            Client.this.listener.onRefresh(Client.this, new RefreshEvent(), new TokenCallback() {
-                @Override
-                public void Fail(Throwable e) {
-                    // TODO: handle error.
-                }
+        this.executor.submit(() ->
+                Client.this.listener.onRefresh(Client.this, new RefreshEvent(), new TokenCallback() {
+                    @Override
+                    public void Fail(Throwable e) {
+                        // TODO: handle error.
+                    }
 
-                @Override
-                public void Done(String token) {
-                    Client.this.executor.submit(() -> {
-                        if (token.equals("")) {
-                            return;
-                        }
-                        if (Client.this.state != ConnectionState.CONNECTED) {
-                            return;
-                        }
-                        refreshSynchronized(token, new ReplyCallback<Protocol.RefreshResult>() {
-                            @Override
-                            public void onFailure(Throwable e) {
-                                // TODO: handle error.
+                    @Override
+                    public void Done(String token) {
+                        Client.this.executor.submit(() -> {
+                            if (token.equals("")) {
+                                return;
                             }
-
-                            @Override
-                            public void onDone(ReplyError error, Protocol.RefreshResult result) {
-                                if (error != null) {
+                            if (Client.this.state != ConnectionState.CONNECTED) {
+                                return;
+                            }
+                            refreshSynchronized(token, new ReplyCallback<Protocol.RefreshResult>() {
+                                @Override
+                                public void onFailure(Throwable e) {
                                     // TODO: handle error.
-                                    return;
                                 }
-                                if (result.getExpires()) {
-                                    int ttl = result.getTtl();
-                                    Client.this.refreshTask = Client.this.scheduler.schedule(Client.this::sendRefresh, ttl, TimeUnit.SECONDS);
+
+                                @Override
+                                public void onDone(ReplyError error, Protocol.RefreshResult result) {
+                                    if (error != null) {
+                                        // TODO: handle error.
+                                        return;
+                                    }
+                                    if (result.getExpires()) {
+                                        int ttl = result.getTtl();
+                                        Client.this.refreshTask = Client.this.scheduler.schedule(Client.this::sendRefresh, ttl, TimeUnit.SECONDS);
+                                    }
                                 }
-                            }
+                            });
                         });
-                    });
-                }
-            });
-        });
+                    }
+                }));
     }
 
     private void sendConnect() {
@@ -621,7 +618,7 @@ public class Client {
                     event.setInfo(info);
                     sub.getListener().onJoin(sub, event);
                 }
-            } else if  (push.getType() == Protocol.PushType.LEAVE) {
+            } else if (push.getType() == Protocol.PushType.LEAVE) {
                 Protocol.Leave leave = Protocol.Leave.parseFrom(push.getData());
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {
@@ -691,7 +688,7 @@ public class Client {
         }
     }
 
-    private void enqueueCommandFuture(Protocol.Command cmd,  CompletableFuture<Protocol.Reply> f) {
+    private void enqueueCommandFuture(Protocol.Command cmd, CompletableFuture<Protocol.Reply> f) {
         this.futures.put(cmd.getId(), f);
         if (this.state != ConnectionState.CONNECTED) {
             this.connectCommands.put(cmd.getId(), cmd);
@@ -800,7 +797,7 @@ public class Client {
     void history(String channel, ReplyCallback<HistoryResult> cb) {
         this.executor.submit(() -> Client.this.historySynchronized(channel, cb));
     }
-    
+
     private void historySynchronized(String channel, ReplyCallback<HistoryResult> cb) {
         Protocol.HistoryRequest req = Protocol.HistoryRequest.newBuilder()
                 .setChannel(channel)
@@ -823,7 +820,7 @@ public class Client {
                     HistoryResult result = new HistoryResult();
                     List<Protocol.Publication> protoPubs = replyResult.getPublicationsList();
                     List<Publication> pubs = new ArrayList<>();
-                    for (int i=0; i<protoPubs.size(); i++) {
+                    for (int i = 0; i < protoPubs.size(); i++) {
                         Protocol.Publication protoPub = protoPubs.get(i);
                         Publication pub = new Publication();
                         pub.setData(protoPub.getData().toByteArray());

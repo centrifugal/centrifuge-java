@@ -50,7 +50,7 @@ public class Subscription {
         SubscribeSuccessEvent event = new SubscribeSuccessEvent();
         this.listener.onSubscribeSuccess(this, event);
 
-        for(Map.Entry<String, CompletableFuture<ReplyError>> entry: this.futures.entrySet()) {
+        for (Map.Entry<String, CompletableFuture<ReplyError>> entry : this.futures.entrySet()) {
             CompletableFuture<ReplyError> f = entry.getValue();
             f.complete(null);
         }
@@ -64,7 +64,7 @@ public class Subscription {
         event.setMessage(err.getMessage());
         this.listener.onSubscribeError(this, event);
 
-        for(Map.Entry<String, CompletableFuture<ReplyError>> entry: this.futures.entrySet()) {
+        for (Map.Entry<String, CompletableFuture<ReplyError>> entry : this.futures.entrySet()) {
             CompletableFuture<ReplyError> f = entry.getValue();
             f.complete(err);
         }
@@ -72,45 +72,41 @@ public class Subscription {
     }
 
     public void subscribe() {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.needResubscribe = true;
-                if (Subscription.this.state == SubscriptionState.SUBSCRIBED) {
-                    return;
-                }
-                Subscription.this.client.sendSubscribe(Subscription.this);
+        this.client.getExecutor().submit(() -> {
+            Subscription.this.needResubscribe = true;
+            if (Subscription.this.state == SubscriptionState.SUBSCRIBED) {
+                return;
             }
+            Subscription.this.client.sendSubscribe(Subscription.this);
         });
     }
 
     public void unsubscribe() {
-        this._unsubscribe(true);
+        this._unsubscribe(true, false);
+    }
+
+    public void unsubscribe(UnsubscribeOptions options) {
+        this._unsubscribe(true, options.isPermanent());
     }
 
     void unsubscribeNoResubscribe() {
         this.needResubscribe = false;
-        this._unsubscribe(false);
+        this._unsubscribe(false, false);
     }
 
-    private void _unsubscribe(boolean shouldSendUnsubscribe) {
+    private void _unsubscribe(boolean shouldSendUnsubscribe, boolean shouldBeRemoved) {
         SubscriptionState previousState = this.state;
         this.moveToUnsubscribed();
         if (previousState == SubscriptionState.SUBSCRIBED) {
             this.listener.onUnsubscribe(this, new UnsubscribeEvent());
         }
         if (shouldSendUnsubscribe) {
-            this.client.sendUnsubscribe(this);
+            this.client.sendUnsubscribe(this, shouldBeRemoved);
         }
     }
 
     public void publish(byte[] data, ReplyCallback<PublishResult> cb) {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.publishSynchronized(data, cb);
-            }
-        });
+        this.client.getExecutor().submit(() -> Subscription.this.publishSynchronized(data, cb));
     }
 
     void publishSynchronized(byte[] data, ReplyCallback<PublishResult> cb) {
@@ -132,12 +128,7 @@ public class Subscription {
     }
 
     public void history(ReplyCallback<HistoryResult> cb) {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.historySynchronized(cb);
-            }
-        });
+        this.client.getExecutor().submit(() -> Subscription.this.historySynchronized(cb));
     }
 
     void historySynchronized(ReplyCallback<HistoryResult> cb) {
@@ -159,12 +150,7 @@ public class Subscription {
     }
 
     public void presence(ReplyCallback<PresenceResult> cb) {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.presenceSynchronized(cb);
-            }
-        });
+        this.client.getExecutor().submit(() -> Subscription.this.presenceSynchronized(cb));
     }
 
     void presenceSynchronized(ReplyCallback<PresenceResult> cb) {
@@ -186,12 +172,7 @@ public class Subscription {
     }
 
     public void presenceStats(ReplyCallback<PresenceStatsResult> cb) {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.presenceStatsSynchronized(cb);
-            }
-        });
+        this.client.getExecutor().submit(() -> Subscription.this.presenceStatsSynchronized(cb));
     }
 
     void presenceStatsSynchronized(ReplyCallback<PresenceStatsResult> cb) {
