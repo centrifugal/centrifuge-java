@@ -72,15 +72,12 @@ public class Subscription {
     }
 
     public void subscribe() {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.needResubscribe = true;
-                if (Subscription.this.state == SubscriptionState.SUBSCRIBED) {
-                    return;
-                }
-                Subscription.this.client.sendSubscribe(Subscription.this);
+        this.client.getExecutor().submit(() -> {
+            Subscription.this.needResubscribe = true;
+            if (Subscription.this.state == SubscriptionState.SUBSCRIBED) {
+                return;
             }
+            Subscription.this.client.subscribe(Subscription.this);
         });
     }
 
@@ -105,15 +102,10 @@ public class Subscription {
     }
 
     public void publish(byte[] data, ReplyCallback<PublishResult> cb) {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.publishSynchronized(data, cb);
-            }
-        });
+        this.client.getExecutor().submit(() -> Subscription.this.publishSynchronized(data, cb));
     }
 
-    void publishSynchronized(byte[] data, ReplyCallback<PublishResult> cb) {
+    private void publishSynchronized(byte[] data, ReplyCallback<PublishResult> cb) {
         CompletableFuture<ReplyError> f = new CompletableFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
@@ -132,15 +124,10 @@ public class Subscription {
     }
 
     public void history(ReplyCallback<HistoryResult> cb) {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.historySynchronized(cb);
-            }
-        });
+        this.client.getExecutor().submit(() -> Subscription.this.historySynchronized(cb));
     }
 
-    void historySynchronized(ReplyCallback<HistoryResult> cb) {
+    private void historySynchronized(ReplyCallback<HistoryResult> cb) {
         CompletableFuture<ReplyError> f = new CompletableFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
@@ -159,15 +146,10 @@ public class Subscription {
     }
 
     public void presence(ReplyCallback<PresenceResult> cb) {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.presenceSynchronized(cb);
-            }
-        });
+        this.client.getExecutor().submit(() -> Subscription.this.presenceSynchronized(cb));
     }
 
-    void presenceSynchronized(ReplyCallback<PresenceResult> cb) {
+    private void presenceSynchronized(ReplyCallback<PresenceResult> cb) {
         CompletableFuture<ReplyError> f = new CompletableFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
@@ -186,15 +168,10 @@ public class Subscription {
     }
 
     public void presenceStats(ReplyCallback<PresenceStatsResult> cb) {
-        this.client.getExecutor().submit(new Runnable() {
-            @Override
-            public void run() {
-                Subscription.this.presenceStatsSynchronized(cb);
-            }
-        });
+        this.client.getExecutor().submit(() -> Subscription.this.presenceStatsSynchronized(cb));
     }
 
-    void presenceStatsSynchronized(ReplyCallback<PresenceStatsResult> cb) {
+    private void presenceStatsSynchronized(ReplyCallback<PresenceStatsResult> cb) {
         CompletableFuture<ReplyError> f = new CompletableFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);

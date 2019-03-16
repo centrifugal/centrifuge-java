@@ -72,10 +72,13 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        Subscription sub;
         try {
-            client.subscribe("chat:index", subListener);
+            sub = client.newSubscription("chat:index", subListener);
         } catch (Exception e) {
             e.printStackTrace();
+            return;
         }
+        sub.subscribe();
     }
 }
