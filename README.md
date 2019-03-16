@@ -14,6 +14,8 @@ Library available in Maven: https://search.maven.org/artifact/io.github.centrifu
 
 http://www.javadoc.io/doc/io.github.centrifugal/centrifuge-java
 
+## Quick start
+
 ## CI status
 
 [![Build Status](https://travis-ci.org/centrifugal/centrifuge-java.svg)](https://travis-ci.org/centrifugal/centrifuge-java)

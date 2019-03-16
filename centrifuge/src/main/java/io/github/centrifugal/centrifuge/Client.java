@@ -74,6 +74,10 @@ public class Client {
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
+    /**
+     * Set connection JWT. This is a token you have to receive from your application backend.
+     * @param token
+     */
     public void setToken(String token) {
         this.executor.submit(() -> {
             Client.this.token = token;
@@ -81,7 +85,11 @@ public class Client {
     }
 
     /**
-     * Creates a new instance of Client.
+     * Creates a new instance of Client. Client allows to allocate new Subscriptions to channels,
+     * automatically manages reconnects.
+     * @param url
+     * @param opts
+     * @param listener
      */
     public Client(final String url, final Options opts, final EventListener listener) {
         this.url = url;
@@ -198,6 +206,9 @@ public class Client {
         }
     }
 
+    /**
+     * Disconnect from server and do not reconnect.
+     */
     public void disconnect() {
         this.executor.submit(() -> {
             String disconnectReason = "{\"reason\": \"clean disconnect\", \"reconnect\": false}";
@@ -226,12 +237,14 @@ public class Client {
         this.state = ConnectionState.DISCONNECTED;
         this.disconnecting = false;
 
-        for(Map.Entry<String, Subscription> entry: this.subs.entrySet()) {
-            Subscription sub = entry.getValue();
-            SubscriptionState previousSubState = sub.getState();
-            sub.moveToUnsubscribed();
-            if (previousSubState == SubscriptionState.SUBSCRIBED) {
-                sub.getListener().onUnsubscribe(sub, new UnsubscribeEvent());
+        synchronized (this.subs) {
+            for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
+                Subscription sub = entry.getValue();
+                SubscriptionState previousSubState = sub.getState();
+                sub.moveToUnsubscribed();
+                if (previousSubState == SubscriptionState.SUBSCRIBED) {
+                    sub.getListener().onUnsubscribe(sub, new UnsubscribeEvent());
+                }
             }
         }
 
@@ -300,7 +313,7 @@ public class Client {
         this.ws.send(ByteString.of(this.serializeCommand(cmd)));
     }
 
-    void sendSubscribe(Subscription sub) {
+    private void sendSubscribe(Subscription sub) {
         String channel = sub.getChannel();
         if (sub.getChannel().startsWith(this.opts.getPrivateChannelPrefix())) {
             PrivateSubEvent privateSubEvent = new PrivateSubEvent();
@@ -376,7 +389,14 @@ public class Client {
         return this.subs.get(channel);
     }
 
-    public Subscription subscribe(String channel, SubscriptionEventListener listener) throws DuplicateSubscriptionException {
+    /**
+     * Create new subscription to channel with certain SubscriptionEventListener
+     * @param channel
+     * @param listener
+     * @return
+     * @throws DuplicateSubscriptionException
+     */
+    public Subscription newSubscription(String channel, SubscriptionEventListener listener) throws DuplicateSubscriptionException {
         Subscription sub;
         synchronized (this.subs) {
             if (this.subs.get(channel) != null) {
@@ -385,6 +405,38 @@ public class Client {
             sub = new Subscription(Client.this, channel, listener);
             this.subs.put(channel, sub);
         }
+        return sub;
+    }
+
+    /**
+     * Try to get Subscription from internal client registry. Can return null if Subscription
+     * does not exist yet.
+     * @param channel
+     * @return
+     */
+    public Subscription getSubscription(String channel) {
+        Subscription sub;
+        synchronized (this.subs) {
+            sub = this.getSub(channel);
+        }
+        return sub;
+    }
+
+    /**
+     * Say Client that Subscription should be removed from internal registry. Subscription will be
+     * automatically unsubscribed before removing.
+     * @param sub
+     */
+    public void removeSubscription(Subscription sub) {
+        synchronized (this.subs) {
+            sub.unsubscribe();
+            if (this.subs.get(sub.getChannel()) != null) {
+                this.subs.remove(sub.getChannel());
+            }
+        }
+    }
+
+    void subscribe(Subscription sub) {
         this.executor.submit(() -> {
             if (Client.this.state != ConnectionState.CONNECTED) {
                 // Subscription registered and will start subscribing as soon as
@@ -393,7 +445,6 @@ public class Client {
             }
             Client.this.sendSubscribe(sub);
         });
-        return sub;
     }
 
     private void handleSubscribeReply(String channel, Protocol.Reply reply) {
@@ -469,10 +520,12 @@ public class Client {
             this.connecting = false;
             this.client = result.getClient();
             this.listener.onConnect(this, event);
-            for(Map.Entry<String, Subscription> entry: this.subs.entrySet()) {
-                Subscription sub = entry.getValue();
-                if (sub.getNeedResubscribe()) {
-                    this.sendSubscribe(sub);
+            synchronized (this.subs) {
+                for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
+                    Subscription sub = entry.getValue();
+                    if (sub.getNeedResubscribe()) {
+                        this.sendSubscribe(sub);
+                    }
                 }
             }
             this.backoff.reset();
@@ -649,6 +702,12 @@ public class Client {
         }
     }
 
+    /**
+     * Send asynchronous message with data to server. Callback successfully completes if data
+     * written to connection. No reply from server expected in this case.
+     * @param data
+     * @param cb
+     */
     public void send(byte[] data, CompletionCallback cb) {
         this.executor.submit(() -> Client.this.sendSynchronized(data, cb));
     }
@@ -718,6 +777,11 @@ public class Client {
         }
     }
 
+    /**
+     * Send RPC to server, process result in callback.
+     * @param data
+     * @param cb
+     */
     public void rpc(byte[] data, ReplyCallback<RPCResult> cb) {
         this.executor.submit(() -> Client.this.rpcSynchronized(data, cb));
     }
@@ -759,6 +823,13 @@ public class Client {
         this.enqueueCommandFuture(cmd, f);
     }
 
+    /**
+     * Publish data to channel without being subscribed to it. Publish option should be
+     * enabled in Centrifuge/Centrifugo server configuration.
+     * @param channel
+     * @param data
+     * @param cb
+     */
     public void publish(String channel, byte[] data, ReplyCallback<PublishResult> cb) {
         this.executor.submit(() -> Client.this.publishSynchronized(channel, data, cb));
     }

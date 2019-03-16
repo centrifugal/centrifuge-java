@@ -1,6 +1,7 @@
 package io.github.centrifugal.centrifuge.example;
 
 import io.github.centrifugal.centrifuge.Client;
+import io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
 import io.github.centrifugal.centrifuge.PresenceStatsResult;
 import io.github.centrifugal.centrifuge.RefreshEvent;
 import io.github.centrifugal.centrifuge.ReplyCallback;
@@ -106,11 +107,12 @@ public class Main {
 
         Subscription sub;
         try {
-            sub = client.subscribe("chat:index", subListener);
-        } catch (Exception e) {
+            sub = client.newSubscription("chat:index", subListener);
+        } catch (DuplicateSubscriptionException e) {
             e.printStackTrace();
             return;
         }
+        sub.subscribe();
 
         String data="{\"input\": \"hi from Java\"}";
 
@@ -165,11 +167,24 @@ public class Main {
         });
 
         try {
-            Thread.sleep(100000);
+            Thread.sleep(2000);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
 
+        sub.unsubscribe();
+
+        // Say Client that we finished with Subscription. It will be removed from
+        // internal Subscription map so you can create new Subscription to channel
+        // later calling newSubscription method again.
+        client.removeSubscription(sub);
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+        // Disconnect from server.
         client.disconnect();
     }
 }
