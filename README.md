@@ -14,7 +14,105 @@ Library available in Maven: https://search.maven.org/artifact/io.github.centrifu
 
 http://www.javadoc.io/doc/io.github.centrifugal/centrifuge-java
 
-## Quick start
+## Basic usage
+
+Connect to server based on Centrifuge library:
+
+```java
+EventListener listener = new EventListener() {
+    @Override
+    public void onConnect(Client client, ConnectEvent event) {
+        System.out.println("connected");
+    }
+
+    @Override
+    public void onDisconnect(Client client, DisconnectEvent event) {
+        System.out.printf("disconnected %s, reconnect %s%n", event.getReason(), event.getReconnect());
+    }
+};
+
+Client client = new Client(
+        "ws://localhost:8000/connection/websocket?format=protobuf",
+        new Options(),
+        listener
+);
+client.connect();
+```
+
+Note that *you must use* `?format=protobuf` in connection URL as this client communicates with Centrifugo/Centrifuge over Protobuf protocol.
+
+Also in case of running in Android emulator don't forget to use proper connection address to Centrifuge/Centrifugo (as `localhost` is pointing to emulator vm and obviously your server instance is not available there).
+
+To connect to Centrifugo you need to additionally set connection JWT:
+
+```java
+...
+Client client = new Client(
+        "ws://localhost:8000/connection/websocket?format=protobuf",
+        new Options(),
+        listener
+);
+client.setToken("YOUR CONNECTION JWT")
+client.connect()
+```
+
+Now let's look at how to subscribe to channel and listen to messages published into it:
+
+```java
+EventListener listener = new EventListener() {
+    @Override
+    public void onConnect(Client client, ConnectEvent event) {
+        System.out.println("connected");
+    }
+
+    @Override
+    public void onDisconnect(Client client, DisconnectEvent event) {
+        System.out.printf("disconnected %s, reconnect %s%n", event.getReason(), event.getReconnect());
+    }
+};
+
+SubscriptionEventListener subListener = new SubscriptionEventListener() {
+    @Override
+    public void onSubscribeSuccess(Subscription sub, SubscribeSuccessEvent event) {
+        System.out.println("subscribed to " + sub.getChannel());
+    }
+    @Override
+    public void onSubscribeError(Subscription sub, SubscribeErrorEvent event) {
+        System.out.println("subscribe error " + sub.getChannel() + " " + event.getMessage());
+    }
+    @Override
+    public void onPublish(Subscription sub, PublishEvent event) {
+        String data = new String(event.getData(), UTF_8);
+        System.out.println("message from " + sub.getChannel() + " " + data);
+    }
+}
+
+Client client = new Client(
+        "ws://localhost:8000/connection/websocket?format=protobuf",
+        new Options(),
+        listener
+);
+// If using Centrifugo.
+client.setToken("YOUR CONNECTION JWT")
+client.connect()
+
+Subscription sub;
+try {
+    sub = client.newSubscription("chat:index", subListener);
+} catch (DuplicateSubscriptionException e) {
+    e.printStackTrace();
+    return;
+}
+sub.subscribe();
+```
+
+See more example code in [console Java example](https://github.com/centrifugal/centrifuge-java/blob/master/example/src/main/java/io/github/centrifugal/centrifuge/example/Main.java) or in [demo Android app](https://github.com/centrifugal/centrifuge-java/blob/master/demo/src/main/java/io/github/centrifugal/centrifuge/demo/MainActivity.java)
+
+To use with Android don't forget to set INTERNET permission to `AndroidManifest.xml`:
+
+```
+<uses-permission android:name="android.permission.INTERNET" />
+```
 
 ## CI status
 
