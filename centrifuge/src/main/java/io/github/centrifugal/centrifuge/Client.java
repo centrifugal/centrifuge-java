@@ -182,7 +182,7 @@ public class Client {
             @Override
             public void onFailure(WebSocket webSocket, Throwable t, Response response) {
                 super.onFailure(webSocket, t, response);
-                Client.this.executor.submit(Client.this::handleConnectionError);
+                Client.this.executor.submit(() -> Client.this.handleConnectionError(t, response));
             }
         });
     }
@@ -263,8 +263,8 @@ public class Client {
         }
     }
 
-    private void handleConnectionError() {
-        this.listener.onError(this, new ErrorEvent());
+    private void handleConnectionError(Throwable t, Response resp) {
+        this.listener.onError(this, new ErrorEvent(t, resp.message(), resp));
         this.handleConnectionClose("connection error", true);
     }
 

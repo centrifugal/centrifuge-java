@@ -22,15 +22,15 @@ signing {
 
 group = "io.github.centrifugal"
 archivesBaseName = "centrifuge-java"
-version = "0.0.2"
+version = "0.0.3"
 
 dependencies {
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-    implementation 'com.google.protobuf:protobuf-java:3.6.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'com.google.protobuf:protobuf-java:3.7.0'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
 
 uploadArchives {
