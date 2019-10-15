@@ -1,7 +1,7 @@
 package io.github.centrifugal.centrifuge;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import okhttp3.Response;
 
@@ -10,7 +10,7 @@ public class ErrorEvent {
     private Throwable mException;
     private Response mResponse;
 
-    ErrorEvent(@NotNull Throwable t, @Nullable String message, @Nullable Response response) {
+    ErrorEvent(@Nonnull Throwable t, @Nullable String message, @Nullable Response response) {
         mException = t;
         mMessage = message;
         mResponse = response;
@@ -26,7 +26,7 @@ public class ErrorEvent {
         return mMessage;
     }
 
-    @NotNull
+    @Nonnull
     public Throwable getException() {
         return mException;
     }
