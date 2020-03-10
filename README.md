@@ -147,6 +147,7 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 - [ ] handle connection expired error
 - [ ] handle subscription expired error
 - [x] ping/pong to find broken connection
+- [ ] server-side subscriptions
 - [ ] message recovery mechanism
 
 ## Generate proto
