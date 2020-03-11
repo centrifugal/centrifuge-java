@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package proto;
 
-option java_package = "io.github.centrifugal.centrifuge.internal.proto";
+option java_package = "io.github.centrifugal.centrifuge.internal.protocol";
 option java_outer_classname = "Protocol";
 
 message Error {
@@ -46,6 +46,7 @@ enum PushType {
     LEAVE = 2;
     UNSUB = 3;
     MESSAGE = 4;
+    SUB = 5;
 }
 
 message Push {
@@ -81,6 +82,13 @@ message Unsub {
     bool resubscribe =1;
 }
 
+message Sub {
+    bool recoverable = 1;
+    uint32 seq = 2;
+    uint32 gen = 3;
+    string epoch = 4;   
+}
+
 message Message {
     bytes data = 1;
 }
@@ -88,6 +96,7 @@ message Message {
 message ConnectRequest {
     string token = 1;
     bytes data = 2;
+    map<string, SubscribeRequest> subs = 3;
 }
 
 message ConnectResult {
@@ -96,6 +105,7 @@ message ConnectResult {
     bool expires = 3;
     uint32 ttl = 4;
     bytes data = 5;
+    map<string, SubscribeResult> subs = 6;
 }
 
 message RefreshRequest {

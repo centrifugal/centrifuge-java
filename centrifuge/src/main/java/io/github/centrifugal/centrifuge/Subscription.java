@@ -5,7 +5,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import io.github.centrifugal.centrifuge.internal.proto.Protocol;
+import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
 import java8.util.concurrent.CompletableFuture;
 
 public class Subscription {

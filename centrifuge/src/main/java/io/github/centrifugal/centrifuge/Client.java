@@ -14,7 +14,7 @@ import okhttp3.WebSocketListener;
 import okio.ByteString;
 
 import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
-import io.github.centrifugal.centrifuge.internal.proto.Protocol;
+import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
 
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
