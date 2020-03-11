@@ -153,7 +153,7 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 
 ```
 protoc --java_out=./ client.proto
-mv io/github/centrifugal/centrifuge/internal/protocol centrifuge/src/main/java/io/github/centrifugal/centrifuge/internal/protocol
+mv io/github/centrifugal/centrifuge/internal/protocol/Protocol.java centrifuge/src/main/java/io/github/centrifugal/centrifuge/internal/protocol/Protocol.java
 rm -r io/
 ```
 
