@@ -81,6 +81,22 @@ public class Main {
             @Override
             public void onSubscribeSuccess(Subscription sub, SubscribeSuccessEvent event) {
                 System.out.println("subscribed to " + sub.getChannel());
+                String data="{\"input\": \"I just subscribed to channel\"}";
+                sub.publish(data.getBytes(), new ReplyCallback<PublishResult>() {
+                    @Override
+                    public void onFailure(Throwable e) {
+                        System.out.println("sub publish error: " + e);
+                    }
+
+                    @Override
+                    public void onDone(ReplyError err, PublishResult res) {
+                        if (err != null) {
+                            System.out.println("error publish: " + err.getMessage());
+                            return;
+                        }
+                        System.out.println("successfully published");
+                    }
+                });
             }
             @Override
             public void onSubscribeError(Subscription sub, SubscribeErrorEvent event) {
@@ -116,7 +132,10 @@ public class Main {
 
         String data="{\"input\": \"hi from Java\"}";
 
-        // Publish to channel.
+        // Publish to channel (won't wait until client subscribed to channel).
+        // This message most probably won't be received by this client.
+        // You need to wait for subscription success to reliably receive
+        // publication - see publishing over sub object below.
         client.publish("chat:index", data.getBytes(), new ReplyCallback<PublishResult>() {
             @Override
             public void onFailure(Throwable e) {
@@ -133,7 +152,7 @@ public class Main {
             }
         });
 
-        // Or via subscription (will wait for subscribe success before publishing).
+        // Publish via subscription (will wait for subscribe success before publishing).
         sub.publish(data.getBytes(), new ReplyCallback<PublishResult>() {
             @Override
             public void onFailure(Throwable e) {

@@ -121,6 +121,9 @@ public class Subscription {
             cb.onFailure(e);
             return null;
         });
+        if (this.state == SubscriptionState.SUBSCRIBED) {
+            f.complete(null);
+        }
     }
 
     public void history(ReplyCallback<HistoryResult> cb) {
@@ -143,6 +146,9 @@ public class Subscription {
             cb.onFailure(e);
             return null;
         });
+        if (this.state == SubscriptionState.SUBSCRIBED) {
+            f.complete(null);
+        }
     }
 
     public void presence(ReplyCallback<PresenceResult> cb) {
@@ -165,6 +171,9 @@ public class Subscription {
             cb.onFailure(e);
             return null;
         });
+        if (this.state == SubscriptionState.SUBSCRIBED) {
+            f.complete(null);
+        }
     }
 
     public void presenceStats(ReplyCallback<PresenceStatsResult> cb) {
@@ -187,5 +196,8 @@ public class Subscription {
             cb.onFailure(e);
             return null;
         });
+        if (this.state == SubscriptionState.SUBSCRIBED) {
+            f.complete(null);
+        }
     }
 }
