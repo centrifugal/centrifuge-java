@@ -168,7 +168,7 @@ Library is available under the MIT license. See LICENSE for details.
 
 ## Release
 
-Bump version. Then run:
+Bump version in `centrifuge/build/gradle`. Create new library tag. Then run:
 
 ```
 ./gradlew uploadArchives
@@ -177,3 +177,10 @@ Bump version. Then run:
 Then follow instructions:
 
 https://central.sonatype.org/pages/releasing-the-deployment.html
+
+I.e.
+
+1) Login here: https://oss.sonatype.org/
+2) Go to `Staging repositories`
+3) Find release, push `Close` button, wait
+4) Push `Release` button
