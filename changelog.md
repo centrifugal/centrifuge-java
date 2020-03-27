@@ -1,3 +1,8 @@
+0.0.3
+=====
+
+* fix executing Subscription methods in Subscribed state - see [#9](https://github.com/centrifugal/centrifuge-java/issues/9)
+
 0.0.2
 =====
 
