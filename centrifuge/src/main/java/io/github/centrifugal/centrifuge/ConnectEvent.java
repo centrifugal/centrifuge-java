@@ -9,5 +9,14 @@ public class ConnectEvent {
         this.client = client;
     }
 
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
     private String client;
+    private byte[] data;
 }
