@@ -516,6 +516,7 @@ public class Client {
             Protocol.ConnectResult result = Protocol.ConnectResult.parseFrom(reply.getResult().toByteArray());
             ConnectEvent event = new ConnectEvent();
             event.setClient(result.getClient());
+            event.setData(result.getData().toByteArray());
             this.state = ConnectionState.CONNECTED;
             this.connecting = false;
             this.client = result.getClient();
