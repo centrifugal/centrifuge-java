@@ -1,26 +1,14 @@
 package io.github.centrifugal.centrifuge;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.WebSocket;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocketListener;
-import okio.ByteString;
-
-import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
-import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
-
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +20,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
+import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
 import java8.util.concurrent.CompletableFuture;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
 
 public class Client {
     private WebSocket ws;
@@ -284,11 +281,25 @@ public class Client {
         });
     }
 
-    private void sendSubscribeSynchronized(String channel, String token) {
-        Protocol.SubscribeRequest req = Protocol.SubscribeRequest.newBuilder()
-                .setChannel(channel)
-                .setToken(token)
-                .build();
+    private void sendSubscribeSynchronized(String channel, boolean recover, StreamPosition streamPosition, String token) {
+
+        Protocol.SubscribeRequest req = null;
+
+        if (recover) {
+            req = Protocol.SubscribeRequest.newBuilder()
+                    .setEpoch(streamPosition.getEpoch())
+                    .setGen(streamPosition.getGen())
+                    .setSeq(streamPosition.getSeq())
+                    .setChannel(channel)
+                    .setRecover(true)
+                    .setToken(token)
+                    .build();
+        } else {
+            req = Protocol.SubscribeRequest.newBuilder()
+                    .setChannel(channel)
+                    .setToken(token)
+                    .build();
+        }
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
@@ -315,10 +326,27 @@ public class Client {
 
     private void sendSubscribe(Subscription sub) {
         String channel = sub.getChannel();
+
+        boolean isRecover = false;
+        StreamPosition streamPosition = new StreamPosition();
+
+        if (sub.getSubscribedAt() != 0 && sub.isRecover()) {
+            isRecover = true;
+            if (sub.getLastOffset() > 0) {
+                streamPosition.setOffset(sub.getLastOffset());
+            } else if (sub.getLastGen() > 0 || sub.getLastSeq() > 0) {
+                streamPosition.setGen(sub.getLastGen());
+                streamPosition.setSeq(sub.getLastSeq());
+            }
+
+            streamPosition.setEpoch(sub.getLastEpoch());
+        }
+
         if (sub.getChannel().startsWith(this.opts.getPrivateChannelPrefix())) {
             PrivateSubEvent privateSubEvent = new PrivateSubEvent();
             privateSubEvent.setChannel(sub.getChannel());
             privateSubEvent.setClient(this.client);
+            boolean finalIsRecover = isRecover;
             this.listener.onPrivateSub(this, privateSubEvent, new TokenCallback() {
                 @Override
                 public void Fail(Throwable e) {
@@ -336,11 +364,11 @@ public class Client {
                     if (Client.this.state != ConnectionState.CONNECTED) {
                         return;
                     }
-                    Client.this.sendSubscribeSynchronized(channel, token);
+                    Client.this.sendSubscribeSynchronized(channel, finalIsRecover, streamPosition, token);
                 }
             });
         } else {
-            this.sendSubscribeSynchronized(channel, "");
+            this.sendSubscribeSynchronized(channel, isRecover, streamPosition,"");
         }
     }
 
@@ -870,7 +898,7 @@ public class Client {
     void history(String channel, ReplyCallback<HistoryResult> cb) {
         this.executor.submit(() -> Client.this.historySynchronized(channel, cb));
     }
-    
+
     private void historySynchronized(String channel, ReplyCallback<HistoryResult> cb) {
         Protocol.HistoryRequest req = Protocol.HistoryRequest.newBuilder()
                 .setChannel(channel)
