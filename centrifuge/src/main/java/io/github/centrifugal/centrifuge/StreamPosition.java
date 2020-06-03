@@ -1,6 +1,6 @@
 package io.github.centrifugal.centrifuge;
 
-public class StreamPosition {
+class StreamPosition {
     private long Offset;
 
     private String Epoch;
@@ -8,7 +8,7 @@ public class StreamPosition {
     private int Seq;
     private int Gen;
 
-    public StreamPosition() {
+    StreamPosition() {
     }
 
     public long getOffset() {
