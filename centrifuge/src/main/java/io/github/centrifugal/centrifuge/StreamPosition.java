@@ -5,9 +5,6 @@ class StreamPosition {
 
     private String Epoch;
 
-    private int Seq;
-    private int Gen;
-
     StreamPosition() {
     }
 
@@ -27,19 +24,4 @@ class StreamPosition {
         Epoch = epoch;
     }
 
-    public int getSeq() {
-        return Seq;
-    }
-
-    public void setSeq(int seq) {
-        Seq = seq;
-    }
-
-    public int getGen() {
-        return Gen;
-    }
-
-    public void setGen(int gen) {
-        Gen = gen;
-    }
 }

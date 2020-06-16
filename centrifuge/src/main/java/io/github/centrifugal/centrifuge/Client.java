@@ -288,8 +288,7 @@ public class Client {
         if (recover) {
             req = Protocol.SubscribeRequest.newBuilder()
                     .setEpoch(streamPosition.getEpoch())
-                    .setGen(streamPosition.getGen())
-                    .setSeq(streamPosition.getSeq())
+                    .setOffset(streamPosition.getOffset())
                     .setChannel(channel)
                     .setRecover(true)
                     .setToken(token)
@@ -334,11 +333,7 @@ public class Client {
             isRecover = true;
             if (sub.getLastOffset() > 0) {
                 streamPosition.setOffset(sub.getLastOffset());
-            } else if (sub.getLastGen() > 0 || sub.getLastSeq() > 0) {
-                streamPosition.setGen(sub.getLastGen());
-                streamPosition.setSeq(sub.getLastSeq());
             }
-
             streamPosition.setEpoch(sub.getLastEpoch());
         }
 
