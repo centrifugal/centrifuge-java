@@ -787,6 +787,12 @@ public class Client {
         this.executor.submit(() -> Client.this.rpcSynchronized(null, data, cb));
     }
 
+    /**
+     * Send RPC with method to server, process result in callback.
+     * @param method
+     * @param data
+     * @param cb
+     */
     public void rpc(String method, byte[] data, ReplyCallback<RPCResult> cb) {
         this.executor.submit(() -> Client.this.rpcSynchronized(method, data, cb));
     }

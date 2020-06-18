@@ -174,10 +174,6 @@ public final class Protocol {
 
     public final com.google.protobuf.Descriptors.EnumValueDescriptor
         getValueDescriptor() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalStateException(
-            "Can't get the descriptor of an unrecognized enum value.");
-      }
       return getDescriptor().getValues().get(ordinal());
     }
     public final com.google.protobuf.Descriptors.EnumDescriptor
@@ -318,10 +314,6 @@ public final class Protocol {
 
     public final com.google.protobuf.Descriptors.EnumValueDescriptor
         getValueDescriptor() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalStateException(
-            "Can't get the descriptor of an unrecognized enum value.");
-      }
       return getDescriptor().getValues().get(ordinal());
     }
     public final com.google.protobuf.Descriptors.EnumDescriptor
@@ -381,7 +373,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Error}
    */
-  public static final class Error extends
+  public  static final class Error extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Error)
       ErrorOrBuilder {
@@ -473,7 +465,6 @@ public final class Protocol {
      * <code>uint32 code = 1;</code>
      * @return The code.
      */
-    @java.lang.Override
     public int getCode() {
       return code_;
     }
@@ -484,7 +475,6 @@ public final class Protocol {
      * <code>string message = 2;</code>
      * @return The message.
      */
-    @java.lang.Override
     public java.lang.String getMessage() {
       java.lang.Object ref = message_;
       if (ref instanceof java.lang.String) {
@@ -501,7 +491,6 @@ public final class Protocol {
      * <code>string message = 2;</code>
      * @return The bytes for message.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getMessageBytes() {
       java.lang.Object ref = message_;
@@ -840,7 +829,6 @@ public final class Protocol {
        * <code>uint32 code = 1;</code>
        * @return The code.
        */
-      @java.lang.Override
       public int getCode() {
         return code_;
       }
@@ -1024,7 +1012,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Command}
    */
-  public static final class Command extends
+  public  static final class Command extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Command)
       CommandOrBuilder {
@@ -1122,7 +1110,6 @@ public final class Protocol {
      * <code>uint32 id = 1;</code>
      * @return The id.
      */
-    @java.lang.Override
     public int getId() {
       return id_;
     }
@@ -1133,14 +1120,14 @@ public final class Protocol {
      * <code>.proto.MethodType method = 2;</code>
      * @return The enum numeric value on the wire for method.
      */
-    @java.lang.Override public int getMethodValue() {
+    public int getMethodValue() {
       return method_;
     }
     /**
      * <code>.proto.MethodType method = 2;</code>
      * @return The method.
      */
-    @java.lang.Override public io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType getMethod() {
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType getMethod() {
       @SuppressWarnings("deprecation")
       io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType.valueOf(method_);
       return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType.UNRECOGNIZED : result;
@@ -1152,7 +1139,6 @@ public final class Protocol {
      * <code>bytes params = 3;</code>
      * @return The params.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getParams() {
       return params_;
     }
@@ -1497,7 +1483,6 @@ public final class Protocol {
        * <code>uint32 id = 1;</code>
        * @return The id.
        */
-      @java.lang.Override
       public int getId() {
         return id_;
       }
@@ -1528,7 +1513,7 @@ public final class Protocol {
        * <code>.proto.MethodType method = 2;</code>
        * @return The enum numeric value on the wire for method.
        */
-      @java.lang.Override public int getMethodValue() {
+      public int getMethodValue() {
         return method_;
       }
       /**
@@ -1537,7 +1522,6 @@ public final class Protocol {
        * @return This builder for chaining.
        */
       public Builder setMethodValue(int value) {
-        
         method_ = value;
         onChanged();
         return this;
@@ -1546,7 +1530,6 @@ public final class Protocol {
        * <code>.proto.MethodType method = 2;</code>
        * @return The method.
        */
-      @java.lang.Override
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType getMethod() {
         @SuppressWarnings("deprecation")
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType.valueOf(method_);
@@ -1582,7 +1565,6 @@ public final class Protocol {
        * <code>bytes params = 3;</code>
        * @return The params.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getParams() {
         return params_;
       }
@@ -1697,7 +1679,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Reply}
    */
-  public static final class Reply extends
+  public  static final class Reply extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Reply)
       ReplyOrBuilder {
@@ -1801,7 +1783,6 @@ public final class Protocol {
      * <code>uint32 id = 1;</code>
      * @return The id.
      */
-    @java.lang.Override
     public int getId() {
       return id_;
     }
@@ -1812,7 +1793,6 @@ public final class Protocol {
      * <code>.proto.Error error = 2;</code>
      * @return Whether the error field is set.
      */
-    @java.lang.Override
     public boolean hasError() {
       return error_ != null;
     }
@@ -1820,14 +1800,12 @@ public final class Protocol {
      * <code>.proto.Error error = 2;</code>
      * @return The error.
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error getError() {
       return error_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.getDefaultInstance() : error_;
     }
     /**
      * <code>.proto.Error error = 2;</code>
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ErrorOrBuilder getErrorOrBuilder() {
       return getError();
     }
@@ -1838,7 +1816,6 @@ public final class Protocol {
      * <code>bytes result = 3;</code>
      * @return The result.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getResult() {
       return result_;
     }
@@ -2197,7 +2174,6 @@ public final class Protocol {
        * <code>uint32 id = 1;</code>
        * @return The id.
        */
-      @java.lang.Override
       public int getId() {
         return id_;
       }
@@ -2347,7 +2323,6 @@ public final class Protocol {
        * <code>bytes result = 3;</code>
        * @return The result.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getResult() {
         return result_;
       }
@@ -2464,7 +2439,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Push}
    */
-  public static final class Push extends
+  public  static final class Push extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Push)
       PushOrBuilder {
@@ -2564,14 +2539,14 @@ public final class Protocol {
      * <code>.proto.PushType type = 1;</code>
      * @return The enum numeric value on the wire for type.
      */
-    @java.lang.Override public int getTypeValue() {
+    public int getTypeValue() {
       return type_;
     }
     /**
      * <code>.proto.PushType type = 1;</code>
      * @return The type.
      */
-    @java.lang.Override public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType getType() {
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType getType() {
       @SuppressWarnings("deprecation")
       io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType.valueOf(type_);
       return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType.UNRECOGNIZED : result;
@@ -2583,7 +2558,6 @@ public final class Protocol {
      * <code>string channel = 2;</code>
      * @return The channel.
      */
-    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -2600,7 +2574,6 @@ public final class Protocol {
      * <code>string channel = 2;</code>
      * @return The bytes for channel.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -2621,7 +2594,6 @@ public final class Protocol {
      * <code>bytes data = 3;</code>
      * @return The data.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -2966,7 +2938,7 @@ public final class Protocol {
        * <code>.proto.PushType type = 1;</code>
        * @return The enum numeric value on the wire for type.
        */
-      @java.lang.Override public int getTypeValue() {
+      public int getTypeValue() {
         return type_;
       }
       /**
@@ -2975,7 +2947,6 @@ public final class Protocol {
        * @return This builder for chaining.
        */
       public Builder setTypeValue(int value) {
-        
         type_ = value;
         onChanged();
         return this;
@@ -2984,7 +2955,6 @@ public final class Protocol {
        * <code>.proto.PushType type = 1;</code>
        * @return The type.
        */
-      @java.lang.Override
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType getType() {
         @SuppressWarnings("deprecation")
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType.valueOf(type_);
@@ -3096,7 +3066,6 @@ public final class Protocol {
        * <code>bytes data = 3;</code>
        * @return The data.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -3220,7 +3189,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.ClientInfo}
    */
-  public static final class ClientInfo extends
+  public  static final class ClientInfo extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.ClientInfo)
       ClientInfoOrBuilder {
@@ -3326,7 +3295,6 @@ public final class Protocol {
      * <code>string user = 1;</code>
      * @return The user.
      */
-    @java.lang.Override
     public java.lang.String getUser() {
       java.lang.Object ref = user_;
       if (ref instanceof java.lang.String) {
@@ -3343,7 +3311,6 @@ public final class Protocol {
      * <code>string user = 1;</code>
      * @return The bytes for user.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getUserBytes() {
       java.lang.Object ref = user_;
@@ -3364,7 +3331,6 @@ public final class Protocol {
      * <code>string client = 2;</code>
      * @return The client.
      */
-    @java.lang.Override
     public java.lang.String getClient() {
       java.lang.Object ref = client_;
       if (ref instanceof java.lang.String) {
@@ -3381,7 +3347,6 @@ public final class Protocol {
      * <code>string client = 2;</code>
      * @return The bytes for client.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getClientBytes() {
       java.lang.Object ref = client_;
@@ -3402,7 +3367,6 @@ public final class Protocol {
      * <code>bytes conn_info = 3;</code>
      * @return The connInfo.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getConnInfo() {
       return connInfo_;
     }
@@ -3413,7 +3377,6 @@ public final class Protocol {
      * <code>bytes chan_info = 4;</code>
      * @return The chanInfo.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getChanInfo() {
       return chanInfo_;
     }
@@ -3928,7 +3891,6 @@ public final class Protocol {
        * <code>bytes conn_info = 3;</code>
        * @return The connInfo.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getConnInfo() {
         return connInfo_;
       }
@@ -3962,7 +3924,6 @@ public final class Protocol {
        * <code>bytes chan_info = 4;</code>
        * @return The chanInfo.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getChanInfo() {
         return chanInfo_;
       }
@@ -4101,7 +4062,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Publication}
    */
-  public static final class Publication extends
+  public  static final class Publication extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Publication)
       PublicationOrBuilder {
@@ -4222,7 +4183,6 @@ public final class Protocol {
      * <code>uint32 seq = 1;</code>
      * @return The seq.
      */
-    @java.lang.Override
     public int getSeq() {
       return seq_;
     }
@@ -4233,7 +4193,6 @@ public final class Protocol {
      * <code>uint32 gen = 2;</code>
      * @return The gen.
      */
-    @java.lang.Override
     public int getGen() {
       return gen_;
     }
@@ -4244,7 +4203,6 @@ public final class Protocol {
      * <code>string uid = 3;</code>
      * @return The uid.
      */
-    @java.lang.Override
     public java.lang.String getUid() {
       java.lang.Object ref = uid_;
       if (ref instanceof java.lang.String) {
@@ -4261,7 +4219,6 @@ public final class Protocol {
      * <code>string uid = 3;</code>
      * @return The bytes for uid.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getUidBytes() {
       java.lang.Object ref = uid_;
@@ -4282,7 +4239,6 @@ public final class Protocol {
      * <code>bytes data = 4;</code>
      * @return The data.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -4293,7 +4249,6 @@ public final class Protocol {
      * <code>.proto.ClientInfo info = 5;</code>
      * @return Whether the info field is set.
      */
-    @java.lang.Override
     public boolean hasInfo() {
       return info_ != null;
     }
@@ -4301,14 +4256,12 @@ public final class Protocol {
      * <code>.proto.ClientInfo info = 5;</code>
      * @return The info.
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo() {
       return info_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.getDefaultInstance() : info_;
     }
     /**
      * <code>.proto.ClientInfo info = 5;</code>
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder() {
       return getInfo();
     }
@@ -4319,7 +4272,6 @@ public final class Protocol {
      * <code>uint64 offset = 6;</code>
      * @return The offset.
      */
-    @java.lang.Override
     public long getOffset() {
       return offset_;
     }
@@ -4730,7 +4682,6 @@ public final class Protocol {
        * <code>uint32 seq = 1;</code>
        * @return The seq.
        */
-      @java.lang.Override
       public int getSeq() {
         return seq_;
       }
@@ -4761,7 +4712,6 @@ public final class Protocol {
        * <code>uint32 gen = 2;</code>
        * @return The gen.
        */
-      @java.lang.Override
       public int getGen() {
         return gen_;
       }
@@ -4868,7 +4818,6 @@ public final class Protocol {
        * <code>bytes data = 4;</code>
        * @return The data.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -5021,7 +4970,6 @@ public final class Protocol {
        * <code>uint64 offset = 6;</code>
        * @return The offset.
        */
-      @java.lang.Override
       public long getOffset() {
         return offset_;
       }
@@ -5121,7 +5069,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Join}
    */
-  public static final class Join extends
+  public  static final class Join extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Join)
       JoinOrBuilder {
@@ -5214,7 +5162,6 @@ public final class Protocol {
      * <code>.proto.ClientInfo info = 1;</code>
      * @return Whether the info field is set.
      */
-    @java.lang.Override
     public boolean hasInfo() {
       return info_ != null;
     }
@@ -5222,14 +5169,12 @@ public final class Protocol {
      * <code>.proto.ClientInfo info = 1;</code>
      * @return The info.
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo() {
       return info_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.getDefaultInstance() : info_;
     }
     /**
      * <code>.proto.ClientInfo info = 1;</code>
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder() {
       return getInfo();
     }
@@ -5742,7 +5687,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Leave}
    */
-  public static final class Leave extends
+  public  static final class Leave extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Leave)
       LeaveOrBuilder {
@@ -5835,7 +5780,6 @@ public final class Protocol {
      * <code>.proto.ClientInfo info = 1;</code>
      * @return Whether the info field is set.
      */
-    @java.lang.Override
     public boolean hasInfo() {
       return info_ != null;
     }
@@ -5843,14 +5787,12 @@ public final class Protocol {
      * <code>.proto.ClientInfo info = 1;</code>
      * @return The info.
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo() {
       return info_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.getDefaultInstance() : info_;
     }
     /**
      * <code>.proto.ClientInfo info = 1;</code>
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder() {
       return getInfo();
     }
@@ -6354,7 +6296,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Unsub}
    */
-  public static final class Unsub extends
+  public  static final class Unsub extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Unsub)
       UnsubOrBuilder {
@@ -6439,7 +6381,6 @@ public final class Protocol {
      * <code>bool resubscribe = 1;</code>
      * @return The resubscribe.
      */
-    @java.lang.Override
     public boolean getResubscribe() {
       return resubscribe_;
     }
@@ -6752,7 +6693,6 @@ public final class Protocol {
        * <code>bool resubscribe = 1;</code>
        * @return The resubscribe.
        */
-      @java.lang.Override
       public boolean getResubscribe() {
         return resubscribe_;
       }
@@ -6873,7 +6813,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Sub}
    */
-  public static final class Sub extends
+  public  static final class Sub extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Sub)
       SubOrBuilder {
@@ -6980,7 +6920,6 @@ public final class Protocol {
      * <code>bool recoverable = 1;</code>
      * @return The recoverable.
      */
-    @java.lang.Override
     public boolean getRecoverable() {
       return recoverable_;
     }
@@ -6991,7 +6930,6 @@ public final class Protocol {
      * <code>uint32 seq = 2;</code>
      * @return The seq.
      */
-    @java.lang.Override
     public int getSeq() {
       return seq_;
     }
@@ -7002,7 +6940,6 @@ public final class Protocol {
      * <code>uint32 gen = 3;</code>
      * @return The gen.
      */
-    @java.lang.Override
     public int getGen() {
       return gen_;
     }
@@ -7013,7 +6950,6 @@ public final class Protocol {
      * <code>string epoch = 4;</code>
      * @return The epoch.
      */
-    @java.lang.Override
     public java.lang.String getEpoch() {
       java.lang.Object ref = epoch_;
       if (ref instanceof java.lang.String) {
@@ -7030,7 +6966,6 @@ public final class Protocol {
      * <code>string epoch = 4;</code>
      * @return The bytes for epoch.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getEpochBytes() {
       java.lang.Object ref = epoch_;
@@ -7051,7 +6986,6 @@ public final class Protocol {
      * <code>uint64 offset = 5;</code>
      * @return The offset.
      */
-    @java.lang.Override
     public long getOffset() {
       return offset_;
     }
@@ -7433,7 +7367,6 @@ public final class Protocol {
        * <code>bool recoverable = 1;</code>
        * @return The recoverable.
        */
-      @java.lang.Override
       public boolean getRecoverable() {
         return recoverable_;
       }
@@ -7464,7 +7397,6 @@ public final class Protocol {
        * <code>uint32 seq = 2;</code>
        * @return The seq.
        */
-      @java.lang.Override
       public int getSeq() {
         return seq_;
       }
@@ -7495,7 +7427,6 @@ public final class Protocol {
        * <code>uint32 gen = 3;</code>
        * @return The gen.
        */
-      @java.lang.Override
       public int getGen() {
         return gen_;
       }
@@ -7602,7 +7533,6 @@ public final class Protocol {
        * <code>uint64 offset = 5;</code>
        * @return The offset.
        */
-      @java.lang.Override
       public long getOffset() {
         return offset_;
       }
@@ -7693,7 +7623,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.Message}
    */
-  public static final class Message extends
+  public  static final class Message extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.Message)
       MessageOrBuilder {
@@ -7779,7 +7709,6 @@ public final class Protocol {
      * <code>bytes data = 1;</code>
      * @return The data.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -8091,7 +8020,6 @@ public final class Protocol {
        * <code>bytes data = 1;</code>
        * @return The data.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -8231,7 +8159,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.ConnectRequest}
    */
-  public static final class ConnectRequest extends
+  public  static final class ConnectRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.ConnectRequest)
       ConnectRequestOrBuilder {
@@ -8350,7 +8278,6 @@ public final class Protocol {
      * <code>string token = 1;</code>
      * @return The token.
      */
-    @java.lang.Override
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
       if (ref instanceof java.lang.String) {
@@ -8367,7 +8294,6 @@ public final class Protocol {
      * <code>string token = 1;</code>
      * @return The bytes for token.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getTokenBytes() {
       java.lang.Object ref = token_;
@@ -8388,7 +8314,6 @@ public final class Protocol {
      * <code>bytes data = 2;</code>
      * @return The data.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -8423,7 +8348,6 @@ public final class Protocol {
      * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
      */
 
-    @java.lang.Override
     public boolean containsSubs(
         java.lang.String key) {
       if (key == null) { throw new java.lang.NullPointerException(); }
@@ -8432,7 +8356,6 @@ public final class Protocol {
     /**
      * Use {@link #getSubsMap()} instead.
      */
-    @java.lang.Override
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> getSubs() {
       return getSubsMap();
@@ -8440,7 +8363,6 @@ public final class Protocol {
     /**
      * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
      */
-    @java.lang.Override
 
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> getSubsMap() {
       return internalGetSubs().getMap();
@@ -8448,7 +8370,6 @@ public final class Protocol {
     /**
      * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
      */
-    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrDefault(
         java.lang.String key,
@@ -8461,7 +8382,6 @@ public final class Protocol {
     /**
      * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
      */
-    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrThrow(
         java.lang.String key) {
@@ -8925,7 +8845,6 @@ public final class Protocol {
        * <code>bytes data = 2;</code>
        * @return The data.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -8984,7 +8903,6 @@ public final class Protocol {
        * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
        */
 
-      @java.lang.Override
       public boolean containsSubs(
           java.lang.String key) {
         if (key == null) { throw new java.lang.NullPointerException(); }
@@ -8993,7 +8911,6 @@ public final class Protocol {
       /**
        * Use {@link #getSubsMap()} instead.
        */
-      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> getSubs() {
         return getSubsMap();
@@ -9001,7 +8918,6 @@ public final class Protocol {
       /**
        * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
        */
-      @java.lang.Override
 
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> getSubsMap() {
         return internalGetSubs().getMap();
@@ -9009,7 +8925,6 @@ public final class Protocol {
       /**
        * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
        */
-      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrDefault(
           java.lang.String key,
@@ -9022,7 +8937,6 @@ public final class Protocol {
       /**
        * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
        */
-      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrThrow(
           java.lang.String key) {
@@ -9217,7 +9131,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.ConnectResult}
    */
-  public static final class ConnectResult extends
+  public  static final class ConnectResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.ConnectResult)
       ConnectResultOrBuilder {
@@ -9353,7 +9267,6 @@ public final class Protocol {
      * <code>string client = 1;</code>
      * @return The client.
      */
-    @java.lang.Override
     public java.lang.String getClient() {
       java.lang.Object ref = client_;
       if (ref instanceof java.lang.String) {
@@ -9370,7 +9283,6 @@ public final class Protocol {
      * <code>string client = 1;</code>
      * @return The bytes for client.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getClientBytes() {
       java.lang.Object ref = client_;
@@ -9391,7 +9303,6 @@ public final class Protocol {
      * <code>string version = 2;</code>
      * @return The version.
      */
-    @java.lang.Override
     public java.lang.String getVersion() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
@@ -9408,7 +9319,6 @@ public final class Protocol {
      * <code>string version = 2;</code>
      * @return The bytes for version.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getVersionBytes() {
       java.lang.Object ref = version_;
@@ -9429,7 +9339,6 @@ public final class Protocol {
      * <code>bool expires = 3;</code>
      * @return The expires.
      */
-    @java.lang.Override
     public boolean getExpires() {
       return expires_;
     }
@@ -9440,7 +9349,6 @@ public final class Protocol {
      * <code>uint32 ttl = 4;</code>
      * @return The ttl.
      */
-    @java.lang.Override
     public int getTtl() {
       return ttl_;
     }
@@ -9451,7 +9359,6 @@ public final class Protocol {
      * <code>bytes data = 5;</code>
      * @return The data.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -9486,7 +9393,6 @@ public final class Protocol {
      * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
      */
 
-    @java.lang.Override
     public boolean containsSubs(
         java.lang.String key) {
       if (key == null) { throw new java.lang.NullPointerException(); }
@@ -9495,7 +9401,6 @@ public final class Protocol {
     /**
      * Use {@link #getSubsMap()} instead.
      */
-    @java.lang.Override
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> getSubs() {
       return getSubsMap();
@@ -9503,7 +9408,6 @@ public final class Protocol {
     /**
      * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
      */
-    @java.lang.Override
 
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> getSubsMap() {
       return internalGetSubs().getMap();
@@ -9511,7 +9415,6 @@ public final class Protocol {
     /**
      * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
      */
-    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrDefault(
         java.lang.String key,
@@ -9524,7 +9427,6 @@ public final class Protocol {
     /**
      * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
      */
-    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
         java.lang.String key) {
@@ -10116,7 +10018,6 @@ public final class Protocol {
        * <code>bool expires = 3;</code>
        * @return The expires.
        */
-      @java.lang.Override
       public boolean getExpires() {
         return expires_;
       }
@@ -10147,7 +10048,6 @@ public final class Protocol {
        * <code>uint32 ttl = 4;</code>
        * @return The ttl.
        */
-      @java.lang.Override
       public int getTtl() {
         return ttl_;
       }
@@ -10178,7 +10078,6 @@ public final class Protocol {
        * <code>bytes data = 5;</code>
        * @return The data.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -10237,7 +10136,6 @@ public final class Protocol {
        * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
        */
 
-      @java.lang.Override
       public boolean containsSubs(
           java.lang.String key) {
         if (key == null) { throw new java.lang.NullPointerException(); }
@@ -10246,7 +10144,6 @@ public final class Protocol {
       /**
        * Use {@link #getSubsMap()} instead.
        */
-      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> getSubs() {
         return getSubsMap();
@@ -10254,7 +10151,6 @@ public final class Protocol {
       /**
        * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
        */
-      @java.lang.Override
 
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> getSubsMap() {
         return internalGetSubs().getMap();
@@ -10262,7 +10158,6 @@ public final class Protocol {
       /**
        * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
        */
-      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrDefault(
           java.lang.String key,
@@ -10275,7 +10170,6 @@ public final class Protocol {
       /**
        * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
        */
-      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
           java.lang.String key) {
@@ -10406,7 +10300,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.RefreshRequest}
    */
-  public static final class RefreshRequest extends
+  public  static final class RefreshRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.RefreshRequest)
       RefreshRequestOrBuilder {
@@ -10493,7 +10387,6 @@ public final class Protocol {
      * <code>string token = 1;</code>
      * @return The token.
      */
-    @java.lang.Override
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
       if (ref instanceof java.lang.String) {
@@ -10510,7 +10403,6 @@ public final class Protocol {
      * <code>string token = 1;</code>
      * @return The bytes for token.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getTokenBytes() {
       java.lang.Object ref = token_;
@@ -10998,7 +10890,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.RefreshResult}
    */
-  public static final class RefreshResult extends
+  public  static final class RefreshResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.RefreshResult)
       RefreshResultOrBuilder {
@@ -11102,7 +10994,6 @@ public final class Protocol {
      * <code>string client = 1;</code>
      * @return The client.
      */
-    @java.lang.Override
     public java.lang.String getClient() {
       java.lang.Object ref = client_;
       if (ref instanceof java.lang.String) {
@@ -11119,7 +11010,6 @@ public final class Protocol {
      * <code>string client = 1;</code>
      * @return The bytes for client.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getClientBytes() {
       java.lang.Object ref = client_;
@@ -11140,7 +11030,6 @@ public final class Protocol {
      * <code>string version = 2;</code>
      * @return The version.
      */
-    @java.lang.Override
     public java.lang.String getVersion() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
@@ -11157,7 +11046,6 @@ public final class Protocol {
      * <code>string version = 2;</code>
      * @return The bytes for version.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getVersionBytes() {
       java.lang.Object ref = version_;
@@ -11178,7 +11066,6 @@ public final class Protocol {
      * <code>bool expires = 3;</code>
      * @return The expires.
      */
-    @java.lang.Override
     public boolean getExpires() {
       return expires_;
     }
@@ -11189,7 +11076,6 @@ public final class Protocol {
      * <code>uint32 ttl = 4;</code>
      * @return The ttl.
      */
-    @java.lang.Override
     public int getTtl() {
       return ttl_;
     }
@@ -11705,7 +11591,6 @@ public final class Protocol {
        * <code>bool expires = 3;</code>
        * @return The expires.
        */
-      @java.lang.Override
       public boolean getExpires() {
         return expires_;
       }
@@ -11736,7 +11621,6 @@ public final class Protocol {
        * <code>uint32 ttl = 4;</code>
        * @return The ttl.
        */
-      @java.lang.Override
       public int getTtl() {
         return ttl_;
       }
@@ -11881,7 +11765,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.SubscribeRequest}
    */
-  public static final class SubscribeRequest extends
+  public  static final class SubscribeRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.SubscribeRequest)
       SubscribeRequestOrBuilder {
@@ -12002,7 +11886,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -12019,7 +11902,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -12040,7 +11922,6 @@ public final class Protocol {
      * <code>string token = 2;</code>
      * @return The token.
      */
-    @java.lang.Override
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
       if (ref instanceof java.lang.String) {
@@ -12057,7 +11938,6 @@ public final class Protocol {
      * <code>string token = 2;</code>
      * @return The bytes for token.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getTokenBytes() {
       java.lang.Object ref = token_;
@@ -12078,7 +11958,6 @@ public final class Protocol {
      * <code>bool recover = 3;</code>
      * @return The recover.
      */
-    @java.lang.Override
     public boolean getRecover() {
       return recover_;
     }
@@ -12089,7 +11968,6 @@ public final class Protocol {
      * <code>uint32 seq = 4;</code>
      * @return The seq.
      */
-    @java.lang.Override
     public int getSeq() {
       return seq_;
     }
@@ -12100,7 +11978,6 @@ public final class Protocol {
      * <code>uint32 gen = 5;</code>
      * @return The gen.
      */
-    @java.lang.Override
     public int getGen() {
       return gen_;
     }
@@ -12111,7 +11988,6 @@ public final class Protocol {
      * <code>string epoch = 6;</code>
      * @return The epoch.
      */
-    @java.lang.Override
     public java.lang.String getEpoch() {
       java.lang.Object ref = epoch_;
       if (ref instanceof java.lang.String) {
@@ -12128,7 +12004,6 @@ public final class Protocol {
      * <code>string epoch = 6;</code>
      * @return The bytes for epoch.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getEpochBytes() {
       java.lang.Object ref = epoch_;
@@ -12149,7 +12024,6 @@ public final class Protocol {
      * <code>uint64 offset = 7;</code>
      * @return The offset.
      */
-    @java.lang.Override
     public long getOffset() {
       return offset_;
     }
@@ -12717,7 +12591,6 @@ public final class Protocol {
        * <code>bool recover = 3;</code>
        * @return The recover.
        */
-      @java.lang.Override
       public boolean getRecover() {
         return recover_;
       }
@@ -12748,7 +12621,6 @@ public final class Protocol {
        * <code>uint32 seq = 4;</code>
        * @return The seq.
        */
-      @java.lang.Override
       public int getSeq() {
         return seq_;
       }
@@ -12779,7 +12651,6 @@ public final class Protocol {
        * <code>uint32 gen = 5;</code>
        * @return The gen.
        */
-      @java.lang.Override
       public int getGen() {
         return gen_;
       }
@@ -12886,7 +12757,6 @@ public final class Protocol {
        * <code>uint64 offset = 7;</code>
        * @return The offset.
        */
-      @java.lang.Override
       public long getOffset() {
         return offset_;
       }
@@ -13049,7 +12919,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.SubscribeResult}
    */
-  public static final class SubscribeResult extends
+  public  static final class SubscribeResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.SubscribeResult)
       SubscribeResultOrBuilder {
@@ -13185,7 +13055,6 @@ public final class Protocol {
      * <code>bool expires = 1;</code>
      * @return The expires.
      */
-    @java.lang.Override
     public boolean getExpires() {
       return expires_;
     }
@@ -13196,7 +13065,6 @@ public final class Protocol {
      * <code>uint32 ttl = 2;</code>
      * @return The ttl.
      */
-    @java.lang.Override
     public int getTtl() {
       return ttl_;
     }
@@ -13207,7 +13075,6 @@ public final class Protocol {
      * <code>bool recoverable = 3;</code>
      * @return The recoverable.
      */
-    @java.lang.Override
     public boolean getRecoverable() {
       return recoverable_;
     }
@@ -13218,7 +13085,6 @@ public final class Protocol {
      * <code>uint32 seq = 4;</code>
      * @return The seq.
      */
-    @java.lang.Override
     public int getSeq() {
       return seq_;
     }
@@ -13229,7 +13095,6 @@ public final class Protocol {
      * <code>uint32 gen = 5;</code>
      * @return The gen.
      */
-    @java.lang.Override
     public int getGen() {
       return gen_;
     }
@@ -13240,7 +13105,6 @@ public final class Protocol {
      * <code>string epoch = 6;</code>
      * @return The epoch.
      */
-    @java.lang.Override
     public java.lang.String getEpoch() {
       java.lang.Object ref = epoch_;
       if (ref instanceof java.lang.String) {
@@ -13257,7 +13121,6 @@ public final class Protocol {
      * <code>string epoch = 6;</code>
      * @return The bytes for epoch.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getEpochBytes() {
       java.lang.Object ref = epoch_;
@@ -13277,14 +13140,12 @@ public final class Protocol {
     /**
      * <code>repeated .proto.Publication publications = 7;</code>
      */
-    @java.lang.Override
     public java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> getPublicationsList() {
       return publications_;
     }
     /**
      * <code>repeated .proto.Publication publications = 7;</code>
      */
-    @java.lang.Override
     public java.util.List<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> 
         getPublicationsOrBuilderList() {
       return publications_;
@@ -13292,21 +13153,18 @@ public final class Protocol {
     /**
      * <code>repeated .proto.Publication publications = 7;</code>
      */
-    @java.lang.Override
     public int getPublicationsCount() {
       return publications_.size();
     }
     /**
      * <code>repeated .proto.Publication publications = 7;</code>
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPublications(int index) {
       return publications_.get(index);
     }
     /**
      * <code>repeated .proto.Publication publications = 7;</code>
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder getPublicationsOrBuilder(
         int index) {
       return publications_.get(index);
@@ -13318,7 +13176,6 @@ public final class Protocol {
      * <code>bool recovered = 8;</code>
      * @return The recovered.
      */
-    @java.lang.Override
     public boolean getRecovered() {
       return recovered_;
     }
@@ -13329,7 +13186,6 @@ public final class Protocol {
      * <code>uint64 offset = 9;</code>
      * @return The offset.
      */
-    @java.lang.Override
     public long getOffset() {
       return offset_;
     }
@@ -13821,7 +13677,6 @@ public final class Protocol {
        * <code>bool expires = 1;</code>
        * @return The expires.
        */
-      @java.lang.Override
       public boolean getExpires() {
         return expires_;
       }
@@ -13852,7 +13707,6 @@ public final class Protocol {
        * <code>uint32 ttl = 2;</code>
        * @return The ttl.
        */
-      @java.lang.Override
       public int getTtl() {
         return ttl_;
       }
@@ -13883,7 +13737,6 @@ public final class Protocol {
        * <code>bool recoverable = 3;</code>
        * @return The recoverable.
        */
-      @java.lang.Override
       public boolean getRecoverable() {
         return recoverable_;
       }
@@ -13914,7 +13767,6 @@ public final class Protocol {
        * <code>uint32 seq = 4;</code>
        * @return The seq.
        */
-      @java.lang.Override
       public int getSeq() {
         return seq_;
       }
@@ -13945,7 +13797,6 @@ public final class Protocol {
        * <code>uint32 gen = 5;</code>
        * @return The gen.
        */
-      @java.lang.Override
       public int getGen() {
         return gen_;
       }
@@ -14292,7 +14143,6 @@ public final class Protocol {
        * <code>bool recovered = 8;</code>
        * @return The recovered.
        */
-      @java.lang.Override
       public boolean getRecovered() {
         return recovered_;
       }
@@ -14323,7 +14173,6 @@ public final class Protocol {
        * <code>uint64 offset = 9;</code>
        * @return The offset.
        */
-      @java.lang.Override
       public long getOffset() {
         return offset_;
       }
@@ -14432,7 +14281,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.SubRefreshRequest}
    */
-  public static final class SubRefreshRequest extends
+  public  static final class SubRefreshRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.SubRefreshRequest)
       SubRefreshRequestOrBuilder {
@@ -14526,7 +14375,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -14543,7 +14391,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -14564,7 +14411,6 @@ public final class Protocol {
      * <code>string token = 2;</code>
      * @return The token.
      */
-    @java.lang.Override
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
       if (ref instanceof java.lang.String) {
@@ -14581,7 +14427,6 @@ public final class Protocol {
      * <code>string token = 2;</code>
      * @return The bytes for token.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getTokenBytes() {
       java.lang.Object ref = token_;
@@ -15138,7 +14983,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.SubRefreshResult}
    */
-  public static final class SubRefreshResult extends
+  public  static final class SubRefreshResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.SubRefreshResult)
       SubRefreshResultOrBuilder {
@@ -15228,7 +15073,6 @@ public final class Protocol {
      * <code>bool expires = 1;</code>
      * @return The expires.
      */
-    @java.lang.Override
     public boolean getExpires() {
       return expires_;
     }
@@ -15239,7 +15083,6 @@ public final class Protocol {
      * <code>uint32 ttl = 2;</code>
      * @return The ttl.
      */
-    @java.lang.Override
     public int getTtl() {
       return ttl_;
     }
@@ -15569,7 +15412,6 @@ public final class Protocol {
        * <code>bool expires = 1;</code>
        * @return The expires.
        */
-      @java.lang.Override
       public boolean getExpires() {
         return expires_;
       }
@@ -15600,7 +15442,6 @@ public final class Protocol {
        * <code>uint32 ttl = 2;</code>
        * @return The ttl.
        */
-      @java.lang.Override
       public int getTtl() {
         return ttl_;
       }
@@ -15697,7 +15538,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.UnsubscribeRequest}
    */
-  public static final class UnsubscribeRequest extends
+  public  static final class UnsubscribeRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.UnsubscribeRequest)
       UnsubscribeRequestOrBuilder {
@@ -15784,7 +15625,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -15801,7 +15641,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -16253,7 +16092,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.UnsubscribeResult}
    */
-  public static final class UnsubscribeResult extends
+  public  static final class UnsubscribeResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.UnsubscribeResult)
       UnsubscribeResultOrBuilder {
@@ -16689,7 +16528,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.PublishRequest}
    */
-  public static final class PublishRequest extends
+  public  static final class PublishRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.PublishRequest)
       PublishRequestOrBuilder {
@@ -16782,7 +16621,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -16799,7 +16637,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -16820,7 +16657,6 @@ public final class Protocol {
      * <code>bytes data = 2;</code>
      * @return The data.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -17225,7 +17061,6 @@ public final class Protocol {
        * <code>bytes data = 2;</code>
        * @return The data.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -17313,7 +17148,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.PublishResult}
    */
-  public static final class PublishResult extends
+  public  static final class PublishResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.PublishResult)
       PublishResultOrBuilder {
@@ -17743,7 +17578,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.PresenceRequest}
    */
-  public static final class PresenceRequest extends
+  public  static final class PresenceRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.PresenceRequest)
       PresenceRequestOrBuilder {
@@ -17830,7 +17665,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -17847,7 +17681,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -18333,7 +18166,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.PresenceResult}
    */
-  public static final class PresenceResult extends
+  public  static final class PresenceResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.PresenceResult)
       PresenceResultOrBuilder {
@@ -18463,7 +18296,6 @@ public final class Protocol {
      * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
      */
 
-    @java.lang.Override
     public boolean containsPresence(
         java.lang.String key) {
       if (key == null) { throw new java.lang.NullPointerException(); }
@@ -18472,7 +18304,6 @@ public final class Protocol {
     /**
      * Use {@link #getPresenceMap()} instead.
      */
-    @java.lang.Override
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> getPresence() {
       return getPresenceMap();
@@ -18480,7 +18311,6 @@ public final class Protocol {
     /**
      * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
      */
-    @java.lang.Override
 
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> getPresenceMap() {
       return internalGetPresence().getMap();
@@ -18488,7 +18318,6 @@ public final class Protocol {
     /**
      * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
      */
-    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrDefault(
         java.lang.String key,
@@ -18501,7 +18330,6 @@ public final class Protocol {
     /**
      * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
      */
-    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrThrow(
         java.lang.String key) {
@@ -18880,7 +18708,6 @@ public final class Protocol {
        * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
        */
 
-      @java.lang.Override
       public boolean containsPresence(
           java.lang.String key) {
         if (key == null) { throw new java.lang.NullPointerException(); }
@@ -18889,7 +18716,6 @@ public final class Protocol {
       /**
        * Use {@link #getPresenceMap()} instead.
        */
-      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> getPresence() {
         return getPresenceMap();
@@ -18897,7 +18723,6 @@ public final class Protocol {
       /**
        * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
        */
-      @java.lang.Override
 
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> getPresenceMap() {
         return internalGetPresence().getMap();
@@ -18905,7 +18730,6 @@ public final class Protocol {
       /**
        * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
        */
-      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrDefault(
           java.lang.String key,
@@ -18918,7 +18742,6 @@ public final class Protocol {
       /**
        * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
        */
-      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrThrow(
           java.lang.String key) {
@@ -19049,7 +18872,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.PresenceStatsRequest}
    */
-  public static final class PresenceStatsRequest extends
+  public  static final class PresenceStatsRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.PresenceStatsRequest)
       PresenceStatsRequestOrBuilder {
@@ -19136,7 +18959,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -19153,7 +18975,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -19617,7 +19438,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.PresenceStatsResult}
    */
-  public static final class PresenceStatsResult extends
+  public  static final class PresenceStatsResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.PresenceStatsResult)
       PresenceStatsResultOrBuilder {
@@ -19707,7 +19528,6 @@ public final class Protocol {
      * <code>uint32 num_clients = 1;</code>
      * @return The numClients.
      */
-    @java.lang.Override
     public int getNumClients() {
       return numClients_;
     }
@@ -19718,7 +19538,6 @@ public final class Protocol {
      * <code>uint32 num_users = 2;</code>
      * @return The numUsers.
      */
-    @java.lang.Override
     public int getNumUsers() {
       return numUsers_;
     }
@@ -20047,7 +19866,6 @@ public final class Protocol {
        * <code>uint32 num_clients = 1;</code>
        * @return The numClients.
        */
-      @java.lang.Override
       public int getNumClients() {
         return numClients_;
       }
@@ -20078,7 +19896,6 @@ public final class Protocol {
        * <code>uint32 num_users = 2;</code>
        * @return The numUsers.
        */
-      @java.lang.Override
       public int getNumUsers() {
         return numUsers_;
       }
@@ -20175,7 +19992,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.HistoryRequest}
    */
-  public static final class HistoryRequest extends
+  public  static final class HistoryRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.HistoryRequest)
       HistoryRequestOrBuilder {
@@ -20262,7 +20079,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
-    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -20279,7 +20095,6 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -20755,7 +20570,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.HistoryResult}
    */
-  public static final class HistoryResult extends
+  public  static final class HistoryResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.HistoryResult)
       HistoryResultOrBuilder {
@@ -20848,14 +20663,12 @@ public final class Protocol {
     /**
      * <code>repeated .proto.Publication publications = 1;</code>
      */
-    @java.lang.Override
     public java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> getPublicationsList() {
       return publications_;
     }
     /**
      * <code>repeated .proto.Publication publications = 1;</code>
      */
-    @java.lang.Override
     public java.util.List<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> 
         getPublicationsOrBuilderList() {
       return publications_;
@@ -20863,21 +20676,18 @@ public final class Protocol {
     /**
      * <code>repeated .proto.Publication publications = 1;</code>
      */
-    @java.lang.Override
     public int getPublicationsCount() {
       return publications_.size();
     }
     /**
      * <code>repeated .proto.Publication publications = 1;</code>
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPublications(int index) {
       return publications_.get(index);
     }
     /**
      * <code>repeated .proto.Publication publications = 1;</code>
      */
-    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder getPublicationsOrBuilder(
         int index) {
       return publications_.get(index);
@@ -21524,7 +21334,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.PingRequest}
    */
-  public static final class PingRequest extends
+  public  static final class PingRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.PingRequest)
       PingRequestOrBuilder {
@@ -21942,7 +21752,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.PingResult}
    */
-  public static final class PingResult extends
+  public  static final class PingResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.PingResult)
       PingResultOrBuilder {
@@ -22378,7 +22188,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.RPCRequest}
    */
-  public static final class RPCRequest extends
+  public  static final class RPCRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.RPCRequest)
       RPCRequestOrBuilder {
@@ -22471,7 +22281,6 @@ public final class Protocol {
      * <code>bytes data = 1;</code>
      * @return The data.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -22482,7 +22291,6 @@ public final class Protocol {
      * <code>string method = 2;</code>
      * @return The method.
      */
-    @java.lang.Override
     public java.lang.String getMethod() {
       java.lang.Object ref = method_;
       if (ref instanceof java.lang.String) {
@@ -22499,7 +22307,6 @@ public final class Protocol {
      * <code>string method = 2;</code>
      * @return The bytes for method.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString
         getMethodBytes() {
       java.lang.Object ref = method_;
@@ -22838,7 +22645,6 @@ public final class Protocol {
        * <code>bytes data = 1;</code>
        * @return The data.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -23008,7 +22814,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.RPCResult}
    */
-  public static final class RPCResult extends
+  public  static final class RPCResult extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.RPCResult)
       RPCResultOrBuilder {
@@ -23094,7 +22900,6 @@ public final class Protocol {
      * <code>bytes data = 1;</code>
      * @return The data.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -23406,7 +23211,6 @@ public final class Protocol {
        * <code>bytes data = 1;</code>
        * @return The data.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -23500,7 +23304,7 @@ public final class Protocol {
   /**
    * Protobuf type {@code proto.SendRequest}
    */
-  public static final class SendRequest extends
+  public  static final class SendRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:proto.SendRequest)
       SendRequestOrBuilder {
@@ -23586,7 +23390,6 @@ public final class Protocol {
      * <code>bytes data = 1;</code>
      * @return The data.
      */
-    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -23898,7 +23701,6 @@ public final class Protocol {
        * <code>bytes data = 1;</code>
        * @return The data.
        */
-      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
