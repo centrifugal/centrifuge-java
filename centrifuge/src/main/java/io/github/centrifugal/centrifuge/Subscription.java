@@ -17,8 +17,6 @@ public class Subscription {
     private boolean recover;
     private long subscribedAt = 0;
     private String lastEpoch;
-    private int lastSeq;
-    private int lastGen;
     private SubscriptionEventListener listener;
     private SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
     private Map<String, CompletableFuture<ReplyError>> futures = new ConcurrentHashMap<>();
@@ -71,8 +69,6 @@ public class Subscription {
     void moveToSubscribeSuccess(Protocol.SubscribeResult result) {
         this.state = SubscriptionState.SUBSCRIBED;
         this.lastEpoch = result.getEpoch();
-        this.lastGen = result.getGen();
-        this.lastSeq = result.getSeq();
         this.lastOffset = result.getOffset();
         this.setRecover(true);
 
@@ -255,19 +251,4 @@ public class Subscription {
         this.subscribedAt = subscribedAt;
     }
 
-    public int getLastSeq() {
-        return lastSeq;
-    }
-
-    public void setLastSeq(int lastSeq) {
-        this.lastSeq = lastSeq;
-    }
-
-    public int getLastGen() {
-        return lastGen;
-    }
-
-    public void setLastGen(int lastGen) {
-        this.lastGen = lastGen;
-    }
 }
