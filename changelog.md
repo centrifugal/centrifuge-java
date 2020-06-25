@@ -1,3 +1,13 @@
+0.0.5
+=====
+
+* Support RPC `method` field - [#16](https://github.com/centrifugal/centrifuge-java/pull/16)
+
+0.0.4
+=====
+
+* add `Data` field for `ConnectEvent`
+
 0.0.3
 =====
 
