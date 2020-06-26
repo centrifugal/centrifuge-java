@@ -70,7 +70,7 @@ public class Subscription {
         this.state = SubscriptionState.SUBSCRIBED;
         this.lastEpoch = result.getEpoch();
         this.lastOffset = result.getOffset();
-        this.setRecover(true);
+        this.setRecover(result.getRecoverable());
 
         for (Protocol.Publication publication: result.getPublicationsList()) {
             PublishEvent publishEvent = new PublishEvent();
