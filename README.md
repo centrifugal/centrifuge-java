@@ -154,7 +154,7 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 
 ```
 protoc --java_out=./ client.proto
-mv io/github/centrifugal/centrifuge/internal/protocol centrifuge/src/main/java/io/github/centrifugal/centrifuge/internal/protocol
+mv io/github/centrifugal/centrifuge/internal/protocol/* centrifuge/src/main/java/io/github/centrifugal/centrifuge/internal/protocol/centrifuge/internal/protocol
 rm -r io/
 ```
 
@@ -168,7 +168,7 @@ Library is available under the MIT license. See LICENSE for details.
 
 ## Release
 
-Bump version in `centrifuge/build/gradle`. Create new library tag. Then run:
+Bump version in `centrifuge/build.gradle`. Write changelog. Create new library tag. Then run:
 
 ```
 ./gradlew uploadArchives

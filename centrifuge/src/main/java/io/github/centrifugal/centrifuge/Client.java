@@ -798,13 +798,28 @@ public class Client {
      * @param cb
      */
     public void rpc(byte[] data, ReplyCallback<RPCResult> cb) {
-        this.executor.submit(() -> Client.this.rpcSynchronized(data, cb));
+        this.executor.submit(() -> Client.this.rpcSynchronized(null, data, cb));
     }
 
-    private void rpcSynchronized(byte[] data, ReplyCallback<RPCResult> cb) {
-        Protocol.RPCRequest req = Protocol.RPCRequest.newBuilder()
-                .setData(com.google.protobuf.ByteString.copyFrom(data))
-                .build();
+    /**
+     * Send RPC with method to server, process result in callback.
+     * @param method
+     * @param data
+     * @param cb
+     */
+    public void rpc(String method, byte[] data, ReplyCallback<RPCResult> cb) {
+        this.executor.submit(() -> Client.this.rpcSynchronized(method, data, cb));
+    }
+
+    private void rpcSynchronized(String method, byte[] data, ReplyCallback<RPCResult> cb) {
+        Protocol.RPCRequest.Builder builder = Protocol.RPCRequest.newBuilder()
+                .setData(com.google.protobuf.ByteString.copyFrom(data));
+
+                if(method != null){
+                    builder.setMethod(method);
+                }
+
+        Protocol.RPCRequest req = builder.build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
