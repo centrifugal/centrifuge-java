@@ -44,6 +44,7 @@ public class Client {
 
     private Options opts;
     private String token = "";
+    private com.google.protobuf.ByteString connectData;
     private EventListener listener;
     private String client;
     private Map<Integer, CompletableFuture<Protocol.Reply>> futures = new ConcurrentHashMap<>();
@@ -81,6 +82,16 @@ public class Client {
     public void setToken(String token) {
         this.executor.submit(() -> {
             Client.this.token = token;
+        });
+    }
+
+    /**
+     * Set connection data This is a data you have to receive from your application backend.
+     * @param data
+     */
+    public void setConnectData(byte[] data) {
+        this.executor.submit(() -> {
+            Client.this.connectData = com.google.protobuf.ByteString.copyFrom(data);;
         });
     }
 
@@ -614,9 +625,12 @@ public class Client {
     }
 
     private void sendConnect() {
-        Protocol.ConnectRequest req = Protocol.ConnectRequest.newBuilder()
-                .setToken(this.token)
-                .build();
+        Protocol.ConnectRequest.Builder build=Protocol.ConnectRequest.newBuilder()
+                .setToken(this.token);
+        if(this.connectData!=null){
+            build.setData(this.connectData);
+        }
+        Protocol.ConnectRequest req = build.build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
