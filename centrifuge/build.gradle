@@ -22,7 +22,7 @@ signing {
 
 group = "io.github.centrifugal"
 archivesBaseName = "centrifuge-java"
-version = "0.0.3"
+version = "0.0.5"
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'

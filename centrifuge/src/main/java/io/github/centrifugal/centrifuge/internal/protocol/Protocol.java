@@ -4052,6 +4052,12 @@ public final class Protocol {
      * <code>.proto.ClientInfo info = 5;</code>
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder();
+
+    /**
+     * <code>uint64 offset = 6;</code>
+     * @return The offset.
+     */
+    long getOffset();
   }
   /**
    * Protobuf type {@code proto.Publication}
@@ -4132,6 +4138,11 @@ public final class Protocol {
                 info_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+            case 48: {
+
+              offset_ = input.readUInt64();
               break;
             }
             default: {
@@ -4255,6 +4266,16 @@ public final class Protocol {
       return getInfo();
     }
 
+    public static final int OFFSET_FIELD_NUMBER = 6;
+    private long offset_;
+    /**
+     * <code>uint64 offset = 6;</code>
+     * @return The offset.
+     */
+    public long getOffset() {
+      return offset_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -4284,6 +4305,9 @@ public final class Protocol {
       if (info_ != null) {
         output.writeMessage(5, getInfo());
       }
+      if (offset_ != 0L) {
+        output.writeUInt64(6, offset_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4311,6 +4335,10 @@ public final class Protocol {
       if (info_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, getInfo());
+      }
+      if (offset_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(6, offset_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4340,6 +4368,8 @@ public final class Protocol {
         if (!getInfo()
             .equals(other.getInfo())) return false;
       }
+      if (getOffset()
+          != other.getOffset()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4363,6 +4393,9 @@ public final class Protocol {
         hash = (37 * hash) + INFO_FIELD_NUMBER;
         hash = (53 * hash) + getInfo().hashCode();
       }
+      hash = (37 * hash) + OFFSET_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getOffset());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4510,6 +4543,8 @@ public final class Protocol {
           info_ = null;
           infoBuilder_ = null;
         }
+        offset_ = 0L;
+
         return this;
       }
 
@@ -4545,6 +4580,7 @@ public final class Protocol {
         } else {
           result.info_ = infoBuilder_.build();
         }
+        result.offset_ = offset_;
         onBuilt();
         return result;
       }
@@ -4608,6 +4644,9 @@ public final class Protocol {
         }
         if (other.hasInfo()) {
           mergeInfo(other.getInfo());
+        }
+        if (other.getOffset() != 0L) {
+          setOffset(other.getOffset());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4924,6 +4963,36 @@ public final class Protocol {
           info_ = null;
         }
         return infoBuilder_;
+      }
+
+      private long offset_ ;
+      /**
+       * <code>uint64 offset = 6;</code>
+       * @return The offset.
+       */
+      public long getOffset() {
+        return offset_;
+      }
+      /**
+       * <code>uint64 offset = 6;</code>
+       * @param value The offset to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOffset(long value) {
+        
+        offset_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 offset = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearOffset() {
+        
+        offset_ = 0L;
+        onChanged();
+        return this;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -6734,6 +6803,12 @@ public final class Protocol {
      */
     com.google.protobuf.ByteString
         getEpochBytes();
+
+    /**
+     * <code>uint64 offset = 5;</code>
+     * @return The offset.
+     */
+    long getOffset();
   }
   /**
    * Protobuf type {@code proto.Sub}
@@ -6800,6 +6875,11 @@ public final class Protocol {
               java.lang.String s = input.readStringRequireUtf8();
 
               epoch_ = s;
+              break;
+            }
+            case 40: {
+
+              offset_ = input.readUInt64();
               break;
             }
             default: {
@@ -6900,6 +6980,16 @@ public final class Protocol {
       }
     }
 
+    public static final int OFFSET_FIELD_NUMBER = 5;
+    private long offset_;
+    /**
+     * <code>uint64 offset = 5;</code>
+     * @return The offset.
+     */
+    public long getOffset() {
+      return offset_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -6926,6 +7016,9 @@ public final class Protocol {
       if (!getEpochBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, epoch_);
       }
+      if (offset_ != 0L) {
+        output.writeUInt64(5, offset_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -6950,6 +7043,10 @@ public final class Protocol {
       if (!getEpochBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, epoch_);
       }
+      if (offset_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(5, offset_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -6973,6 +7070,8 @@ public final class Protocol {
           != other.getGen()) return false;
       if (!getEpoch()
           .equals(other.getEpoch())) return false;
+      if (getOffset()
+          != other.getOffset()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -6993,6 +7092,9 @@ public final class Protocol {
       hash = (53 * hash) + getGen();
       hash = (37 * hash) + EPOCH_FIELD_NUMBER;
       hash = (53 * hash) + getEpoch().hashCode();
+      hash = (37 * hash) + OFFSET_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getOffset());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -7134,6 +7236,8 @@ public final class Protocol {
 
         epoch_ = "";
 
+        offset_ = 0L;
+
         return this;
       }
 
@@ -7164,6 +7268,7 @@ public final class Protocol {
         result.seq_ = seq_;
         result.gen_ = gen_;
         result.epoch_ = epoch_;
+        result.offset_ = offset_;
         onBuilt();
         return result;
       }
@@ -7224,6 +7329,9 @@ public final class Protocol {
         if (!other.getEpoch().isEmpty()) {
           epoch_ = other.epoch_;
           onChanged();
+        }
+        if (other.getOffset() != 0L) {
+          setOffset(other.getOffset());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -7416,6 +7524,36 @@ public final class Protocol {
   checkByteStringIsUtf8(value);
         
         epoch_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long offset_ ;
+      /**
+       * <code>uint64 offset = 5;</code>
+       * @return The offset.
+       */
+      public long getOffset() {
+        return offset_;
+      }
+      /**
+       * <code>uint64 offset = 5;</code>
+       * @param value The offset to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOffset(long value) {
+        
+        offset_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 offset = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearOffset() {
+        
+        offset_ = 0L;
         onChanged();
         return this;
       }
@@ -11617,6 +11755,12 @@ public final class Protocol {
      */
     com.google.protobuf.ByteString
         getEpochBytes();
+
+    /**
+     * <code>uint64 offset = 7;</code>
+     * @return The offset.
+     */
+    long getOffset();
   }
   /**
    * Protobuf type {@code proto.SubscribeRequest}
@@ -11697,6 +11841,11 @@ public final class Protocol {
               java.lang.String s = input.readStringRequireUtf8();
 
               epoch_ = s;
+              break;
+            }
+            case 56: {
+
+              offset_ = input.readUInt64();
               break;
             }
             default: {
@@ -11869,6 +12018,16 @@ public final class Protocol {
       }
     }
 
+    public static final int OFFSET_FIELD_NUMBER = 7;
+    private long offset_;
+    /**
+     * <code>uint64 offset = 7;</code>
+     * @return The offset.
+     */
+    public long getOffset() {
+      return offset_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -11901,6 +12060,9 @@ public final class Protocol {
       if (!getEpochBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 6, epoch_);
       }
+      if (offset_ != 0L) {
+        output.writeUInt64(7, offset_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -11931,6 +12093,10 @@ public final class Protocol {
       if (!getEpochBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, epoch_);
       }
+      if (offset_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(7, offset_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -11958,6 +12124,8 @@ public final class Protocol {
           != other.getGen()) return false;
       if (!getEpoch()
           .equals(other.getEpoch())) return false;
+      if (getOffset()
+          != other.getOffset()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -11982,6 +12150,9 @@ public final class Protocol {
       hash = (53 * hash) + getGen();
       hash = (37 * hash) + EPOCH_FIELD_NUMBER;
       hash = (53 * hash) + getEpoch().hashCode();
+      hash = (37 * hash) + OFFSET_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getOffset());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -12127,6 +12298,8 @@ public final class Protocol {
 
         epoch_ = "";
 
+        offset_ = 0L;
+
         return this;
       }
 
@@ -12159,6 +12332,7 @@ public final class Protocol {
         result.seq_ = seq_;
         result.gen_ = gen_;
         result.epoch_ = epoch_;
+        result.offset_ = offset_;
         onBuilt();
         return result;
       }
@@ -12227,6 +12401,9 @@ public final class Protocol {
         if (!other.getEpoch().isEmpty()) {
           epoch_ = other.epoch_;
           onChanged();
+        }
+        if (other.getOffset() != 0L) {
+          setOffset(other.getOffset());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -12574,6 +12751,36 @@ public final class Protocol {
         onChanged();
         return this;
       }
+
+      private long offset_ ;
+      /**
+       * <code>uint64 offset = 7;</code>
+       * @return The offset.
+       */
+      public long getOffset() {
+        return offset_;
+      }
+      /**
+       * <code>uint64 offset = 7;</code>
+       * @param value The offset to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOffset(long value) {
+        
+        offset_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 offset = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearOffset() {
+        
+        offset_ = 0L;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -12702,6 +12909,12 @@ public final class Protocol {
      * @return The recovered.
      */
     boolean getRecovered();
+
+    /**
+     * <code>uint64 offset = 9;</code>
+     * @return The offset.
+     */
+    long getOffset();
   }
   /**
    * Protobuf type {@code proto.SubscribeResult}
@@ -12794,6 +13007,11 @@ public final class Protocol {
             case 64: {
 
               recovered_ = input.readBool();
+              break;
+            }
+            case 72: {
+
+              offset_ = input.readUInt64();
               break;
             }
             default: {
@@ -12962,6 +13180,16 @@ public final class Protocol {
       return recovered_;
     }
 
+    public static final int OFFSET_FIELD_NUMBER = 9;
+    private long offset_;
+    /**
+     * <code>uint64 offset = 9;</code>
+     * @return The offset.
+     */
+    public long getOffset() {
+      return offset_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -12999,6 +13227,9 @@ public final class Protocol {
       }
       if (recovered_ != false) {
         output.writeBool(8, recovered_);
+      }
+      if (offset_ != 0L) {
+        output.writeUInt64(9, offset_);
       }
       unknownFields.writeTo(output);
     }
@@ -13040,6 +13271,10 @@ public final class Protocol {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(8, recovered_);
       }
+      if (offset_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(9, offset_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -13071,6 +13306,8 @@ public final class Protocol {
           .equals(other.getPublicationsList())) return false;
       if (getRecovered()
           != other.getRecovered()) return false;
+      if (getOffset()
+          != other.getOffset()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -13103,6 +13340,9 @@ public final class Protocol {
       hash = (37 * hash) + RECOVERED_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getRecovered());
+      hash = (37 * hash) + OFFSET_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getOffset());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -13257,6 +13497,8 @@ public final class Protocol {
         }
         recovered_ = false;
 
+        offset_ = 0L;
+
         return this;
       }
 
@@ -13300,6 +13542,7 @@ public final class Protocol {
           result.publications_ = publicationsBuilder_.build();
         }
         result.recovered_ = recovered_;
+        result.offset_ = offset_;
         onBuilt();
         return result;
       }
@@ -13395,6 +13638,9 @@ public final class Protocol {
         }
         if (other.getRecovered() != false) {
           setRecovered(other.getRecovered());
+        }
+        if (other.getOffset() != 0L) {
+          setOffset(other.getOffset());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -13918,6 +14164,36 @@ public final class Protocol {
       public Builder clearRecovered() {
         
         recovered_ = false;
+        onChanged();
+        return this;
+      }
+
+      private long offset_ ;
+      /**
+       * <code>uint64 offset = 9;</code>
+       * @return The offset.
+       */
+      public long getOffset() {
+        return offset_;
+      }
+      /**
+       * <code>uint64 offset = 9;</code>
+       * @param value The offset to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOffset(long value) {
+        
+        offset_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint64 offset = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearOffset() {
+        
+        offset_ = 0L;
         onChanged();
         return this;
       }
@@ -21896,6 +22172,18 @@ public final class Protocol {
      * @return The data.
      */
     com.google.protobuf.ByteString getData();
+
+    /**
+     * <code>string method = 2;</code>
+     * @return The method.
+     */
+    java.lang.String getMethod();
+    /**
+     * <code>string method = 2;</code>
+     * @return The bytes for method.
+     */
+    com.google.protobuf.ByteString
+        getMethodBytes();
   }
   /**
    * Protobuf type {@code proto.RPCRequest}
@@ -21911,6 +22199,7 @@ public final class Protocol {
     }
     private RPCRequest() {
       data_ = com.google.protobuf.ByteString.EMPTY;
+      method_ = "";
     }
 
     @java.lang.Override
@@ -21946,6 +22235,12 @@ public final class Protocol {
             case 10: {
 
               data_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              method_ = s;
               break;
             }
             default: {
@@ -21990,6 +22285,42 @@ public final class Protocol {
       return data_;
     }
 
+    public static final int METHOD_FIELD_NUMBER = 2;
+    private volatile java.lang.Object method_;
+    /**
+     * <code>string method = 2;</code>
+     * @return The method.
+     */
+    public java.lang.String getMethod() {
+      java.lang.Object ref = method_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        method_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string method = 2;</code>
+     * @return The bytes for method.
+     */
+    public com.google.protobuf.ByteString
+        getMethodBytes() {
+      java.lang.Object ref = method_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        method_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -22007,6 +22338,9 @@ public final class Protocol {
       if (!data_.isEmpty()) {
         output.writeBytes(1, data_);
       }
+      if (!getMethodBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, method_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -22019,6 +22353,9 @@ public final class Protocol {
       if (!data_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(1, data_);
+      }
+      if (!getMethodBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, method_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -22037,6 +22374,8 @@ public final class Protocol {
 
       if (!getData()
           .equals(other.getData())) return false;
+      if (!getMethod()
+          .equals(other.getMethod())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -22050,6 +22389,8 @@ public final class Protocol {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + DATA_FIELD_NUMBER;
       hash = (53 * hash) + getData().hashCode();
+      hash = (37 * hash) + METHOD_FIELD_NUMBER;
+      hash = (53 * hash) + getMethod().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -22185,6 +22526,8 @@ public final class Protocol {
         super.clear();
         data_ = com.google.protobuf.ByteString.EMPTY;
 
+        method_ = "";
+
         return this;
       }
 
@@ -22212,6 +22555,7 @@ public final class Protocol {
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest buildPartial() {
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest result = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest(this);
         result.data_ = data_;
+        result.method_ = method_;
         onBuilt();
         return result;
       }
@@ -22262,6 +22606,10 @@ public final class Protocol {
         if (other == io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest.getDefaultInstance()) return this;
         if (other.getData() != com.google.protobuf.ByteString.EMPTY) {
           setData(other.getData());
+        }
+        if (!other.getMethod().isEmpty()) {
+          method_ = other.method_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -22321,6 +22669,82 @@ public final class Protocol {
       public Builder clearData() {
         
         data_ = getDefaultInstance().getData();
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object method_ = "";
+      /**
+       * <code>string method = 2;</code>
+       * @return The method.
+       */
+      public java.lang.String getMethod() {
+        java.lang.Object ref = method_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          method_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string method = 2;</code>
+       * @return The bytes for method.
+       */
+      public com.google.protobuf.ByteString
+          getMethodBytes() {
+        java.lang.Object ref = method_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          method_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string method = 2;</code>
+       * @param value The method to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMethod(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        method_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string method = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMethod() {
+        
+        method_ = getDefaultInstance().getMethod();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string method = 2;</code>
+       * @param value The bytes for method to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMethodBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        method_ = value;
         onChanged();
         return this;
       }
@@ -23559,51 +23983,53 @@ public final class Protocol {
       "\014\"D\n\004Push\022\035\n\004type\030\001 \001(\0162\017.proto.PushType" +
       "\022\017\n\007channel\030\002 \001(\t\022\014\n\004data\030\003 \001(\014\"P\n\nClien" +
       "tInfo\022\014\n\004user\030\001 \001(\t\022\016\n\006client\030\002 \001(\t\022\021\n\tc" +
-      "onn_info\030\003 \001(\014\022\021\n\tchan_info\030\004 \001(\014\"c\n\013Pub" +
+      "onn_info\030\003 \001(\014\022\021\n\tchan_info\030\004 \001(\014\"s\n\013Pub" +
       "lication\022\013\n\003seq\030\001 \001(\r\022\013\n\003gen\030\002 \001(\r\022\013\n\003ui" +
       "d\030\003 \001(\t\022\014\n\004data\030\004 \001(\014\022\037\n\004info\030\005 \001(\0132\021.pr" +
-      "oto.ClientInfo\"\'\n\004Join\022\037\n\004info\030\001 \001(\0132\021.p" +
-      "roto.ClientInfo\"(\n\005Leave\022\037\n\004info\030\001 \001(\0132\021" +
-      ".proto.ClientInfo\"\034\n\005Unsub\022\023\n\013resubscrib" +
-      "e\030\001 \001(\010\"C\n\003Sub\022\023\n\013recoverable\030\001 \001(\010\022\013\n\003s" +
-      "eq\030\002 \001(\r\022\013\n\003gen\030\003 \001(\r\022\r\n\005epoch\030\004 \001(\t\"\027\n\007" +
-      "Message\022\014\n\004data\030\001 \001(\014\"\242\001\n\016ConnectRequest" +
-      "\022\r\n\005token\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022-\n\004subs\030\003 " +
-      "\003(\0132\037.proto.ConnectRequest.SubsEntry\032D\n\t" +
-      "SubsEntry\022\013\n\003key\030\001 \001(\t\022&\n\005value\030\002 \001(\0132\027." +
-      "proto.SubscribeRequest:\0028\001\"\317\001\n\rConnectRe" +
-      "sult\022\016\n\006client\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022\017\n" +
-      "\007expires\030\003 \001(\010\022\013\n\003ttl\030\004 \001(\r\022\014\n\004data\030\005 \001(" +
-      "\014\022,\n\004subs\030\006 \003(\0132\036.proto.ConnectResult.Su" +
-      "bsEntry\032C\n\tSubsEntry\022\013\n\003key\030\001 \001(\t\022%\n\005val" +
-      "ue\030\002 \001(\0132\026.proto.SubscribeResult:\0028\001\"\037\n\016" +
-      "RefreshRequest\022\r\n\005token\030\001 \001(\t\"N\n\rRefresh" +
-      "Result\022\016\n\006client\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022" +
-      "\017\n\007expires\030\003 \001(\010\022\013\n\003ttl\030\004 \001(\r\"l\n\020Subscri" +
-      "beRequest\022\017\n\007channel\030\001 \001(\t\022\r\n\005token\030\002 \001(" +
-      "\t\022\017\n\007recover\030\003 \001(\010\022\013\n\003seq\030\004 \001(\r\022\013\n\003gen\030\005" +
-      " \001(\r\022\r\n\005epoch\030\006 \001(\t\"\252\001\n\017SubscribeResult\022" +
-      "\017\n\007expires\030\001 \001(\010\022\013\n\003ttl\030\002 \001(\r\022\023\n\013recover" +
-      "able\030\003 \001(\010\022\013\n\003seq\030\004 \001(\r\022\013\n\003gen\030\005 \001(\r\022\r\n\005" +
-      "epoch\030\006 \001(\t\022(\n\014publications\030\007 \003(\0132\022.prot" +
-      "o.Publication\022\021\n\trecovered\030\010 \001(\010\"3\n\021SubR" +
-      "efreshRequest\022\017\n\007channel\030\001 \001(\t\022\r\n\005token\030" +
-      "\002 \001(\t\"0\n\020SubRefreshResult\022\017\n\007expires\030\001 \001" +
-      "(\010\022\013\n\003ttl\030\002 \001(\r\"%\n\022UnsubscribeRequest\022\017\n" +
-      "\007channel\030\001 \001(\t\"\023\n\021UnsubscribeResult\"/\n\016P" +
-      "ublishRequest\022\017\n\007channel\030\001 \001(\t\022\014\n\004data\030\002" +
-      " \001(\014\"\017\n\rPublishResult\"\"\n\017PresenceRequest" +
-      "\022\017\n\007channel\030\001 \001(\t\"\213\001\n\016PresenceResult\0225\n\010" +
-      "presence\030\001 \003(\0132#.proto.PresenceResult.Pr" +
-      "esenceEntry\032B\n\rPresenceEntry\022\013\n\003key\030\001 \001(" +
-      "\t\022 \n\005value\030\002 \001(\0132\021.proto.ClientInfo:\0028\001\"" +
-      "\'\n\024PresenceStatsRequest\022\017\n\007channel\030\001 \001(\t" +
-      "\"=\n\023PresenceStatsResult\022\023\n\013num_clients\030\001" +
-      " \001(\r\022\021\n\tnum_users\030\002 \001(\r\"!\n\016HistoryReques" +
-      "t\022\017\n\007channel\030\001 \001(\t\"9\n\rHistoryResult\022(\n\014p" +
-      "ublications\030\001 \003(\0132\022.proto.Publication\"\r\n" +
-      "\013PingRequest\"\014\n\nPingResult\"\032\n\nRPCRequest" +
-      "\022\014\n\004data\030\001 \001(\014\"\031\n\tRPCResult\022\014\n\004data\030\001 \001(" +
+      "oto.ClientInfo\022\016\n\006offset\030\006 \001(\004\"\'\n\004Join\022\037" +
+      "\n\004info\030\001 \001(\0132\021.proto.ClientInfo\"(\n\005Leave" +
+      "\022\037\n\004info\030\001 \001(\0132\021.proto.ClientInfo\"\034\n\005Uns" +
+      "ub\022\023\n\013resubscribe\030\001 \001(\010\"S\n\003Sub\022\023\n\013recove" +
+      "rable\030\001 \001(\010\022\013\n\003seq\030\002 \001(\r\022\013\n\003gen\030\003 \001(\r\022\r\n" +
+      "\005epoch\030\004 \001(\t\022\016\n\006offset\030\005 \001(\004\"\027\n\007Message\022" +
+      "\014\n\004data\030\001 \001(\014\"\242\001\n\016ConnectRequest\022\r\n\005toke" +
+      "n\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022-\n\004subs\030\003 \003(\0132\037.pr" +
+      "oto.ConnectRequest.SubsEntry\032D\n\tSubsEntr" +
+      "y\022\013\n\003key\030\001 \001(\t\022&\n\005value\030\002 \001(\0132\027.proto.Su" +
+      "bscribeRequest:\0028\001\"\317\001\n\rConnectResult\022\016\n\006" +
+      "client\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022\017\n\007expires" +
+      "\030\003 \001(\010\022\013\n\003ttl\030\004 \001(\r\022\014\n\004data\030\005 \001(\014\022,\n\004sub" +
+      "s\030\006 \003(\0132\036.proto.ConnectResult.SubsEntry\032" +
+      "C\n\tSubsEntry\022\013\n\003key\030\001 \001(\t\022%\n\005value\030\002 \001(\013" +
+      "2\026.proto.SubscribeResult:\0028\001\"\037\n\016RefreshR" +
+      "equest\022\r\n\005token\030\001 \001(\t\"N\n\rRefreshResult\022\016" +
+      "\n\006client\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022\017\n\007expir" +
+      "es\030\003 \001(\010\022\013\n\003ttl\030\004 \001(\r\"|\n\020SubscribeReques" +
+      "t\022\017\n\007channel\030\001 \001(\t\022\r\n\005token\030\002 \001(\t\022\017\n\007rec" +
+      "over\030\003 \001(\010\022\013\n\003seq\030\004 \001(\r\022\013\n\003gen\030\005 \001(\r\022\r\n\005" +
+      "epoch\030\006 \001(\t\022\016\n\006offset\030\007 \001(\004\"\272\001\n\017Subscrib" +
+      "eResult\022\017\n\007expires\030\001 \001(\010\022\013\n\003ttl\030\002 \001(\r\022\023\n" +
+      "\013recoverable\030\003 \001(\010\022\013\n\003seq\030\004 \001(\r\022\013\n\003gen\030\005" +
+      " \001(\r\022\r\n\005epoch\030\006 \001(\t\022(\n\014publications\030\007 \003(" +
+      "\0132\022.proto.Publication\022\021\n\trecovered\030\010 \001(\010" +
+      "\022\016\n\006offset\030\t \001(\004\"3\n\021SubRefreshRequest\022\017\n" +
+      "\007channel\030\001 \001(\t\022\r\n\005token\030\002 \001(\t\"0\n\020SubRefr" +
+      "eshResult\022\017\n\007expires\030\001 \001(\010\022\013\n\003ttl\030\002 \001(\r\"" +
+      "%\n\022UnsubscribeRequest\022\017\n\007channel\030\001 \001(\t\"\023" +
+      "\n\021UnsubscribeResult\"/\n\016PublishRequest\022\017\n" +
+      "\007channel\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\"\017\n\rPublishR" +
+      "esult\"\"\n\017PresenceRequest\022\017\n\007channel\030\001 \001(" +
+      "\t\"\213\001\n\016PresenceResult\0225\n\010presence\030\001 \003(\0132#" +
+      ".proto.PresenceResult.PresenceEntry\032B\n\rP" +
+      "resenceEntry\022\013\n\003key\030\001 \001(\t\022 \n\005value\030\002 \001(\013" +
+      "2\021.proto.ClientInfo:\0028\001\"\'\n\024PresenceStats" +
+      "Request\022\017\n\007channel\030\001 \001(\t\"=\n\023PresenceStat" +
+      "sResult\022\023\n\013num_clients\030\001 \001(\r\022\021\n\tnum_user" +
+      "s\030\002 \001(\r\"!\n\016HistoryRequest\022\017\n\007channel\030\001 \001" +
+      "(\t\"9\n\rHistoryResult\022(\n\014publications\030\001 \003(" +
+      "\0132\022.proto.Publication\"\r\n\013PingRequest\"\014\n\n" +
+      "PingResult\"*\n\nRPCRequest\022\014\n\004data\030\001 \001(\014\022\016" +
+      "\n\006method\030\002 \001(\t\"\031\n\tRPCResult\022\014\n\004data\030\001 \001(" +
       "\014\"\033\n\013SendRequest\022\014\n\004data\030\001 \001(\014*\260\001\n\nMetho" +
       "dType\022\013\n\007CONNECT\020\000\022\r\n\tSUBSCRIBE\020\001\022\017\n\013UNS" +
       "UBSCRIBE\020\002\022\013\n\007PUBLISH\020\003\022\014\n\010PRESENCE\020\004\022\022\n" +
@@ -23654,7 +24080,7 @@ public final class Protocol {
     internal_static_proto_Publication_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_Publication_descriptor,
-        new java.lang.String[] { "Seq", "Gen", "Uid", "Data", "Info", });
+        new java.lang.String[] { "Seq", "Gen", "Uid", "Data", "Info", "Offset", });
     internal_static_proto_Join_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_proto_Join_fieldAccessorTable = new
@@ -23678,7 +24104,7 @@ public final class Protocol {
     internal_static_proto_Sub_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_Sub_descriptor,
-        new java.lang.String[] { "Recoverable", "Seq", "Gen", "Epoch", });
+        new java.lang.String[] { "Recoverable", "Seq", "Gen", "Epoch", "Offset", });
     internal_static_proto_Message_descriptor =
       getDescriptor().getMessageTypes().get(10);
     internal_static_proto_Message_fieldAccessorTable = new
@@ -23726,13 +24152,13 @@ public final class Protocol {
     internal_static_proto_SubscribeRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_SubscribeRequest_descriptor,
-        new java.lang.String[] { "Channel", "Token", "Recover", "Seq", "Gen", "Epoch", });
+        new java.lang.String[] { "Channel", "Token", "Recover", "Seq", "Gen", "Epoch", "Offset", });
     internal_static_proto_SubscribeResult_descriptor =
       getDescriptor().getMessageTypes().get(16);
     internal_static_proto_SubscribeResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_SubscribeResult_descriptor,
-        new java.lang.String[] { "Expires", "Ttl", "Recoverable", "Seq", "Gen", "Epoch", "Publications", "Recovered", });
+        new java.lang.String[] { "Expires", "Ttl", "Recoverable", "Seq", "Gen", "Epoch", "Publications", "Recovered", "Offset", });
     internal_static_proto_SubRefreshRequest_descriptor =
       getDescriptor().getMessageTypes().get(17);
     internal_static_proto_SubRefreshRequest_fieldAccessorTable = new
@@ -23828,7 +24254,7 @@ public final class Protocol {
     internal_static_proto_RPCRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_proto_RPCRequest_descriptor,
-        new java.lang.String[] { "Data", });
+        new java.lang.String[] { "Data", "Method", });
     internal_static_proto_RPCResult_descriptor =
       getDescriptor().getMessageTypes().get(32);
     internal_static_proto_RPCResult_fieldAccessorTable = new
