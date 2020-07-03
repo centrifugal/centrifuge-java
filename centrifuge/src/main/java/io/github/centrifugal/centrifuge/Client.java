@@ -163,6 +163,8 @@ public class Client {
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 super.onClosed(webSocket, code, reason);
+                //Clear serverSide sub
+                Client.this.serverSide=new HashMap<>();
                 Client.this.executor.submit(() -> {
                     /* TODO: refactor this. */
                     if (!reason.equals("")) {
