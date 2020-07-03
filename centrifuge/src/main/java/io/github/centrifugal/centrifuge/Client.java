@@ -21,10 +21,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,6 +44,7 @@ public class Client {
     private com.google.protobuf.ByteString connectData;
     private EventListener listener;
     private String client;
+    private Map<String,EventListener> serverSide=new HashMap<>();
     private Map<Integer, CompletableFuture<Protocol.Reply>> futures = new ConcurrentHashMap<>();
     private Map<Integer, Protocol.Command> connectCommands = new ConcurrentHashMap<>();
     private Map<Integer, Protocol.Command> connectAsyncCommands = new ConcurrentHashMap<>();
@@ -673,6 +671,10 @@ public class Client {
                     PublishEvent event = new PublishEvent();
                     event.setData(pub.getData().toByteArray());
                     sub.getListener().onPublish(sub, event);
+                }else if(this.serverSide.containsKey(channel)){
+                    MessageEvent event = new MessageEvent();
+                    event.setData(push.getData().toByteArray());
+                    this.serverSide.get(channel).onMessage(this,event);
                 }
             } else if (push.getType() == Protocol.PushType.JOIN) {
                 Protocol.Join join = Protocol.Join.parseFrom(push.getData());
@@ -686,6 +688,8 @@ public class Client {
                     info.setChanInfo(join.getInfo().getChanInfo().toByteArray());
                     event.setInfo(info);
                     sub.getListener().onJoin(sub, event);
+                }else if(!this.serverSide.containsKey(channel)){
+                    this.serverSide.put(channel,this.listener);
                 }
             } else if  (push.getType() == Protocol.PushType.LEAVE) {
                 Protocol.Leave leave = Protocol.Leave.parseFrom(push.getData());
@@ -699,6 +703,8 @@ public class Client {
                     info.setChanInfo(leave.getInfo().getChanInfo().toByteArray());
                     event.setInfo(info);
                     sub.getListener().onLeave(sub, event);
+                }else if(!this.serverSide.containsKey(channel)){
+                    this.serverSide.remove(channel);
                 }
             } else if (push.getType() == Protocol.PushType.UNSUB) {
                 Protocol.Unsub.parseFrom(push.getData());
