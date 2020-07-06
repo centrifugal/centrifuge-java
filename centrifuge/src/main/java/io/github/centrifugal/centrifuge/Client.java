@@ -44,7 +44,6 @@ public class Client {
     private com.google.protobuf.ByteString connectData;
     private EventListener listener;
     private String client;
-    private Map<String,EventListener> serverSide=new HashMap<>();
     private Map<Integer, CompletableFuture<Protocol.Reply>> futures = new ConcurrentHashMap<>();
     private Map<Integer, Protocol.Command> connectCommands = new ConcurrentHashMap<>();
     private Map<Integer, Protocol.Command> connectAsyncCommands = new ConcurrentHashMap<>();
@@ -75,6 +74,7 @@ public class Client {
 
     /**
      * Set connection JWT. This is a token you have to receive from your application backend.
+     *
      * @param token
      */
     public void setToken(String token) {
@@ -85,17 +85,20 @@ public class Client {
 
     /**
      * Set connection data This is a data you have to receive from your application backend.
+     *
      * @param data
      */
     public void setConnectData(byte[] data) {
         this.executor.submit(() -> {
-            Client.this.connectData = com.google.protobuf.ByteString.copyFrom(data);;
+            Client.this.connectData = com.google.protobuf.ByteString.copyFrom(data);
+            ;
         });
     }
 
     /**
      * Creates a new instance of Client. Client allows to allocate new Subscriptions to channels,
      * automatically manages reconnects.
+     *
      * @param url
      * @param opts
      * @param listener
@@ -127,7 +130,7 @@ public class Client {
 
         Headers.Builder headers = new Headers.Builder();
         if (this.opts.getHeaders() != null) {
-            for (Map.Entry<String,String> entry : this.opts.getHeaders().entrySet()) {
+            for (Map.Entry<String, String> entry : this.opts.getHeaders().entrySet()) {
                 headers.add(entry.getKey(), entry.getValue());
             }
         }
@@ -164,7 +167,6 @@ public class Client {
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 super.onClosed(webSocket, code, reason);
                 //Clear serverSide sub
-                Client.this.serverSide=new HashMap<>();
                 Client.this.executor.submit(() -> {
                     /* TODO: refactor this. */
                     if (!reason.equals("")) {
@@ -263,7 +265,7 @@ public class Client {
             DisconnectEvent event = new DisconnectEvent();
             event.setReason(reason);
             event.setReconnect(shouldReconnect);
-            for(Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry: this.futures.entrySet()) {
+            for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
                 CompletableFuture f = entry.getValue();
                 f.completeExceptionally(new IOException());
             }
@@ -283,7 +285,7 @@ public class Client {
         this.reconnectExecutor.submit(() -> {
             try {
                 Thread.sleep(Client.this.backoff.duration());
-            } catch(InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
             Client.this.executor.submit(() -> {
@@ -402,6 +404,7 @@ public class Client {
 
     /**
      * Create new subscription to channel with certain SubscriptionEventListener
+     *
      * @param channel
      * @param listener
      * @return
@@ -422,6 +425,7 @@ public class Client {
     /**
      * Try to get Subscription from internal client registry. Can return null if Subscription
      * does not exist yet.
+     *
      * @param channel
      * @return
      */
@@ -436,6 +440,7 @@ public class Client {
     /**
      * Say Client that Subscription should be removed from internal registry. Subscription will be
      * automatically unsubscribed before removing.
+     *
      * @param sub
      */
     public void removeSubscription(Subscription sub) {
@@ -542,7 +547,7 @@ public class Client {
             }
             this.backoff.reset();
 
-            for(Map.Entry<Integer, Protocol.Command> entry: this.connectCommands.entrySet()) {
+            for (Map.Entry<Integer, Protocol.Command> entry : this.connectCommands.entrySet()) {
                 // TODO: send in one frame?
                 Protocol.Command cmd = entry.getValue();
                 boolean sent = this.ws.send(ByteString.of(this.serializeCommand(cmd)));
@@ -555,7 +560,7 @@ public class Client {
             }
             this.connectCommands.clear();
 
-            for(Map.Entry<Integer, Protocol.Command> entry: this.connectAsyncCommands.entrySet()) {
+            for (Map.Entry<Integer, Protocol.Command> entry : this.connectAsyncCommands.entrySet()) {
                 // TODO: send in one frame?
                 Protocol.Command cmd = entry.getValue();
                 CompletableFuture<Protocol.Reply> f = this.futures.get(cmd.getId());
@@ -625,11 +630,9 @@ public class Client {
     }
 
     private void sendConnect() {
-        Protocol.ConnectRequest.Builder build=Protocol.ConnectRequest.newBuilder()
-                .setToken(this.token);
-        if(this.connectData!=null){
-            build.setData(this.connectData);
-        }
+        Protocol.ConnectRequest.Builder build = Protocol.ConnectRequest.newBuilder();
+        if (this.token.length() > 0) build.setToken(this.token);
+        if (this.connectData != null) build.setData(this.connectData);
         Protocol.ConnectRequest req = build.build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
@@ -673,10 +676,6 @@ public class Client {
                     PublishEvent event = new PublishEvent();
                     event.setData(pub.getData().toByteArray());
                     sub.getListener().onPublish(sub, event);
-                }else if(this.serverSide.containsKey(channel)){
-                    MessageEvent event = new MessageEvent();
-                    event.setData(push.getData().toByteArray());
-                    this.serverSide.get(channel).onMessage(this,event);
                 }
             } else if (push.getType() == Protocol.PushType.JOIN) {
                 Protocol.Join join = Protocol.Join.parseFrom(push.getData());
@@ -690,10 +689,8 @@ public class Client {
                     info.setChanInfo(join.getInfo().getChanInfo().toByteArray());
                     event.setInfo(info);
                     sub.getListener().onJoin(sub, event);
-                }else if(!this.serverSide.containsKey(channel)){
-                    this.serverSide.put(channel,this.listener);
                 }
-            } else if  (push.getType() == Protocol.PushType.LEAVE) {
+            } else if (push.getType() == Protocol.PushType.LEAVE) {
                 Protocol.Leave leave = Protocol.Leave.parseFrom(push.getData());
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {
@@ -705,8 +702,6 @@ public class Client {
                     info.setChanInfo(leave.getInfo().getChanInfo().toByteArray());
                     event.setInfo(info);
                     sub.getListener().onLeave(sub, event);
-                }else if(!this.serverSide.containsKey(channel)){
-                    this.serverSide.remove(channel);
                 }
             } else if (push.getType() == Protocol.PushType.UNSUB) {
                 Protocol.Unsub.parseFrom(push.getData());
@@ -728,6 +723,7 @@ public class Client {
     /**
      * Send asynchronous message with data to server. Callback successfully completes if data
      * written to connection. No reply from server expected in this case.
+     *
      * @param data
      * @param cb
      */
@@ -771,7 +767,7 @@ public class Client {
         }
     }
 
-    private void enqueueCommandFuture(Protocol.Command cmd,  CompletableFuture<Protocol.Reply> f) {
+    private void enqueueCommandFuture(Protocol.Command cmd, CompletableFuture<Protocol.Reply> f) {
         this.futures.put(cmd.getId(), f);
         if (this.state != ConnectionState.CONNECTED) {
             this.connectCommands.put(cmd.getId(), cmd);
@@ -802,6 +798,7 @@ public class Client {
 
     /**
      * Send RPC to server, process result in callback.
+     *
      * @param data
      * @param cb
      */
@@ -811,6 +808,7 @@ public class Client {
 
     /**
      * Send RPC with method to server, process result in callback.
+     *
      * @param method
      * @param data
      * @param cb
@@ -823,9 +821,9 @@ public class Client {
         Protocol.RPCRequest.Builder builder = Protocol.RPCRequest.newBuilder()
                 .setData(com.google.protobuf.ByteString.copyFrom(data));
 
-                if(method != null){
-                    builder.setMethod(method);
-                }
+        if (method != null) {
+            builder.setMethod(method);
+        }
 
         Protocol.RPCRequest req = builder.build();
 
@@ -864,6 +862,7 @@ public class Client {
     /**
      * Publish data to channel without being subscribed to it. Publish option should be
      * enabled in Centrifuge/Centrifugo server configuration.
+     *
      * @param channel
      * @param data
      * @param cb
@@ -907,7 +906,7 @@ public class Client {
     void history(String channel, ReplyCallback<HistoryResult> cb) {
         this.executor.submit(() -> Client.this.historySynchronized(channel, cb));
     }
-    
+
     private void historySynchronized(String channel, ReplyCallback<HistoryResult> cb) {
         Protocol.HistoryRequest req = Protocol.HistoryRequest.newBuilder()
                 .setChannel(channel)
@@ -930,7 +929,7 @@ public class Client {
                     HistoryResult result = new HistoryResult();
                     List<Protocol.Publication> protoPubs = replyResult.getPublicationsList();
                     List<Publication> pubs = new ArrayList<>();
-                    for (int i=0; i<protoPubs.size(); i++) {
+                    for (int i = 0; i < protoPubs.size(); i++) {
                         Protocol.Publication protoPub = protoPubs.get(i);
                         Publication pub = new Publication();
                         pub.setData(protoPub.getData().toByteArray());
