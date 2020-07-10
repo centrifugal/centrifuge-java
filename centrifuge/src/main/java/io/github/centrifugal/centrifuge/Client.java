@@ -94,7 +94,6 @@ public class Client {
     public void setConnectData(byte[] data) {
         this.executor.submit(() -> {
             Client.this.connectData = com.google.protobuf.ByteString.copyFrom(data);
-            ;
         });
     }
 
