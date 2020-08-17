@@ -323,7 +323,7 @@ public class Client {
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
         f.thenAccept(reply -> {
-            this.handleSubscribeReply(channel, reply);
+            this.handleSubscribeReply(channel, reply, recover);
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.executor.submit(() -> {
@@ -487,7 +487,7 @@ public class Client {
         });
     }
 
-    private void handleSubscribeReply(String channel, Protocol.Reply reply) {
+    private void handleSubscribeReply(String channel, Protocol.Reply reply, boolean recover) {
         Subscription sub = this.getSub(channel);
         if (reply.getError().getCode() != 0) {
             if (sub != null) {
@@ -501,7 +501,7 @@ public class Client {
         try {
             if (sub != null) {
                 Protocol.SubscribeResult result = Protocol.SubscribeResult.parseFrom(reply.getResult().toByteArray());
-                sub.moveToSubscribeSuccess(result);
+                sub.moveToSubscribeSuccess(result, recover);
             }
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();

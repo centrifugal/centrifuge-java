@@ -66,19 +66,19 @@ public class Subscription {
         this.state = SubscriptionState.UNSUBSCRIBED;
     }
 
-    void moveToSubscribeSuccess(Protocol.SubscribeResult result) {
+    void moveToSubscribeSuccess(Protocol.SubscribeResult result, boolean recover) {
         this.state = SubscriptionState.SUBSCRIBED;
         this.lastEpoch = result.getEpoch();
         this.lastOffset = result.getOffset();
         this.setRecover(result.getRecoverable());
 
-        for (Protocol.Publication publication: result.getPublicationsList()) {
+        for (Protocol.Publication publication : result.getPublicationsList()) {
             PublishEvent publishEvent = new PublishEvent();
             publishEvent.setData(publication.toByteArray());
             this.listener.onPublish(this, publishEvent);
         }
 
-        SubscribeSuccessEvent event = new SubscribeSuccessEvent();
+        SubscribeSuccessEvent event = new SubscribeSuccessEvent(recover, result.getRecovered());
         this.listener.onSubscribeSuccess(this, event);
 
         for(Map.Entry<String, CompletableFuture<ReplyError>> entry: this.futures.entrySet()) {

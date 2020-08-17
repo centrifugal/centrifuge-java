@@ -20,4 +20,12 @@ public class SubscribeSuccessEvent {
     }
 
     private Boolean recovered;
+
+    public SubscribeSuccessEvent(Boolean isResubscribe, Boolean recovered) {
+        this.isResubscribe = isResubscribe;
+        this.recovered = recovered;
+    }
+
+    public SubscribeSuccessEvent() {
+    }
 }
