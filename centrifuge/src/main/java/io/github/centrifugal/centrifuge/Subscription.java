@@ -1,5 +1,6 @@
 package io.github.centrifugal.centrifuge;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +13,10 @@ public class Subscription {
 
     private Client client;
     private String channel;
+    private long lastOffset;
+    private boolean recover;
+    private long subscribedAt = 0;
+    private String lastEpoch;
     private SubscriptionEventListener listener;
     private SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
     private Map<String, CompletableFuture<ReplyError>> futures = new ConcurrentHashMap<>();
@@ -41,13 +46,39 @@ public class Subscription {
         this.listener = listener;
     }
 
+    public long getLastOffset() {
+        return lastOffset;
+    }
+
+    public void setLastOffset(long lastOffset) {
+        this.lastOffset = lastOffset;
+    }
+
+    public String getLastEpoch() {
+        return lastEpoch;
+    }
+
+    public void setLastEpoch(String lastEpoch) {
+        this.lastEpoch = lastEpoch;
+    }
+
     void moveToUnsubscribed() {
         this.state = SubscriptionState.UNSUBSCRIBED;
     }
 
-    void moveToSubscribeSuccess(Protocol.SubscribeResult result) {
+    void moveToSubscribeSuccess(Protocol.SubscribeResult result, boolean recover) {
         this.state = SubscriptionState.SUBSCRIBED;
-        SubscribeSuccessEvent event = new SubscribeSuccessEvent();
+        this.lastEpoch = result.getEpoch();
+        this.lastOffset = result.getOffset();
+        this.setRecover(result.getRecoverable());
+
+        for (Protocol.Publication publication : result.getPublicationsList()) {
+            PublishEvent publishEvent = new PublishEvent();
+            publishEvent.setData(publication.toByteArray());
+            this.listener.onPublish(this, publishEvent);
+        }
+
+        SubscribeSuccessEvent event = new SubscribeSuccessEvent(recover, result.getRecovered());
         this.listener.onSubscribeSuccess(this, event);
 
         for(Map.Entry<String, CompletableFuture<ReplyError>> entry: this.futures.entrySet()) {
@@ -78,16 +109,19 @@ public class Subscription {
                 return;
             }
             Subscription.this.client.subscribe(Subscription.this);
+            Subscription.this.setSubscribedAt(new Date().getTime());
         });
     }
 
     public void unsubscribe() {
         this._unsubscribe(true);
+        this.setSubscribedAt(0);
     }
 
     void unsubscribeNoResubscribe() {
         this.needResubscribe = false;
         this._unsubscribe(false);
+        this.setSubscribedAt(0);
     }
 
     private void _unsubscribe(boolean shouldSendUnsubscribe) {
@@ -200,4 +234,21 @@ public class Subscription {
             f.complete(null);
         }
     }
+
+    public boolean isRecover() {
+        return recover;
+    }
+
+    public void setRecover(boolean recover) {
+        this.recover = recover;
+    }
+
+    public long getSubscribedAt() {
+        return subscribedAt;
+    }
+
+    public void setSubscribedAt(long subscribedAt) {
+        this.subscribedAt = subscribedAt;
+    }
+
 }

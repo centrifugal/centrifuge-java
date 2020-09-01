@@ -148,7 +148,7 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 - [ ] handle subscription expired error
 - [x] ping/pong to find broken connection
 - [ ] server-side subscriptions
-- [ ] message recovery mechanism
+- [x] message recovery mechanism (works with Centrifugo >= 2.5.0 with `v3_use_offset` option set to `true`)
 
 ## Generate proto
 
