@@ -20,7 +20,6 @@ public class Subscription {
     private SubscriptionEventListener listener;
     private SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
     private Map<String, CompletableFuture<ReplyError>> futures = new ConcurrentHashMap<>();
-    private ReplyError subError;
 
     Boolean getNeedResubscribe() {
         return needResubscribe;
@@ -46,19 +45,19 @@ public class Subscription {
         this.listener = listener;
     }
 
-    public long getLastOffset() {
+    long getLastOffset() {
         return lastOffset;
     }
 
-    public void setLastOffset(long lastOffset) {
+    void setLastOffset(long lastOffset) {
         this.lastOffset = lastOffset;
     }
 
-    public String getLastEpoch() {
+    String getLastEpoch() {
         return lastEpoch;
     }
 
-    public void setLastEpoch(String lastEpoch) {
+    private void setLastEpoch(String lastEpoch) {
         this.lastEpoch = lastEpoch;
     }
 
@@ -68,18 +67,22 @@ public class Subscription {
 
     void moveToSubscribeSuccess(Protocol.SubscribeResult result, boolean recover) {
         this.state = SubscriptionState.SUBSCRIBED;
-        this.lastEpoch = result.getEpoch();
-        this.lastOffset = result.getOffset();
         this.setRecover(result.getRecoverable());
-
-        for (Protocol.Publication publication : result.getPublicationsList()) {
-            PublishEvent publishEvent = new PublishEvent();
-            publishEvent.setData(publication.toByteArray());
-            this.listener.onPublish(this, publishEvent);
-        }
+        this.setLastEpoch(result.getEpoch());
 
         SubscribeSuccessEvent event = new SubscribeSuccessEvent(recover, result.getRecovered());
         this.listener.onSubscribeSuccess(this, event);
+
+        if (result.getPublicationsCount() > 0) {
+            for (Protocol.Publication publication : result.getPublicationsList()) {
+                PublishEvent publishEvent = new PublishEvent();
+                publishEvent.setData(publication.getData().toByteArray());
+                this.listener.onPublish(this, publishEvent);
+                this.setLastOffset(publication.getOffset());
+            }
+        } else {
+            this.setLastOffset(result.getOffset());
+        }
 
         for(Map.Entry<String, CompletableFuture<ReplyError>> entry: this.futures.entrySet()) {
             CompletableFuture<ReplyError> f = entry.getValue();
@@ -235,7 +238,7 @@ public class Subscription {
         }
     }
 
-    public boolean isRecover() {
+    boolean isRecover() {
         return recover;
     }
 
@@ -243,12 +246,11 @@ public class Subscription {
         this.recover = recover;
     }
 
-    public long getSubscribedAt() {
+    long getSubscribedAt() {
         return subscribedAt;
     }
 
-    public void setSubscribedAt(long subscribedAt) {
+    void setSubscribedAt(long subscribedAt) {
         this.subscribedAt = subscribedAt;
     }
-
 }

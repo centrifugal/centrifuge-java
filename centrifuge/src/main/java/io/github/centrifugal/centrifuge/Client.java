@@ -22,7 +22,16 @@ import java.util.concurrent.TimeUnit;
 
 import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
+
 import java8.util.concurrent.CompletableFuture;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
+
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -253,6 +262,9 @@ public class Client {
                 Subscription sub = entry.getValue();
                 SubscriptionState previousSubState = sub.getState();
                 sub.moveToUnsubscribed();
+                if (!shouldReconnect) {
+                    sub.setSubscribedAt(0);
+                }
                 if (previousSubState == SubscriptionState.SUBSCRIBED) {
                     sub.getListener().onUnsubscribe(sub, new UnsubscribeEvent());
                 }
@@ -700,6 +712,7 @@ public class Client {
                     PublishEvent event = new PublishEvent();
                     event.setData(pub.getData().toByteArray());
                     sub.getListener().onPublish(sub, event);
+                    sub.setLastOffset(pub.getOffset());
                 }
             } else if (push.getType() == Protocol.PushType.JOIN) {
                 Protocol.Join join = Protocol.Join.parseFrom(push.getData());
