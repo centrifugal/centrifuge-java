@@ -10,4 +10,14 @@ public class PublishEvent {
     }
 
     private byte[] data;
+
+    public long getOffset() {
+        return offset;
+    }
+
+    public void setOffset(long offset) {
+        this.offset = offset;
+    }
+
+    private long offset;
 }

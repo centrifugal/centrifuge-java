@@ -1,5 +1,6 @@
 package io.github.centrifugal.centrifuge;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,10 +13,13 @@ public class Subscription {
 
     private Client client;
     private String channel;
+    private long lastOffset;
+    private boolean recover;
+    private long subscribedAt = 0;
+    private String lastEpoch;
     private SubscriptionEventListener listener;
     private SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
     private Map<String, CompletableFuture<ReplyError>> futures = new ConcurrentHashMap<>();
-    private ReplyError subError;
 
     Boolean getNeedResubscribe() {
         return needResubscribe;
@@ -41,14 +45,44 @@ public class Subscription {
         this.listener = listener;
     }
 
+    long getLastOffset() {
+        return lastOffset;
+    }
+
+    void setLastOffset(long lastOffset) {
+        this.lastOffset = lastOffset;
+    }
+
+    String getLastEpoch() {
+        return lastEpoch;
+    }
+
+    private void setLastEpoch(String lastEpoch) {
+        this.lastEpoch = lastEpoch;
+    }
+
     void moveToUnsubscribed() {
         this.state = SubscriptionState.UNSUBSCRIBED;
     }
 
-    void moveToSubscribeSuccess(Protocol.SubscribeResult result) {
+    void moveToSubscribeSuccess(Protocol.SubscribeResult result, boolean recover) {
         this.state = SubscriptionState.SUBSCRIBED;
-        SubscribeSuccessEvent event = new SubscribeSuccessEvent();
+        this.setRecover(result.getRecoverable());
+        this.setLastEpoch(result.getEpoch());
+
+        SubscribeSuccessEvent event = new SubscribeSuccessEvent(recover, result.getRecovered());
         this.listener.onSubscribeSuccess(this, event);
+
+        if (result.getPublicationsCount() > 0) {
+            for (Protocol.Publication publication : result.getPublicationsList()) {
+                PublishEvent publishEvent = new PublishEvent();
+                publishEvent.setData(publication.getData().toByteArray());
+                this.listener.onPublish(this, publishEvent);
+                this.setLastOffset(publication.getOffset());
+            }
+        } else {
+            this.setLastOffset(result.getOffset());
+        }
 
         for(Map.Entry<String, CompletableFuture<ReplyError>> entry: this.futures.entrySet()) {
             CompletableFuture<ReplyError> f = entry.getValue();
@@ -78,16 +112,19 @@ public class Subscription {
                 return;
             }
             Subscription.this.client.subscribe(Subscription.this);
+            Subscription.this.setSubscribedAt(new Date().getTime());
         });
     }
 
     public void unsubscribe() {
         this._unsubscribe(true);
+        this.setSubscribedAt(0);
     }
 
     void unsubscribeNoResubscribe() {
         this.needResubscribe = false;
         this._unsubscribe(false);
+        this.setSubscribedAt(0);
     }
 
     private void _unsubscribe(boolean shouldSendUnsubscribe) {
@@ -199,5 +236,21 @@ public class Subscription {
         if (this.state == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
         }
+    }
+
+    boolean isRecover() {
+        return recover;
+    }
+
+    public void setRecover(boolean recover) {
+        this.recover = recover;
+    }
+
+    long getSubscribedAt() {
+        return subscribedAt;
+    }
+
+    void setSubscribedAt(long subscribedAt) {
+        this.subscribedAt = subscribedAt;
     }
 }

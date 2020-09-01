@@ -1,26 +1,14 @@
 package io.github.centrifugal.centrifuge;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.WebSocket;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocketListener;
-import okio.ByteString;
-
-import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
-import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
-
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +20,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
+import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
+
 import java8.util.concurrent.CompletableFuture;
+
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
 
 public class Client {
     private WebSocket ws;
@@ -242,6 +241,9 @@ public class Client {
                 Subscription sub = entry.getValue();
                 SubscriptionState previousSubState = sub.getState();
                 sub.moveToUnsubscribed();
+                if (!shouldReconnect) {
+                    sub.setSubscribedAt(0);
+                }
                 if (previousSubState == SubscriptionState.SUBSCRIBED) {
                     sub.getListener().onUnsubscribe(sub, new UnsubscribeEvent());
                 }
@@ -284,11 +286,24 @@ public class Client {
         });
     }
 
-    private void sendSubscribeSynchronized(String channel, String token) {
-        Protocol.SubscribeRequest req = Protocol.SubscribeRequest.newBuilder()
-                .setChannel(channel)
-                .setToken(token)
-                .build();
+    private void sendSubscribeSynchronized(String channel, boolean recover, StreamPosition streamPosition, String token) {
+
+        Protocol.SubscribeRequest req = null;
+
+        if (recover) {
+            req = Protocol.SubscribeRequest.newBuilder()
+                    .setEpoch(streamPosition.getEpoch())
+                    .setOffset(streamPosition.getOffset())
+                    .setChannel(channel)
+                    .setRecover(true)
+                    .setToken(token)
+                    .build();
+        } else {
+            req = Protocol.SubscribeRequest.newBuilder()
+                    .setChannel(channel)
+                    .setToken(token)
+                    .build();
+        }
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
@@ -299,7 +314,7 @@ public class Client {
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
         f.thenAccept(reply -> {
-            this.handleSubscribeReply(channel, reply);
+            this.handleSubscribeReply(channel, reply, recover);
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.executor.submit(() -> {
@@ -315,10 +330,23 @@ public class Client {
 
     private void sendSubscribe(Subscription sub) {
         String channel = sub.getChannel();
+
+        boolean isRecover = false;
+        StreamPosition streamPosition = new StreamPosition();
+
+        if (sub.getSubscribedAt() != 0 && sub.isRecover()) {
+            isRecover = true;
+            if (sub.getLastOffset() > 0) {
+                streamPosition.setOffset(sub.getLastOffset());
+            }
+            streamPosition.setEpoch(sub.getLastEpoch());
+        }
+
         if (sub.getChannel().startsWith(this.opts.getPrivateChannelPrefix())) {
             PrivateSubEvent privateSubEvent = new PrivateSubEvent();
             privateSubEvent.setChannel(sub.getChannel());
             privateSubEvent.setClient(this.client);
+            boolean finalIsRecover = isRecover;
             this.listener.onPrivateSub(this, privateSubEvent, new TokenCallback() {
                 @Override
                 public void Fail(Throwable e) {
@@ -336,11 +364,11 @@ public class Client {
                     if (Client.this.state != ConnectionState.CONNECTED) {
                         return;
                     }
-                    Client.this.sendSubscribeSynchronized(channel, token);
+                    Client.this.sendSubscribeSynchronized(channel, finalIsRecover, streamPosition, token);
                 }
             });
         } else {
-            this.sendSubscribeSynchronized(channel, "");
+            this.sendSubscribeSynchronized(channel, isRecover, streamPosition,"");
         }
     }
 
@@ -447,7 +475,7 @@ public class Client {
         });
     }
 
-    private void handleSubscribeReply(String channel, Protocol.Reply reply) {
+    private void handleSubscribeReply(String channel, Protocol.Reply reply, boolean recover) {
         Subscription sub = this.getSub(channel);
         if (reply.getError().getCode() != 0) {
             if (sub != null) {
@@ -461,7 +489,7 @@ public class Client {
         try {
             if (sub != null) {
                 Protocol.SubscribeResult result = Protocol.SubscribeResult.parseFrom(reply.getResult().toByteArray());
-                sub.moveToSubscribeSuccess(result);
+                sub.moveToSubscribeSuccess(result, recover);
             }
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
@@ -659,6 +687,7 @@ public class Client {
                     PublishEvent event = new PublishEvent();
                     event.setData(pub.getData().toByteArray());
                     sub.getListener().onPublish(sub, event);
+                    sub.setLastOffset(pub.getOffset());
                 }
             } else if (push.getType() == Protocol.PushType.JOIN) {
                 Protocol.Join join = Protocol.Join.parseFrom(push.getData());
