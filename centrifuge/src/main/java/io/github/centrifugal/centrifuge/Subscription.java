@@ -1,6 +1,5 @@
 package io.github.centrifugal.centrifuge;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,8 +13,8 @@ public class Subscription {
     private Client client;
     private String channel;
     private long lastOffset;
-    private boolean recover;
-    private long subscribedAt = 0;
+    private boolean recoverable;
+    private boolean needRecover;
     private String lastEpoch;
     private SubscriptionEventListener listener;
     private SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
@@ -67,7 +66,7 @@ public class Subscription {
 
     void moveToSubscribeSuccess(Protocol.SubscribeResult result, boolean recover) {
         this.state = SubscriptionState.SUBSCRIBED;
-        this.setRecover(result.getRecoverable());
+        this.setRecoverable(result.getRecoverable());
         this.setLastEpoch(result.getEpoch());
 
         SubscribeSuccessEvent event = new SubscribeSuccessEvent(recover, result.getRecovered());
@@ -112,19 +111,19 @@ public class Subscription {
                 return;
             }
             Subscription.this.client.subscribe(Subscription.this);
-            Subscription.this.setSubscribedAt(new Date().getTime());
+            Subscription.this.setNeedRecover(true);
         });
     }
 
     public void unsubscribe() {
         this._unsubscribe(true);
-        this.setSubscribedAt(0);
+        this.setNeedRecover(false);
     }
 
     void unsubscribeNoResubscribe() {
         this.needResubscribe = false;
         this._unsubscribe(false);
-        this.setSubscribedAt(0);
+        this.setNeedRecover(false);
     }
 
     private void _unsubscribe(boolean shouldSendUnsubscribe) {
@@ -238,19 +237,19 @@ public class Subscription {
         }
     }
 
-    boolean isRecover() {
-        return recover;
+    boolean isRecoverable() {
+        return recoverable;
     }
 
-    public void setRecover(boolean recover) {
-        this.recover = recover;
+    public void setRecoverable(boolean recoverable) {
+        this.recoverable = recoverable;
     }
 
-    long getSubscribedAt() {
-        return subscribedAt;
+    boolean getNeedRecover() {
+        return this.needRecover;
     }
 
-    void setSubscribedAt(long subscribedAt) {
-        this.subscribedAt = subscribedAt;
+    void setNeedRecover(boolean needRecover) {
+        this.needRecover = needRecover;
     }
 }

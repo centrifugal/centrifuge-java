@@ -255,7 +255,7 @@ public class Client {
                 SubscriptionState previousSubState = sub.getState();
                 sub.moveToUnsubscribed();
                 if (!shouldReconnect) {
-                    sub.setSubscribedAt(0);
+                    sub.setNeedRecover(false);
                 }
                 if (previousSubState == SubscriptionState.SUBSCRIBED) {
                     sub.getListener().onUnsubscribe(sub, new UnsubscribeEvent());
@@ -347,7 +347,7 @@ public class Client {
         boolean isRecover = false;
         StreamPosition streamPosition = new StreamPosition();
 
-        if (sub.getSubscribedAt() != 0 && sub.isRecover()) {
+        if (sub.getNeedRecover() && sub.isRecoverable()) {
             isRecover = true;
             if (sub.getLastOffset() > 0) {
                 streamPosition.setOffset(sub.getLastOffset());
