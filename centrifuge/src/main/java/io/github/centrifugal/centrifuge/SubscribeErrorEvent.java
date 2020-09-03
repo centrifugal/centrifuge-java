@@ -7,7 +7,7 @@ public class SubscribeErrorEvent {
         return code;
     }
 
-    public void setCode(Integer code) {
+    void setCode(Integer code) {
         this.code = code;
     }
 
@@ -15,7 +15,7 @@ public class SubscribeErrorEvent {
         return message;
     }
 
-    public void setMessage(String message) {
+    void setMessage(String message) {
         this.message = message;
     }
 

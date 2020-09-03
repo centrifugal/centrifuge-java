@@ -5,7 +5,7 @@ public class ConnectEvent {
         return client;
     }
 
-    public void setClient(String client) {
+    void setClient(String client) {
         this.client = client;
     }
 
@@ -13,7 +13,7 @@ public class ConnectEvent {
         return data;
     }
 
-    public void setData(byte[] data) {
+    void setData(byte[] data) {
         this.data = data;
     }
 

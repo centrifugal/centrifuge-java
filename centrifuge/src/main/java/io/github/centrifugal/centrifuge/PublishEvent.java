@@ -5,7 +5,7 @@ public class PublishEvent {
         return data;
     }
 
-    public void setData(byte[] data) {
+    void setData(byte[] data) {
         this.data = data;
     }
 
@@ -15,7 +15,7 @@ public class PublishEvent {
         return offset;
     }
 
-    public void setOffset(long offset) {
+    void setOffset(long offset) {
         this.offset = offset;
     }
 

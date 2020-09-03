@@ -703,6 +703,7 @@ public class Client {
                 if (sub != null) {
                     PublishEvent event = new PublishEvent();
                     event.setData(pub.getData().toByteArray());
+                    event.setOffset(pub.getOffset());
                     sub.getListener().onPublish(sub, event);
                     sub.setLastOffset(pub.getOffset());
                 }
@@ -962,6 +963,7 @@ public class Client {
                         Protocol.Publication protoPub = protoPubs.get(i);
                         Publication pub = new Publication();
                         pub.setData(protoPub.getData().toByteArray());
+                        pub.setOffset(protoPub.getOffset());
                         pubs.add(pub);
                     }
                     result.setPublications(pubs);

@@ -8,20 +8,19 @@ class StreamPosition {
     StreamPosition() {
     }
 
-    public long getOffset() {
+    long getOffset() {
         return Offset;
     }
 
-    public void setOffset(long offset) {
+    void setOffset(long offset) {
         Offset = offset;
     }
 
-    public String getEpoch() {
+    String getEpoch() {
         return Epoch;
     }
 
-    public void setEpoch(String epoch) {
+    void setEpoch(String epoch) {
         Epoch = epoch;
     }
-
 }

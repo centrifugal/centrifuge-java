@@ -6,18 +6,10 @@ public class SubscribeSuccessEvent {
         return recovered;
     }
 
-    public void setRecovered(Boolean recovered) {
-        this.recovered = recovered;
-    }
-
     private Boolean recovered;
 
     public Boolean getIsResubscribe() {
         return isResubscribe;
-    }
-
-    public void setIsResubscribe(Boolean isResubscribe) {
-        isResubscribe = isResubscribe;
     }
 
     private Boolean isResubscribe;

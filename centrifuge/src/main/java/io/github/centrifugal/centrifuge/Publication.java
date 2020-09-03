@@ -10,4 +10,14 @@ public class Publication {
     }
 
     private byte[] data;
+
+    public long getOffset() {
+        return offset;
+    }
+
+    void setOffset(long offset) {
+        this.offset = offset;
+    }
+
+    private long offset;
 }

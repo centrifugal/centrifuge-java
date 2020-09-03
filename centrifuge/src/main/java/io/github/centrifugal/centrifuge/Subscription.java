@@ -76,6 +76,7 @@ public class Subscription {
             for (Protocol.Publication publication : result.getPublicationsList()) {
                 PublishEvent publishEvent = new PublishEvent();
                 publishEvent.setData(publication.getData().toByteArray());
+                publishEvent.setOffset(publication.getOffset());
                 this.listener.onPublish(this, publishEvent);
                 this.setLastOffset(publication.getOffset());
             }
