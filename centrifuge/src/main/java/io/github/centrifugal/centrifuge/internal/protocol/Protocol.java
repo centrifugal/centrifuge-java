@@ -15,7 +15,7 @@ public final class Protocol {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   /**
-   * Protobuf enum {@code proto.MethodType}
+   * Protobuf enum {@code protocol.MethodType}
    */
   public enum MethodType
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -174,6 +174,10 @@ public final class Protocol {
 
     public final com.google.protobuf.Descriptors.EnumValueDescriptor
         getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+            "Can't get the descriptor of an unrecognized enum value.");
+      }
       return getDescriptor().getValues().get(ordinal());
     }
     public final com.google.protobuf.Descriptors.EnumDescriptor
@@ -205,11 +209,11 @@ public final class Protocol {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:proto.MethodType)
+    // @@protoc_insertion_point(enum_scope:protocol.MethodType)
   }
 
   /**
-   * Protobuf enum {@code proto.PushType}
+   * Protobuf enum {@code protocol.PushType}
    */
   public enum PushType
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -314,6 +318,10 @@ public final class Protocol {
 
     public final com.google.protobuf.Descriptors.EnumValueDescriptor
         getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+            "Can't get the descriptor of an unrecognized enum value.");
+      }
       return getDescriptor().getValues().get(ordinal());
     }
     public final com.google.protobuf.Descriptors.EnumDescriptor
@@ -345,11 +353,11 @@ public final class Protocol {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:proto.PushType)
+    // @@protoc_insertion_point(enum_scope:protocol.PushType)
   }
 
   public interface ErrorOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Error)
+      // @@protoc_insertion_point(interface_extends:protocol.Error)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -371,11 +379,11 @@ public final class Protocol {
         getMessageBytes();
   }
   /**
-   * Protobuf type {@code proto.Error}
+   * Protobuf type {@code protocol.Error}
    */
-  public  static final class Error extends
+  public static final class Error extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Error)
+      // @@protoc_insertion_point(message_implements:protocol.Error)
       ErrorOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Error.newBuilder() to construct.
@@ -448,13 +456,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Error_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Error_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Error_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Error_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.Builder.class);
     }
@@ -465,6 +473,7 @@ public final class Protocol {
      * <code>uint32 code = 1;</code>
      * @return The code.
      */
+    @java.lang.Override
     public int getCode() {
       return code_;
     }
@@ -475,6 +484,7 @@ public final class Protocol {
      * <code>string message = 2;</code>
      * @return The message.
      */
+    @java.lang.Override
     public java.lang.String getMessage() {
       java.lang.Object ref = message_;
       if (ref instanceof java.lang.String) {
@@ -491,6 +501,7 @@ public final class Protocol {
      * <code>string message = 2;</code>
      * @return The bytes for message.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getMessageBytes() {
       java.lang.Object ref = message_;
@@ -671,21 +682,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Error}
+     * Protobuf type {@code protocol.Error}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Error)
+        // @@protoc_insertion_point(builder_implements:protocol.Error)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.ErrorOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Error_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Error_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Error_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Error_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.Builder.class);
       }
@@ -718,7 +729,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Error_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Error_descriptor;
       }
 
       @java.lang.Override
@@ -829,6 +840,7 @@ public final class Protocol {
        * <code>uint32 code = 1;</code>
        * @return The code.
        */
+      @java.lang.Override
       public int getCode() {
         return code_;
       }
@@ -942,10 +954,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Error)
+      // @@protoc_insertion_point(builder_scope:protocol.Error)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Error)
+    // @@protoc_insertion_point(class_scope:protocol.Error)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error();
@@ -983,7 +995,7 @@ public final class Protocol {
   }
 
   public interface CommandOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Command)
+      // @@protoc_insertion_point(interface_extends:protocol.Command)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -993,12 +1005,12 @@ public final class Protocol {
     int getId();
 
     /**
-     * <code>.proto.MethodType method = 2;</code>
+     * <code>.protocol.MethodType method = 2;</code>
      * @return The enum numeric value on the wire for method.
      */
     int getMethodValue();
     /**
-     * <code>.proto.MethodType method = 2;</code>
+     * <code>.protocol.MethodType method = 2;</code>
      * @return The method.
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType getMethod();
@@ -1010,11 +1022,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getParams();
   }
   /**
-   * Protobuf type {@code proto.Command}
+   * Protobuf type {@code protocol.Command}
    */
-  public  static final class Command extends
+  public static final class Command extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Command)
+      // @@protoc_insertion_point(message_implements:protocol.Command)
       CommandOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Command.newBuilder() to construct.
@@ -1093,13 +1105,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Command_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Command_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Command_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Command_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Command.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Command.Builder.class);
     }
@@ -1110,6 +1122,7 @@ public final class Protocol {
      * <code>uint32 id = 1;</code>
      * @return The id.
      */
+    @java.lang.Override
     public int getId() {
       return id_;
     }
@@ -1117,17 +1130,17 @@ public final class Protocol {
     public static final int METHOD_FIELD_NUMBER = 2;
     private int method_;
     /**
-     * <code>.proto.MethodType method = 2;</code>
+     * <code>.protocol.MethodType method = 2;</code>
      * @return The enum numeric value on the wire for method.
      */
-    public int getMethodValue() {
+    @java.lang.Override public int getMethodValue() {
       return method_;
     }
     /**
-     * <code>.proto.MethodType method = 2;</code>
+     * <code>.protocol.MethodType method = 2;</code>
      * @return The method.
      */
-    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType getMethod() {
+    @java.lang.Override public io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType getMethod() {
       @SuppressWarnings("deprecation")
       io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType.valueOf(method_);
       return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType.UNRECOGNIZED : result;
@@ -1139,6 +1152,7 @@ public final class Protocol {
      * <code>bytes params = 3;</code>
      * @return The params.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getParams() {
       return params_;
     }
@@ -1320,21 +1334,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Command}
+     * Protobuf type {@code protocol.Command}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Command)
+        // @@protoc_insertion_point(builder_implements:protocol.Command)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.CommandOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Command_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Command_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Command_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Command_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Command.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Command.Builder.class);
       }
@@ -1369,7 +1383,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Command_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Command_descriptor;
       }
 
       @java.lang.Override
@@ -1483,6 +1497,7 @@ public final class Protocol {
        * <code>uint32 id = 1;</code>
        * @return The id.
        */
+      @java.lang.Override
       public int getId() {
         return id_;
       }
@@ -1510,33 +1525,35 @@ public final class Protocol {
 
       private int method_ = 0;
       /**
-       * <code>.proto.MethodType method = 2;</code>
+       * <code>.protocol.MethodType method = 2;</code>
        * @return The enum numeric value on the wire for method.
        */
-      public int getMethodValue() {
+      @java.lang.Override public int getMethodValue() {
         return method_;
       }
       /**
-       * <code>.proto.MethodType method = 2;</code>
+       * <code>.protocol.MethodType method = 2;</code>
        * @param value The enum numeric value on the wire for method to set.
        * @return This builder for chaining.
        */
       public Builder setMethodValue(int value) {
+        
         method_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>.proto.MethodType method = 2;</code>
+       * <code>.protocol.MethodType method = 2;</code>
        * @return The method.
        */
+      @java.lang.Override
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType getMethod() {
         @SuppressWarnings("deprecation")
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType.valueOf(method_);
         return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.MethodType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.proto.MethodType method = 2;</code>
+       * <code>.protocol.MethodType method = 2;</code>
        * @param value The method to set.
        * @return This builder for chaining.
        */
@@ -1550,7 +1567,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.MethodType method = 2;</code>
+       * <code>.protocol.MethodType method = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearMethod() {
@@ -1565,6 +1582,7 @@ public final class Protocol {
        * <code>bytes params = 3;</code>
        * @return The params.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getParams() {
         return params_;
       }
@@ -1605,10 +1623,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Command)
+      // @@protoc_insertion_point(builder_scope:protocol.Command)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Command)
+    // @@protoc_insertion_point(class_scope:protocol.Command)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Command DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Command();
@@ -1646,7 +1664,7 @@ public final class Protocol {
   }
 
   public interface ReplyOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Reply)
+      // @@protoc_insertion_point(interface_extends:protocol.Reply)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -1656,17 +1674,17 @@ public final class Protocol {
     int getId();
 
     /**
-     * <code>.proto.Error error = 2;</code>
+     * <code>.protocol.Error error = 2;</code>
      * @return Whether the error field is set.
      */
     boolean hasError();
     /**
-     * <code>.proto.Error error = 2;</code>
+     * <code>.protocol.Error error = 2;</code>
      * @return The error.
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error getError();
     /**
-     * <code>.proto.Error error = 2;</code>
+     * <code>.protocol.Error error = 2;</code>
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ErrorOrBuilder getErrorOrBuilder();
 
@@ -1677,11 +1695,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getResult();
   }
   /**
-   * Protobuf type {@code proto.Reply}
+   * Protobuf type {@code protocol.Reply}
    */
-  public  static final class Reply extends
+  public static final class Reply extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Reply)
+      // @@protoc_insertion_point(message_implements:protocol.Reply)
       ReplyOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Reply.newBuilder() to construct.
@@ -1766,13 +1784,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Reply_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Reply_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Reply_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Reply_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Reply.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Reply.Builder.class);
     }
@@ -1783,6 +1801,7 @@ public final class Protocol {
      * <code>uint32 id = 1;</code>
      * @return The id.
      */
+    @java.lang.Override
     public int getId() {
       return id_;
     }
@@ -1790,22 +1809,25 @@ public final class Protocol {
     public static final int ERROR_FIELD_NUMBER = 2;
     private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error error_;
     /**
-     * <code>.proto.Error error = 2;</code>
+     * <code>.protocol.Error error = 2;</code>
      * @return Whether the error field is set.
      */
+    @java.lang.Override
     public boolean hasError() {
       return error_ != null;
     }
     /**
-     * <code>.proto.Error error = 2;</code>
+     * <code>.protocol.Error error = 2;</code>
      * @return The error.
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error getError() {
       return error_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.getDefaultInstance() : error_;
     }
     /**
-     * <code>.proto.Error error = 2;</code>
+     * <code>.protocol.Error error = 2;</code>
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ErrorOrBuilder getErrorOrBuilder() {
       return getError();
     }
@@ -1816,6 +1838,7 @@ public final class Protocol {
      * <code>bytes result = 3;</code>
      * @return The result.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getResult() {
       return result_;
     }
@@ -2003,21 +2026,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Reply}
+     * Protobuf type {@code protocol.Reply}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Reply)
+        // @@protoc_insertion_point(builder_implements:protocol.Reply)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.ReplyOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Reply_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Reply_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Reply_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Reply_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Reply.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Reply.Builder.class);
       }
@@ -2056,7 +2079,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Reply_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Reply_descriptor;
       }
 
       @java.lang.Override
@@ -2174,6 +2197,7 @@ public final class Protocol {
        * <code>uint32 id = 1;</code>
        * @return The id.
        */
+      @java.lang.Override
       public int getId() {
         return id_;
       }
@@ -2203,14 +2227,14 @@ public final class Protocol {
       private com.google.protobuf.SingleFieldBuilderV3<
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ErrorOrBuilder> errorBuilder_;
       /**
-       * <code>.proto.Error error = 2;</code>
+       * <code>.protocol.Error error = 2;</code>
        * @return Whether the error field is set.
        */
       public boolean hasError() {
         return errorBuilder_ != null || error_ != null;
       }
       /**
-       * <code>.proto.Error error = 2;</code>
+       * <code>.protocol.Error error = 2;</code>
        * @return The error.
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error getError() {
@@ -2221,7 +2245,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.proto.Error error = 2;</code>
+       * <code>.protocol.Error error = 2;</code>
        */
       public Builder setError(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error value) {
         if (errorBuilder_ == null) {
@@ -2237,7 +2261,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.Error error = 2;</code>
+       * <code>.protocol.Error error = 2;</code>
        */
       public Builder setError(
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.Builder builderForValue) {
@@ -2251,7 +2275,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.Error error = 2;</code>
+       * <code>.protocol.Error error = 2;</code>
        */
       public Builder mergeError(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error value) {
         if (errorBuilder_ == null) {
@@ -2269,7 +2293,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.Error error = 2;</code>
+       * <code>.protocol.Error error = 2;</code>
        */
       public Builder clearError() {
         if (errorBuilder_ == null) {
@@ -2283,7 +2307,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.Error error = 2;</code>
+       * <code>.protocol.Error error = 2;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.Builder getErrorBuilder() {
         
@@ -2291,7 +2315,7 @@ public final class Protocol {
         return getErrorFieldBuilder().getBuilder();
       }
       /**
-       * <code>.proto.Error error = 2;</code>
+       * <code>.protocol.Error error = 2;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ErrorOrBuilder getErrorOrBuilder() {
         if (errorBuilder_ != null) {
@@ -2302,7 +2326,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.proto.Error error = 2;</code>
+       * <code>.protocol.Error error = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ErrorOrBuilder> 
@@ -2323,6 +2347,7 @@ public final class Protocol {
        * <code>bytes result = 3;</code>
        * @return The result.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getResult() {
         return result_;
       }
@@ -2363,10 +2388,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Reply)
+      // @@protoc_insertion_point(builder_scope:protocol.Reply)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Reply)
+    // @@protoc_insertion_point(class_scope:protocol.Reply)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Reply DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Reply();
@@ -2404,16 +2429,16 @@ public final class Protocol {
   }
 
   public interface PushOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Push)
+      // @@protoc_insertion_point(interface_extends:protocol.Push)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.proto.PushType type = 1;</code>
+     * <code>.protocol.PushType type = 1;</code>
      * @return The enum numeric value on the wire for type.
      */
     int getTypeValue();
     /**
-     * <code>.proto.PushType type = 1;</code>
+     * <code>.protocol.PushType type = 1;</code>
      * @return The type.
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType getType();
@@ -2437,11 +2462,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getData();
   }
   /**
-   * Protobuf type {@code proto.Push}
+   * Protobuf type {@code protocol.Push}
    */
-  public  static final class Push extends
+  public static final class Push extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Push)
+      // @@protoc_insertion_point(message_implements:protocol.Push)
       PushOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Push.newBuilder() to construct.
@@ -2522,13 +2547,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Push_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Push_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Push_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Push_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push.Builder.class);
     }
@@ -2536,17 +2561,17 @@ public final class Protocol {
     public static final int TYPE_FIELD_NUMBER = 1;
     private int type_;
     /**
-     * <code>.proto.PushType type = 1;</code>
+     * <code>.protocol.PushType type = 1;</code>
      * @return The enum numeric value on the wire for type.
      */
-    public int getTypeValue() {
+    @java.lang.Override public int getTypeValue() {
       return type_;
     }
     /**
-     * <code>.proto.PushType type = 1;</code>
+     * <code>.protocol.PushType type = 1;</code>
      * @return The type.
      */
-    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType getType() {
+    @java.lang.Override public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType getType() {
       @SuppressWarnings("deprecation")
       io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType.valueOf(type_);
       return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType.UNRECOGNIZED : result;
@@ -2558,6 +2583,7 @@ public final class Protocol {
      * <code>string channel = 2;</code>
      * @return The channel.
      */
+    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -2574,6 +2600,7 @@ public final class Protocol {
      * <code>string channel = 2;</code>
      * @return The bytes for channel.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -2594,6 +2621,7 @@ public final class Protocol {
      * <code>bytes data = 3;</code>
      * @return The data.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -2774,21 +2802,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Push}
+     * Protobuf type {@code protocol.Push}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Push)
+        // @@protoc_insertion_point(builder_implements:protocol.Push)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Push_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Push_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Push_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Push_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push.Builder.class);
       }
@@ -2823,7 +2851,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Push_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Push_descriptor;
       }
 
       @java.lang.Override
@@ -2935,33 +2963,35 @@ public final class Protocol {
 
       private int type_ = 0;
       /**
-       * <code>.proto.PushType type = 1;</code>
+       * <code>.protocol.PushType type = 1;</code>
        * @return The enum numeric value on the wire for type.
        */
-      public int getTypeValue() {
+      @java.lang.Override public int getTypeValue() {
         return type_;
       }
       /**
-       * <code>.proto.PushType type = 1;</code>
+       * <code>.protocol.PushType type = 1;</code>
        * @param value The enum numeric value on the wire for type to set.
        * @return This builder for chaining.
        */
       public Builder setTypeValue(int value) {
+        
         type_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>.proto.PushType type = 1;</code>
+       * <code>.protocol.PushType type = 1;</code>
        * @return The type.
        */
+      @java.lang.Override
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType getType() {
         @SuppressWarnings("deprecation")
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType.valueOf(type_);
         return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PushType.UNRECOGNIZED : result;
       }
       /**
-       * <code>.proto.PushType type = 1;</code>
+       * <code>.protocol.PushType type = 1;</code>
        * @param value The type to set.
        * @return This builder for chaining.
        */
@@ -2975,7 +3005,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.PushType type = 1;</code>
+       * <code>.protocol.PushType type = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearType() {
@@ -3066,6 +3096,7 @@ public final class Protocol {
        * <code>bytes data = 3;</code>
        * @return The data.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -3106,10 +3137,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Push)
+      // @@protoc_insertion_point(builder_scope:protocol.Push)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Push)
+    // @@protoc_insertion_point(class_scope:protocol.Push)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push();
@@ -3147,7 +3178,7 @@ public final class Protocol {
   }
 
   public interface ClientInfoOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.ClientInfo)
+      // @@protoc_insertion_point(interface_extends:protocol.ClientInfo)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -3187,11 +3218,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getChanInfo();
   }
   /**
-   * Protobuf type {@code proto.ClientInfo}
+   * Protobuf type {@code protocol.ClientInfo}
    */
-  public  static final class ClientInfo extends
+  public static final class ClientInfo extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.ClientInfo)
+      // @@protoc_insertion_point(message_implements:protocol.ClientInfo)
       ClientInfoOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use ClientInfo.newBuilder() to construct.
@@ -3278,13 +3309,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ClientInfo_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ClientInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ClientInfo_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ClientInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder.class);
     }
@@ -3295,6 +3326,7 @@ public final class Protocol {
      * <code>string user = 1;</code>
      * @return The user.
      */
+    @java.lang.Override
     public java.lang.String getUser() {
       java.lang.Object ref = user_;
       if (ref instanceof java.lang.String) {
@@ -3311,6 +3343,7 @@ public final class Protocol {
      * <code>string user = 1;</code>
      * @return The bytes for user.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getUserBytes() {
       java.lang.Object ref = user_;
@@ -3331,6 +3364,7 @@ public final class Protocol {
      * <code>string client = 2;</code>
      * @return The client.
      */
+    @java.lang.Override
     public java.lang.String getClient() {
       java.lang.Object ref = client_;
       if (ref instanceof java.lang.String) {
@@ -3347,6 +3381,7 @@ public final class Protocol {
      * <code>string client = 2;</code>
      * @return The bytes for client.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getClientBytes() {
       java.lang.Object ref = client_;
@@ -3367,6 +3402,7 @@ public final class Protocol {
      * <code>bytes conn_info = 3;</code>
      * @return The connInfo.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getConnInfo() {
       return connInfo_;
     }
@@ -3377,6 +3413,7 @@ public final class Protocol {
      * <code>bytes chan_info = 4;</code>
      * @return The chanInfo.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getChanInfo() {
       return chanInfo_;
     }
@@ -3568,21 +3605,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.ClientInfo}
+     * Protobuf type {@code protocol.ClientInfo}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.ClientInfo)
+        // @@protoc_insertion_point(builder_implements:protocol.ClientInfo)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ClientInfo_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ClientInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ClientInfo_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ClientInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder.class);
       }
@@ -3619,7 +3656,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ClientInfo_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ClientInfo_descriptor;
       }
 
       @java.lang.Override
@@ -3891,6 +3928,7 @@ public final class Protocol {
        * <code>bytes conn_info = 3;</code>
        * @return The connInfo.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getConnInfo() {
         return connInfo_;
       }
@@ -3924,6 +3962,7 @@ public final class Protocol {
        * <code>bytes chan_info = 4;</code>
        * @return The chanInfo.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getChanInfo() {
         return chanInfo_;
       }
@@ -3964,10 +4003,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.ClientInfo)
+      // @@protoc_insertion_point(builder_scope:protocol.ClientInfo)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.ClientInfo)
+    // @@protoc_insertion_point(class_scope:protocol.ClientInfo)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo();
@@ -4005,7 +4044,7 @@ public final class Protocol {
   }
 
   public interface PublicationOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Publication)
+      // @@protoc_insertion_point(interface_extends:protocol.Publication)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -4039,17 +4078,17 @@ public final class Protocol {
     com.google.protobuf.ByteString getData();
 
     /**
-     * <code>.proto.ClientInfo info = 5;</code>
+     * <code>.protocol.ClientInfo info = 5;</code>
      * @return Whether the info field is set.
      */
     boolean hasInfo();
     /**
-     * <code>.proto.ClientInfo info = 5;</code>
+     * <code>.protocol.ClientInfo info = 5;</code>
      * @return The info.
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo();
     /**
-     * <code>.proto.ClientInfo info = 5;</code>
+     * <code>.protocol.ClientInfo info = 5;</code>
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder();
 
@@ -4060,11 +4099,11 @@ public final class Protocol {
     long getOffset();
   }
   /**
-   * Protobuf type {@code proto.Publication}
+   * Protobuf type {@code protocol.Publication}
    */
-  public  static final class Publication extends
+  public static final class Publication extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Publication)
+      // @@protoc_insertion_point(message_implements:protocol.Publication)
       PublicationOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Publication.newBuilder() to construct.
@@ -4166,13 +4205,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Publication_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Publication_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Publication_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Publication_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder.class);
     }
@@ -4183,6 +4222,7 @@ public final class Protocol {
      * <code>uint32 seq = 1;</code>
      * @return The seq.
      */
+    @java.lang.Override
     public int getSeq() {
       return seq_;
     }
@@ -4193,6 +4233,7 @@ public final class Protocol {
      * <code>uint32 gen = 2;</code>
      * @return The gen.
      */
+    @java.lang.Override
     public int getGen() {
       return gen_;
     }
@@ -4203,6 +4244,7 @@ public final class Protocol {
      * <code>string uid = 3;</code>
      * @return The uid.
      */
+    @java.lang.Override
     public java.lang.String getUid() {
       java.lang.Object ref = uid_;
       if (ref instanceof java.lang.String) {
@@ -4219,6 +4261,7 @@ public final class Protocol {
      * <code>string uid = 3;</code>
      * @return The bytes for uid.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getUidBytes() {
       java.lang.Object ref = uid_;
@@ -4239,6 +4282,7 @@ public final class Protocol {
      * <code>bytes data = 4;</code>
      * @return The data.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -4246,22 +4290,25 @@ public final class Protocol {
     public static final int INFO_FIELD_NUMBER = 5;
     private io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo info_;
     /**
-     * <code>.proto.ClientInfo info = 5;</code>
+     * <code>.protocol.ClientInfo info = 5;</code>
      * @return Whether the info field is set.
      */
+    @java.lang.Override
     public boolean hasInfo() {
       return info_ != null;
     }
     /**
-     * <code>.proto.ClientInfo info = 5;</code>
+     * <code>.protocol.ClientInfo info = 5;</code>
      * @return The info.
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo() {
       return info_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.getDefaultInstance() : info_;
     }
     /**
-     * <code>.proto.ClientInfo info = 5;</code>
+     * <code>.protocol.ClientInfo info = 5;</code>
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder() {
       return getInfo();
     }
@@ -4272,6 +4319,7 @@ public final class Protocol {
      * <code>uint64 offset = 6;</code>
      * @return The offset.
      */
+    @java.lang.Override
     public long getOffset() {
       return offset_;
     }
@@ -4492,21 +4540,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Publication}
+     * Protobuf type {@code protocol.Publication}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Publication)
+        // @@protoc_insertion_point(builder_implements:protocol.Publication)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Publication_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Publication_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Publication_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Publication_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder.class);
       }
@@ -4551,7 +4599,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Publication_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Publication_descriptor;
       }
 
       @java.lang.Override
@@ -4682,6 +4730,7 @@ public final class Protocol {
        * <code>uint32 seq = 1;</code>
        * @return The seq.
        */
+      @java.lang.Override
       public int getSeq() {
         return seq_;
       }
@@ -4712,6 +4761,7 @@ public final class Protocol {
        * <code>uint32 gen = 2;</code>
        * @return The gen.
        */
+      @java.lang.Override
       public int getGen() {
         return gen_;
       }
@@ -4818,6 +4868,7 @@ public final class Protocol {
        * <code>bytes data = 4;</code>
        * @return The data.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -4850,14 +4901,14 @@ public final class Protocol {
       private com.google.protobuf.SingleFieldBuilderV3<
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder> infoBuilder_;
       /**
-       * <code>.proto.ClientInfo info = 5;</code>
+       * <code>.protocol.ClientInfo info = 5;</code>
        * @return Whether the info field is set.
        */
       public boolean hasInfo() {
         return infoBuilder_ != null || info_ != null;
       }
       /**
-       * <code>.proto.ClientInfo info = 5;</code>
+       * <code>.protocol.ClientInfo info = 5;</code>
        * @return The info.
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo() {
@@ -4868,7 +4919,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.proto.ClientInfo info = 5;</code>
+       * <code>.protocol.ClientInfo info = 5;</code>
        */
       public Builder setInfo(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo value) {
         if (infoBuilder_ == null) {
@@ -4884,7 +4935,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 5;</code>
+       * <code>.protocol.ClientInfo info = 5;</code>
        */
       public Builder setInfo(
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder builderForValue) {
@@ -4898,7 +4949,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 5;</code>
+       * <code>.protocol.ClientInfo info = 5;</code>
        */
       public Builder mergeInfo(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo value) {
         if (infoBuilder_ == null) {
@@ -4916,7 +4967,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 5;</code>
+       * <code>.protocol.ClientInfo info = 5;</code>
        */
       public Builder clearInfo() {
         if (infoBuilder_ == null) {
@@ -4930,7 +4981,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 5;</code>
+       * <code>.protocol.ClientInfo info = 5;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder getInfoBuilder() {
         
@@ -4938,7 +4989,7 @@ public final class Protocol {
         return getInfoFieldBuilder().getBuilder();
       }
       /**
-       * <code>.proto.ClientInfo info = 5;</code>
+       * <code>.protocol.ClientInfo info = 5;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder() {
         if (infoBuilder_ != null) {
@@ -4949,7 +5000,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.proto.ClientInfo info = 5;</code>
+       * <code>.protocol.ClientInfo info = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder> 
@@ -4970,6 +5021,7 @@ public final class Protocol {
        * <code>uint64 offset = 6;</code>
        * @return The offset.
        */
+      @java.lang.Override
       public long getOffset() {
         return offset_;
       }
@@ -5007,10 +5059,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Publication)
+      // @@protoc_insertion_point(builder_scope:protocol.Publication)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Publication)
+    // @@protoc_insertion_point(class_scope:protocol.Publication)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication();
@@ -5048,30 +5100,30 @@ public final class Protocol {
   }
 
   public interface JoinOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Join)
+      // @@protoc_insertion_point(interface_extends:protocol.Join)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      * @return Whether the info field is set.
      */
     boolean hasInfo();
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      * @return The info.
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo();
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder();
   }
   /**
-   * Protobuf type {@code proto.Join}
+   * Protobuf type {@code protocol.Join}
    */
-  public  static final class Join extends
+  public static final class Join extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Join)
+      // @@protoc_insertion_point(message_implements:protocol.Join)
       JoinOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Join.newBuilder() to construct.
@@ -5145,13 +5197,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Join_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Join_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Join_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Join_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join.Builder.class);
     }
@@ -5159,22 +5211,25 @@ public final class Protocol {
     public static final int INFO_FIELD_NUMBER = 1;
     private io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo info_;
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      * @return Whether the info field is set.
      */
+    @java.lang.Override
     public boolean hasInfo() {
       return info_ != null;
     }
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      * @return The info.
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo() {
       return info_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.getDefaultInstance() : info_;
     }
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder() {
       return getInfo();
     }
@@ -5340,21 +5395,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Join}
+     * Protobuf type {@code protocol.Join}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Join)
+        // @@protoc_insertion_point(builder_implements:protocol.Join)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.JoinOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Join_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Join_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Join_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Join_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join.Builder.class);
       }
@@ -5389,7 +5444,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Join_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Join_descriptor;
       }
 
       @java.lang.Override
@@ -5498,14 +5553,14 @@ public final class Protocol {
       private com.google.protobuf.SingleFieldBuilderV3<
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder> infoBuilder_;
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        * @return Whether the info field is set.
        */
       public boolean hasInfo() {
         return infoBuilder_ != null || info_ != null;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        * @return The info.
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo() {
@@ -5516,7 +5571,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public Builder setInfo(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo value) {
         if (infoBuilder_ == null) {
@@ -5532,7 +5587,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public Builder setInfo(
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder builderForValue) {
@@ -5546,7 +5601,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public Builder mergeInfo(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo value) {
         if (infoBuilder_ == null) {
@@ -5564,7 +5619,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public Builder clearInfo() {
         if (infoBuilder_ == null) {
@@ -5578,7 +5633,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder getInfoBuilder() {
         
@@ -5586,7 +5641,7 @@ public final class Protocol {
         return getInfoFieldBuilder().getBuilder();
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder() {
         if (infoBuilder_ != null) {
@@ -5597,7 +5652,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder> 
@@ -5625,10 +5680,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Join)
+      // @@protoc_insertion_point(builder_scope:protocol.Join)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Join)
+    // @@protoc_insertion_point(class_scope:protocol.Join)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join();
@@ -5666,30 +5721,30 @@ public final class Protocol {
   }
 
   public interface LeaveOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Leave)
+      // @@protoc_insertion_point(interface_extends:protocol.Leave)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      * @return Whether the info field is set.
      */
     boolean hasInfo();
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      * @return The info.
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo();
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder();
   }
   /**
-   * Protobuf type {@code proto.Leave}
+   * Protobuf type {@code protocol.Leave}
    */
-  public  static final class Leave extends
+  public static final class Leave extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Leave)
+      // @@protoc_insertion_point(message_implements:protocol.Leave)
       LeaveOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Leave.newBuilder() to construct.
@@ -5763,13 +5818,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Leave_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Leave_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Leave_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Leave_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave.Builder.class);
     }
@@ -5777,22 +5832,25 @@ public final class Protocol {
     public static final int INFO_FIELD_NUMBER = 1;
     private io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo info_;
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      * @return Whether the info field is set.
      */
+    @java.lang.Override
     public boolean hasInfo() {
       return info_ != null;
     }
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      * @return The info.
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo() {
       return info_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.getDefaultInstance() : info_;
     }
     /**
-     * <code>.proto.ClientInfo info = 1;</code>
+     * <code>.protocol.ClientInfo info = 1;</code>
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder() {
       return getInfo();
     }
@@ -5958,21 +6016,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Leave}
+     * Protobuf type {@code protocol.Leave}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Leave)
+        // @@protoc_insertion_point(builder_implements:protocol.Leave)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.LeaveOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Leave_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Leave_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Leave_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Leave_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave.Builder.class);
       }
@@ -6007,7 +6065,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Leave_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Leave_descriptor;
       }
 
       @java.lang.Override
@@ -6116,14 +6174,14 @@ public final class Protocol {
       private com.google.protobuf.SingleFieldBuilderV3<
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder> infoBuilder_;
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        * @return Whether the info field is set.
        */
       public boolean hasInfo() {
         return infoBuilder_ != null || info_ != null;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        * @return The info.
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getInfo() {
@@ -6134,7 +6192,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public Builder setInfo(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo value) {
         if (infoBuilder_ == null) {
@@ -6150,7 +6208,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public Builder setInfo(
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder builderForValue) {
@@ -6164,7 +6222,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public Builder mergeInfo(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo value) {
         if (infoBuilder_ == null) {
@@ -6182,7 +6240,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public Builder clearInfo() {
         if (infoBuilder_ == null) {
@@ -6196,7 +6254,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder getInfoBuilder() {
         
@@ -6204,7 +6262,7 @@ public final class Protocol {
         return getInfoFieldBuilder().getBuilder();
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder getInfoOrBuilder() {
         if (infoBuilder_ != null) {
@@ -6215,7 +6273,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>.proto.ClientInfo info = 1;</code>
+       * <code>.protocol.ClientInfo info = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfoOrBuilder> 
@@ -6243,10 +6301,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Leave)
+      // @@protoc_insertion_point(builder_scope:protocol.Leave)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Leave)
+    // @@protoc_insertion_point(class_scope:protocol.Leave)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave();
@@ -6284,7 +6342,7 @@ public final class Protocol {
   }
 
   public interface UnsubOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Unsub)
+      // @@protoc_insertion_point(interface_extends:protocol.Unsub)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -6294,11 +6352,11 @@ public final class Protocol {
     boolean getResubscribe();
   }
   /**
-   * Protobuf type {@code proto.Unsub}
+   * Protobuf type {@code protocol.Unsub}
    */
-  public  static final class Unsub extends
+  public static final class Unsub extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Unsub)
+      // @@protoc_insertion_point(message_implements:protocol.Unsub)
       UnsubOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Unsub.newBuilder() to construct.
@@ -6364,13 +6422,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Unsub_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Unsub_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Unsub_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Unsub_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsub.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsub.Builder.class);
     }
@@ -6381,6 +6439,7 @@ public final class Protocol {
      * <code>bool resubscribe = 1;</code>
      * @return The resubscribe.
      */
+    @java.lang.Override
     public boolean getResubscribe() {
       return resubscribe_;
     }
@@ -6542,21 +6601,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Unsub}
+     * Protobuf type {@code protocol.Unsub}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Unsub)
+        // @@protoc_insertion_point(builder_implements:protocol.Unsub)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Unsub_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Unsub_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Unsub_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Unsub_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsub.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsub.Builder.class);
       }
@@ -6587,7 +6646,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Unsub_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Unsub_descriptor;
       }
 
       @java.lang.Override
@@ -6693,6 +6752,7 @@ public final class Protocol {
        * <code>bool resubscribe = 1;</code>
        * @return The resubscribe.
        */
+      @java.lang.Override
       public boolean getResubscribe() {
         return resubscribe_;
       }
@@ -6730,10 +6790,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Unsub)
+      // @@protoc_insertion_point(builder_scope:protocol.Unsub)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Unsub)
+    // @@protoc_insertion_point(class_scope:protocol.Unsub)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsub DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsub();
@@ -6771,7 +6831,7 @@ public final class Protocol {
   }
 
   public interface SubOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Sub)
+      // @@protoc_insertion_point(interface_extends:protocol.Sub)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -6811,11 +6871,11 @@ public final class Protocol {
     long getOffset();
   }
   /**
-   * Protobuf type {@code proto.Sub}
+   * Protobuf type {@code protocol.Sub}
    */
-  public  static final class Sub extends
+  public static final class Sub extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Sub)
+      // @@protoc_insertion_point(message_implements:protocol.Sub)
       SubOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Sub.newBuilder() to construct.
@@ -6903,13 +6963,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Sub_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Sub_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Sub_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Sub_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Sub.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Sub.Builder.class);
     }
@@ -6920,6 +6980,7 @@ public final class Protocol {
      * <code>bool recoverable = 1;</code>
      * @return The recoverable.
      */
+    @java.lang.Override
     public boolean getRecoverable() {
       return recoverable_;
     }
@@ -6930,6 +6991,7 @@ public final class Protocol {
      * <code>uint32 seq = 2;</code>
      * @return The seq.
      */
+    @java.lang.Override
     public int getSeq() {
       return seq_;
     }
@@ -6940,6 +7002,7 @@ public final class Protocol {
      * <code>uint32 gen = 3;</code>
      * @return The gen.
      */
+    @java.lang.Override
     public int getGen() {
       return gen_;
     }
@@ -6950,6 +7013,7 @@ public final class Protocol {
      * <code>string epoch = 4;</code>
      * @return The epoch.
      */
+    @java.lang.Override
     public java.lang.String getEpoch() {
       java.lang.Object ref = epoch_;
       if (ref instanceof java.lang.String) {
@@ -6966,6 +7030,7 @@ public final class Protocol {
      * <code>string epoch = 4;</code>
      * @return The bytes for epoch.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getEpochBytes() {
       java.lang.Object ref = epoch_;
@@ -6986,6 +7051,7 @@ public final class Protocol {
      * <code>uint64 offset = 5;</code>
      * @return The offset.
      */
+    @java.lang.Override
     public long getOffset() {
       return offset_;
     }
@@ -7191,21 +7257,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Sub}
+     * Protobuf type {@code protocol.Sub}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Sub)
+        // @@protoc_insertion_point(builder_implements:protocol.Sub)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Sub_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Sub_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Sub_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Sub_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Sub.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Sub.Builder.class);
       }
@@ -7244,7 +7310,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Sub_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Sub_descriptor;
       }
 
       @java.lang.Override
@@ -7367,6 +7433,7 @@ public final class Protocol {
        * <code>bool recoverable = 1;</code>
        * @return The recoverable.
        */
+      @java.lang.Override
       public boolean getRecoverable() {
         return recoverable_;
       }
@@ -7397,6 +7464,7 @@ public final class Protocol {
        * <code>uint32 seq = 2;</code>
        * @return The seq.
        */
+      @java.lang.Override
       public int getSeq() {
         return seq_;
       }
@@ -7427,6 +7495,7 @@ public final class Protocol {
        * <code>uint32 gen = 3;</code>
        * @return The gen.
        */
+      @java.lang.Override
       public int getGen() {
         return gen_;
       }
@@ -7533,6 +7602,7 @@ public final class Protocol {
        * <code>uint64 offset = 5;</code>
        * @return The offset.
        */
+      @java.lang.Override
       public long getOffset() {
         return offset_;
       }
@@ -7570,10 +7640,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Sub)
+      // @@protoc_insertion_point(builder_scope:protocol.Sub)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Sub)
+    // @@protoc_insertion_point(class_scope:protocol.Sub)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Sub DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Sub();
@@ -7611,7 +7681,7 @@ public final class Protocol {
   }
 
   public interface MessageOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.Message)
+      // @@protoc_insertion_point(interface_extends:protocol.Message)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -7621,11 +7691,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getData();
   }
   /**
-   * Protobuf type {@code proto.Message}
+   * Protobuf type {@code protocol.Message}
    */
-  public  static final class Message extends
+  public static final class Message extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.Message)
+      // @@protoc_insertion_point(message_implements:protocol.Message)
       MessageOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use Message.newBuilder() to construct.
@@ -7692,13 +7762,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Message_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Message_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Message_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Message_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message.Builder.class);
     }
@@ -7709,6 +7779,7 @@ public final class Protocol {
      * <code>bytes data = 1;</code>
      * @return The data.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -7869,21 +7940,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.Message}
+     * Protobuf type {@code protocol.Message}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.Message)
+        // @@protoc_insertion_point(builder_implements:protocol.Message)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.MessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Message_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Message_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Message_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Message_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message.Builder.class);
       }
@@ -7914,7 +7985,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_Message_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_Message_descriptor;
       }
 
       @java.lang.Override
@@ -8020,6 +8091,7 @@ public final class Protocol {
        * <code>bytes data = 1;</code>
        * @return The data.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -8060,10 +8132,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.Message)
+      // @@protoc_insertion_point(builder_scope:protocol.Message)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.Message)
+    // @@protoc_insertion_point(class_scope:protocol.Message)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message();
@@ -8101,7 +8173,7 @@ public final class Protocol {
   }
 
   public interface ConnectRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.ConnectRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.ConnectRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -8123,11 +8195,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getData();
 
     /**
-     * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+     * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
      */
     int getSubsCount();
     /**
-     * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+     * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
      */
     boolean containsSubs(
         java.lang.String key);
@@ -8138,30 +8210,54 @@ public final class Protocol {
     java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest>
     getSubs();
     /**
-     * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+     * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
      */
     java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest>
     getSubsMap();
     /**
-     * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+     * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
      */
 
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrDefault(
         java.lang.String key,
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest defaultValue);
     /**
-     * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+     * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
      */
 
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrThrow(
         java.lang.String key);
+
+    /**
+     * <code>string name = 4;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <code>string name = 4;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
+
+    /**
+     * <code>string version = 5;</code>
+     * @return The version.
+     */
+    java.lang.String getVersion();
+    /**
+     * <code>string version = 5;</code>
+     * @return The bytes for version.
+     */
+    com.google.protobuf.ByteString
+        getVersionBytes();
   }
   /**
-   * Protobuf type {@code proto.ConnectRequest}
+   * Protobuf type {@code protocol.ConnectRequest}
    */
-  public  static final class ConnectRequest extends
+  public static final class ConnectRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.ConnectRequest)
+      // @@protoc_insertion_point(message_implements:protocol.ConnectRequest)
       ConnectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use ConnectRequest.newBuilder() to construct.
@@ -8171,6 +8267,8 @@ public final class Protocol {
     private ConnectRequest() {
       token_ = "";
       data_ = com.google.protobuf.ByteString.EMPTY;
+      name_ = "";
+      version_ = "";
     }
 
     @java.lang.Override
@@ -8228,6 +8326,18 @@ public final class Protocol {
                   subs__.getKey(), subs__.getValue());
               break;
             }
+            case 34: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            case 42: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              version_ = s;
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -8249,7 +8359,7 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectRequest_descriptor;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -8267,7 +8377,7 @@ public final class Protocol {
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest.Builder.class);
     }
@@ -8278,6 +8388,7 @@ public final class Protocol {
      * <code>string token = 1;</code>
      * @return The token.
      */
+    @java.lang.Override
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
       if (ref instanceof java.lang.String) {
@@ -8294,6 +8405,7 @@ public final class Protocol {
      * <code>string token = 1;</code>
      * @return The bytes for token.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getTokenBytes() {
       java.lang.Object ref = token_;
@@ -8314,6 +8426,7 @@ public final class Protocol {
      * <code>bytes data = 2;</code>
      * @return The data.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -8324,7 +8437,7 @@ public final class Protocol {
           java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest>newDefaultInstance(
-                  io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectRequest_SubsEntry_descriptor, 
+                  io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectRequest_SubsEntry_descriptor, 
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -8345,9 +8458,10 @@ public final class Protocol {
       return internalGetSubs().getMap().size();
     }
     /**
-     * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+     * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
      */
 
+    @java.lang.Override
     public boolean containsSubs(
         java.lang.String key) {
       if (key == null) { throw new java.lang.NullPointerException(); }
@@ -8356,20 +8470,23 @@ public final class Protocol {
     /**
      * Use {@link #getSubsMap()} instead.
      */
+    @java.lang.Override
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> getSubs() {
       return getSubsMap();
     }
     /**
-     * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+     * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
      */
+    @java.lang.Override
 
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> getSubsMap() {
       return internalGetSubs().getMap();
     }
     /**
-     * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+     * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
      */
+    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrDefault(
         java.lang.String key,
@@ -8380,8 +8497,9 @@ public final class Protocol {
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
     /**
-     * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+     * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
      */
+    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrThrow(
         java.lang.String key) {
@@ -8392,6 +8510,82 @@ public final class Protocol {
         throw new java.lang.IllegalArgumentException();
       }
       return map.get(key);
+    }
+
+    public static final int NAME_FIELD_NUMBER = 4;
+    private volatile java.lang.Object name_;
+    /**
+     * <code>string name = 4;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string name = 4;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int VERSION_FIELD_NUMBER = 5;
+    private volatile java.lang.Object version_;
+    /**
+     * <code>string version = 5;</code>
+     * @return The version.
+     */
+    @java.lang.Override
+    public java.lang.String getVersion() {
+      java.lang.Object ref = version_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        version_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string version = 5;</code>
+     * @return The bytes for version.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getVersionBytes() {
+      java.lang.Object ref = version_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        version_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -8420,6 +8614,12 @@ public final class Protocol {
           internalGetSubs(),
           SubsDefaultEntryHolder.defaultEntry,
           3);
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, name_);
+      }
+      if (!getVersionBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 5, version_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -8446,6 +8646,12 @@ public final class Protocol {
         size += com.google.protobuf.CodedOutputStream
             .computeMessageSize(3, subs__);
       }
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, name_);
+      }
+      if (!getVersionBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, version_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -8467,6 +8673,10 @@ public final class Protocol {
           .equals(other.getData())) return false;
       if (!internalGetSubs().equals(
           other.internalGetSubs())) return false;
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (!getVersion()
+          .equals(other.getVersion())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -8486,6 +8696,10 @@ public final class Protocol {
         hash = (37 * hash) + SUBS_FIELD_NUMBER;
         hash = (53 * hash) + internalGetSubs().hashCode();
       }
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + VERSION_FIELD_NUMBER;
+      hash = (53 * hash) + getVersion().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -8582,15 +8796,15 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.ConnectRequest}
+     * Protobuf type {@code protocol.ConnectRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.ConnectRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.ConnectRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectRequest_descriptor;
       }
 
       @SuppressWarnings({"rawtypes"})
@@ -8618,7 +8832,7 @@ public final class Protocol {
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest.Builder.class);
       }
@@ -8646,13 +8860,17 @@ public final class Protocol {
         data_ = com.google.protobuf.ByteString.EMPTY;
 
         internalGetMutableSubs().clear();
+        name_ = "";
+
+        version_ = "";
+
         return this;
       }
 
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectRequest_descriptor;
       }
 
       @java.lang.Override
@@ -8677,6 +8895,8 @@ public final class Protocol {
         result.data_ = data_;
         result.subs_ = internalGetSubs();
         result.subs_.makeImmutable();
+        result.name_ = name_;
+        result.version_ = version_;
         onBuilt();
         return result;
       }
@@ -8734,6 +8954,14 @@ public final class Protocol {
         }
         internalGetMutableSubs().mergeFrom(
             other.internalGetSubs());
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
+        if (!other.getVersion().isEmpty()) {
+          version_ = other.version_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -8845,6 +9073,7 @@ public final class Protocol {
        * <code>bytes data = 2;</code>
        * @return The data.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -8900,9 +9129,10 @@ public final class Protocol {
         return internalGetSubs().getMap().size();
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+       * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
        */
 
+      @java.lang.Override
       public boolean containsSubs(
           java.lang.String key) {
         if (key == null) { throw new java.lang.NullPointerException(); }
@@ -8911,20 +9141,23 @@ public final class Protocol {
       /**
        * Use {@link #getSubsMap()} instead.
        */
+      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> getSubs() {
         return getSubsMap();
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+       * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
        */
+      @java.lang.Override
 
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> getSubsMap() {
         return internalGetSubs().getMap();
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+       * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
        */
+      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrDefault(
           java.lang.String key,
@@ -8935,8 +9168,9 @@ public final class Protocol {
         return map.containsKey(key) ? map.get(key) : defaultValue;
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+       * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
        */
+      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrThrow(
           java.lang.String key) {
@@ -8955,7 +9189,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+       * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
        */
 
       public Builder removeSubs(
@@ -8974,7 +9208,7 @@ public final class Protocol {
         return internalGetMutableSubs().getMutableMap();
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+       * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
        */
       public Builder putSubs(
           java.lang.String key,
@@ -8986,13 +9220,165 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeRequest&gt; subs = 3;</code>
+       * <code>map&lt;string, .protocol.SubscribeRequest&gt; subs = 3;</code>
        */
 
       public Builder putAllSubs(
           java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> values) {
         internalGetMutableSubs().getMutableMap()
             .putAll(values);
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <code>string name = 4;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string name = 4;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string name = 4;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 4;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        name_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object version_ = "";
+      /**
+       * <code>string version = 5;</code>
+       * @return The version.
+       */
+      public java.lang.String getVersion() {
+        java.lang.Object ref = version_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          version_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string version = 5;</code>
+       * @return The bytes for version.
+       */
+      public com.google.protobuf.ByteString
+          getVersionBytes() {
+        java.lang.Object ref = version_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          version_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string version = 5;</code>
+       * @param value The version to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersion(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        version_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string version = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersion() {
+        
+        version_ = getDefaultInstance().getVersion();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string version = 5;</code>
+       * @param value The bytes for version to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        version_ = value;
+        onChanged();
         return this;
       }
       @java.lang.Override
@@ -9008,10 +9394,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.ConnectRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.ConnectRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.ConnectRequest)
+    // @@protoc_insertion_point(class_scope:protocol.ConnectRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest();
@@ -9049,7 +9435,7 @@ public final class Protocol {
   }
 
   public interface ConnectResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.ConnectResult)
+      // @@protoc_insertion_point(interface_extends:protocol.ConnectResult)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -9095,11 +9481,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getData();
 
     /**
-     * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+     * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
      */
     int getSubsCount();
     /**
-     * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+     * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
      */
     boolean containsSubs(
         java.lang.String key);
@@ -9110,30 +9496,30 @@ public final class Protocol {
     java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult>
     getSubs();
     /**
-     * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+     * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
      */
     java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult>
     getSubsMap();
     /**
-     * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+     * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
      */
 
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrDefault(
         java.lang.String key,
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult defaultValue);
     /**
-     * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+     * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
      */
 
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
         java.lang.String key);
   }
   /**
-   * Protobuf type {@code proto.ConnectResult}
+   * Protobuf type {@code protocol.ConnectResult}
    */
-  public  static final class ConnectResult extends
+  public static final class ConnectResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.ConnectResult)
+      // @@protoc_insertion_point(message_implements:protocol.ConnectResult)
       ConnectResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use ConnectResult.newBuilder() to construct.
@@ -9238,7 +9624,7 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectResult_descriptor;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -9256,7 +9642,7 @@ public final class Protocol {
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult.Builder.class);
     }
@@ -9267,6 +9653,7 @@ public final class Protocol {
      * <code>string client = 1;</code>
      * @return The client.
      */
+    @java.lang.Override
     public java.lang.String getClient() {
       java.lang.Object ref = client_;
       if (ref instanceof java.lang.String) {
@@ -9283,6 +9670,7 @@ public final class Protocol {
      * <code>string client = 1;</code>
      * @return The bytes for client.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getClientBytes() {
       java.lang.Object ref = client_;
@@ -9303,6 +9691,7 @@ public final class Protocol {
      * <code>string version = 2;</code>
      * @return The version.
      */
+    @java.lang.Override
     public java.lang.String getVersion() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
@@ -9319,6 +9708,7 @@ public final class Protocol {
      * <code>string version = 2;</code>
      * @return The bytes for version.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getVersionBytes() {
       java.lang.Object ref = version_;
@@ -9339,6 +9729,7 @@ public final class Protocol {
      * <code>bool expires = 3;</code>
      * @return The expires.
      */
+    @java.lang.Override
     public boolean getExpires() {
       return expires_;
     }
@@ -9349,6 +9740,7 @@ public final class Protocol {
      * <code>uint32 ttl = 4;</code>
      * @return The ttl.
      */
+    @java.lang.Override
     public int getTtl() {
       return ttl_;
     }
@@ -9359,6 +9751,7 @@ public final class Protocol {
      * <code>bytes data = 5;</code>
      * @return The data.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -9369,7 +9762,7 @@ public final class Protocol {
           java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult>newDefaultInstance(
-                  io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectResult_SubsEntry_descriptor, 
+                  io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectResult_SubsEntry_descriptor, 
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -9390,9 +9783,10 @@ public final class Protocol {
       return internalGetSubs().getMap().size();
     }
     /**
-     * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+     * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
      */
 
+    @java.lang.Override
     public boolean containsSubs(
         java.lang.String key) {
       if (key == null) { throw new java.lang.NullPointerException(); }
@@ -9401,20 +9795,23 @@ public final class Protocol {
     /**
      * Use {@link #getSubsMap()} instead.
      */
+    @java.lang.Override
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> getSubs() {
       return getSubsMap();
     }
     /**
-     * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+     * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
      */
+    @java.lang.Override
 
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> getSubsMap() {
       return internalGetSubs().getMap();
     }
     /**
-     * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+     * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
      */
+    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrDefault(
         java.lang.String key,
@@ -9425,8 +9822,9 @@ public final class Protocol {
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
     /**
-     * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+     * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
      */
+    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
         java.lang.String key) {
@@ -9660,15 +10058,15 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.ConnectResult}
+     * Protobuf type {@code protocol.ConnectResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.ConnectResult)
+        // @@protoc_insertion_point(builder_implements:protocol.ConnectResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectResult_descriptor;
       }
 
       @SuppressWarnings({"rawtypes"})
@@ -9696,7 +10094,7 @@ public final class Protocol {
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult.Builder.class);
       }
@@ -9736,7 +10134,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_ConnectResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_ConnectResult_descriptor;
       }
 
       @java.lang.Override
@@ -10018,6 +10416,7 @@ public final class Protocol {
        * <code>bool expires = 3;</code>
        * @return The expires.
        */
+      @java.lang.Override
       public boolean getExpires() {
         return expires_;
       }
@@ -10048,6 +10447,7 @@ public final class Protocol {
        * <code>uint32 ttl = 4;</code>
        * @return The ttl.
        */
+      @java.lang.Override
       public int getTtl() {
         return ttl_;
       }
@@ -10078,6 +10478,7 @@ public final class Protocol {
        * <code>bytes data = 5;</code>
        * @return The data.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -10133,9 +10534,10 @@ public final class Protocol {
         return internalGetSubs().getMap().size();
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+       * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
        */
 
+      @java.lang.Override
       public boolean containsSubs(
           java.lang.String key) {
         if (key == null) { throw new java.lang.NullPointerException(); }
@@ -10144,20 +10546,23 @@ public final class Protocol {
       /**
        * Use {@link #getSubsMap()} instead.
        */
+      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> getSubs() {
         return getSubsMap();
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+       * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
        */
+      @java.lang.Override
 
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> getSubsMap() {
         return internalGetSubs().getMap();
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+       * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
        */
+      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrDefault(
           java.lang.String key,
@@ -10168,8 +10573,9 @@ public final class Protocol {
         return map.containsKey(key) ? map.get(key) : defaultValue;
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+       * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
        */
+      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
           java.lang.String key) {
@@ -10188,7 +10594,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+       * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
        */
 
       public Builder removeSubs(
@@ -10207,7 +10613,7 @@ public final class Protocol {
         return internalGetMutableSubs().getMutableMap();
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+       * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
        */
       public Builder putSubs(
           java.lang.String key,
@@ -10219,7 +10625,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>map&lt;string, .proto.SubscribeResult&gt; subs = 6;</code>
+       * <code>map&lt;string, .protocol.SubscribeResult&gt; subs = 6;</code>
        */
 
       public Builder putAllSubs(
@@ -10241,10 +10647,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.ConnectResult)
+      // @@protoc_insertion_point(builder_scope:protocol.ConnectResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.ConnectResult)
+    // @@protoc_insertion_point(class_scope:protocol.ConnectResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult();
@@ -10282,7 +10688,7 @@ public final class Protocol {
   }
 
   public interface RefreshRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.RefreshRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.RefreshRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -10298,11 +10704,11 @@ public final class Protocol {
         getTokenBytes();
   }
   /**
-   * Protobuf type {@code proto.RefreshRequest}
+   * Protobuf type {@code protocol.RefreshRequest}
    */
-  public  static final class RefreshRequest extends
+  public static final class RefreshRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.RefreshRequest)
+      // @@protoc_insertion_point(message_implements:protocol.RefreshRequest)
       RefreshRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use RefreshRequest.newBuilder() to construct.
@@ -10370,13 +10776,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest.Builder.class);
     }
@@ -10387,6 +10793,7 @@ public final class Protocol {
      * <code>string token = 1;</code>
      * @return The token.
      */
+    @java.lang.Override
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
       if (ref instanceof java.lang.String) {
@@ -10403,6 +10810,7 @@ public final class Protocol {
      * <code>string token = 1;</code>
      * @return The bytes for token.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getTokenBytes() {
       java.lang.Object ref = token_;
@@ -10572,21 +10980,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.RefreshRequest}
+     * Protobuf type {@code protocol.RefreshRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.RefreshRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.RefreshRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest.Builder.class);
       }
@@ -10617,7 +11025,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshRequest_descriptor;
       }
 
       @java.lang.Override
@@ -10807,10 +11215,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.RefreshRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.RefreshRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.RefreshRequest)
+    // @@protoc_insertion_point(class_scope:protocol.RefreshRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest();
@@ -10848,7 +11256,7 @@ public final class Protocol {
   }
 
   public interface RefreshResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.RefreshResult)
+      // @@protoc_insertion_point(interface_extends:protocol.RefreshResult)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -10888,11 +11296,11 @@ public final class Protocol {
     int getTtl();
   }
   /**
-   * Protobuf type {@code proto.RefreshResult}
+   * Protobuf type {@code protocol.RefreshResult}
    */
-  public  static final class RefreshResult extends
+  public static final class RefreshResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.RefreshResult)
+      // @@protoc_insertion_point(message_implements:protocol.RefreshResult)
       RefreshResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use RefreshResult.newBuilder() to construct.
@@ -10977,13 +11385,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult.Builder.class);
     }
@@ -10994,6 +11402,7 @@ public final class Protocol {
      * <code>string client = 1;</code>
      * @return The client.
      */
+    @java.lang.Override
     public java.lang.String getClient() {
       java.lang.Object ref = client_;
       if (ref instanceof java.lang.String) {
@@ -11010,6 +11419,7 @@ public final class Protocol {
      * <code>string client = 1;</code>
      * @return The bytes for client.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getClientBytes() {
       java.lang.Object ref = client_;
@@ -11030,6 +11440,7 @@ public final class Protocol {
      * <code>string version = 2;</code>
      * @return The version.
      */
+    @java.lang.Override
     public java.lang.String getVersion() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
@@ -11046,6 +11457,7 @@ public final class Protocol {
      * <code>string version = 2;</code>
      * @return The bytes for version.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getVersionBytes() {
       java.lang.Object ref = version_;
@@ -11066,6 +11478,7 @@ public final class Protocol {
      * <code>bool expires = 3;</code>
      * @return The expires.
      */
+    @java.lang.Override
     public boolean getExpires() {
       return expires_;
     }
@@ -11076,6 +11489,7 @@ public final class Protocol {
      * <code>uint32 ttl = 4;</code>
      * @return The ttl.
      */
+    @java.lang.Override
     public int getTtl() {
       return ttl_;
     }
@@ -11268,21 +11682,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.RefreshResult}
+     * Protobuf type {@code protocol.RefreshResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.RefreshResult)
+        // @@protoc_insertion_point(builder_implements:protocol.RefreshResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult.Builder.class);
       }
@@ -11319,7 +11733,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RefreshResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RefreshResult_descriptor;
       }
 
       @java.lang.Override
@@ -11591,6 +12005,7 @@ public final class Protocol {
        * <code>bool expires = 3;</code>
        * @return The expires.
        */
+      @java.lang.Override
       public boolean getExpires() {
         return expires_;
       }
@@ -11621,6 +12036,7 @@ public final class Protocol {
        * <code>uint32 ttl = 4;</code>
        * @return The ttl.
        */
+      @java.lang.Override
       public int getTtl() {
         return ttl_;
       }
@@ -11658,10 +12074,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.RefreshResult)
+      // @@protoc_insertion_point(builder_scope:protocol.RefreshResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.RefreshResult)
+    // @@protoc_insertion_point(class_scope:protocol.RefreshResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult();
@@ -11699,7 +12115,7 @@ public final class Protocol {
   }
 
   public interface SubscribeRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.SubscribeRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.SubscribeRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -11763,11 +12179,11 @@ public final class Protocol {
     long getOffset();
   }
   /**
-   * Protobuf type {@code proto.SubscribeRequest}
+   * Protobuf type {@code protocol.SubscribeRequest}
    */
-  public  static final class SubscribeRequest extends
+  public static final class SubscribeRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.SubscribeRequest)
+      // @@protoc_insertion_point(message_implements:protocol.SubscribeRequest)
       SubscribeRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use SubscribeRequest.newBuilder() to construct.
@@ -11869,13 +12285,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest.Builder.class);
     }
@@ -11886,6 +12302,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
+    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -11902,6 +12319,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -11922,6 +12340,7 @@ public final class Protocol {
      * <code>string token = 2;</code>
      * @return The token.
      */
+    @java.lang.Override
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
       if (ref instanceof java.lang.String) {
@@ -11938,6 +12357,7 @@ public final class Protocol {
      * <code>string token = 2;</code>
      * @return The bytes for token.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getTokenBytes() {
       java.lang.Object ref = token_;
@@ -11958,6 +12378,7 @@ public final class Protocol {
      * <code>bool recover = 3;</code>
      * @return The recover.
      */
+    @java.lang.Override
     public boolean getRecover() {
       return recover_;
     }
@@ -11968,6 +12389,7 @@ public final class Protocol {
      * <code>uint32 seq = 4;</code>
      * @return The seq.
      */
+    @java.lang.Override
     public int getSeq() {
       return seq_;
     }
@@ -11978,6 +12400,7 @@ public final class Protocol {
      * <code>uint32 gen = 5;</code>
      * @return The gen.
      */
+    @java.lang.Override
     public int getGen() {
       return gen_;
     }
@@ -11988,6 +12411,7 @@ public final class Protocol {
      * <code>string epoch = 6;</code>
      * @return The epoch.
      */
+    @java.lang.Override
     public java.lang.String getEpoch() {
       java.lang.Object ref = epoch_;
       if (ref instanceof java.lang.String) {
@@ -12004,6 +12428,7 @@ public final class Protocol {
      * <code>string epoch = 6;</code>
      * @return The bytes for epoch.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getEpochBytes() {
       java.lang.Object ref = epoch_;
@@ -12024,6 +12449,7 @@ public final class Protocol {
      * <code>uint64 offset = 7;</code>
      * @return The offset.
      */
+    @java.lang.Override
     public long getOffset() {
       return offset_;
     }
@@ -12249,21 +12675,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.SubscribeRequest}
+     * Protobuf type {@code protocol.SubscribeRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.SubscribeRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.SubscribeRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest.Builder.class);
       }
@@ -12306,7 +12732,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeRequest_descriptor;
       }
 
       @java.lang.Override
@@ -12591,6 +13017,7 @@ public final class Protocol {
        * <code>bool recover = 3;</code>
        * @return The recover.
        */
+      @java.lang.Override
       public boolean getRecover() {
         return recover_;
       }
@@ -12621,6 +13048,7 @@ public final class Protocol {
        * <code>uint32 seq = 4;</code>
        * @return The seq.
        */
+      @java.lang.Override
       public int getSeq() {
         return seq_;
       }
@@ -12651,6 +13079,7 @@ public final class Protocol {
        * <code>uint32 gen = 5;</code>
        * @return The gen.
        */
+      @java.lang.Override
       public int getGen() {
         return gen_;
       }
@@ -12757,6 +13186,7 @@ public final class Protocol {
        * <code>uint64 offset = 7;</code>
        * @return The offset.
        */
+      @java.lang.Override
       public long getOffset() {
         return offset_;
       }
@@ -12794,10 +13224,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.SubscribeRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.SubscribeRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.SubscribeRequest)
+    // @@protoc_insertion_point(class_scope:protocol.SubscribeRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest();
@@ -12835,7 +13265,7 @@ public final class Protocol {
   }
 
   public interface SubscribeResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.SubscribeResult)
+      // @@protoc_insertion_point(interface_extends:protocol.SubscribeResult)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -12881,25 +13311,25 @@ public final class Protocol {
         getEpochBytes();
 
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
     java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> 
         getPublicationsList();
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPublications(int index);
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
     int getPublicationsCount();
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
     java.util.List<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> 
         getPublicationsOrBuilderList();
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder getPublicationsOrBuilder(
         int index);
@@ -12917,11 +13347,11 @@ public final class Protocol {
     long getOffset();
   }
   /**
-   * Protobuf type {@code proto.SubscribeResult}
+   * Protobuf type {@code protocol.SubscribeResult}
    */
-  public  static final class SubscribeResult extends
+  public static final class SubscribeResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.SubscribeResult)
+      // @@protoc_insertion_point(message_implements:protocol.SubscribeResult)
       SubscribeResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use SubscribeResult.newBuilder() to construct.
@@ -13038,13 +13468,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult.Builder.class);
     }
@@ -13055,6 +13485,7 @@ public final class Protocol {
      * <code>bool expires = 1;</code>
      * @return The expires.
      */
+    @java.lang.Override
     public boolean getExpires() {
       return expires_;
     }
@@ -13065,6 +13496,7 @@ public final class Protocol {
      * <code>uint32 ttl = 2;</code>
      * @return The ttl.
      */
+    @java.lang.Override
     public int getTtl() {
       return ttl_;
     }
@@ -13075,6 +13507,7 @@ public final class Protocol {
      * <code>bool recoverable = 3;</code>
      * @return The recoverable.
      */
+    @java.lang.Override
     public boolean getRecoverable() {
       return recoverable_;
     }
@@ -13085,6 +13518,7 @@ public final class Protocol {
      * <code>uint32 seq = 4;</code>
      * @return The seq.
      */
+    @java.lang.Override
     public int getSeq() {
       return seq_;
     }
@@ -13095,6 +13529,7 @@ public final class Protocol {
      * <code>uint32 gen = 5;</code>
      * @return The gen.
      */
+    @java.lang.Override
     public int getGen() {
       return gen_;
     }
@@ -13105,6 +13540,7 @@ public final class Protocol {
      * <code>string epoch = 6;</code>
      * @return The epoch.
      */
+    @java.lang.Override
     public java.lang.String getEpoch() {
       java.lang.Object ref = epoch_;
       if (ref instanceof java.lang.String) {
@@ -13121,6 +13557,7 @@ public final class Protocol {
      * <code>string epoch = 6;</code>
      * @return The bytes for epoch.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getEpochBytes() {
       java.lang.Object ref = epoch_;
@@ -13138,33 +13575,38 @@ public final class Protocol {
     public static final int PUBLICATIONS_FIELD_NUMBER = 7;
     private java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> publications_;
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
+    @java.lang.Override
     public java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> getPublicationsList() {
       return publications_;
     }
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> 
         getPublicationsOrBuilderList() {
       return publications_;
     }
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
+    @java.lang.Override
     public int getPublicationsCount() {
       return publications_.size();
     }
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPublications(int index) {
       return publications_.get(index);
     }
     /**
-     * <code>repeated .proto.Publication publications = 7;</code>
+     * <code>repeated .protocol.Publication publications = 7;</code>
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder getPublicationsOrBuilder(
         int index) {
       return publications_.get(index);
@@ -13176,6 +13618,7 @@ public final class Protocol {
      * <code>bool recovered = 8;</code>
      * @return The recovered.
      */
+    @java.lang.Override
     public boolean getRecovered() {
       return recovered_;
     }
@@ -13186,6 +13629,7 @@ public final class Protocol {
      * <code>uint64 offset = 9;</code>
      * @return The offset.
      */
+    @java.lang.Override
     public long getOffset() {
       return offset_;
     }
@@ -13439,21 +13883,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.SubscribeResult}
+     * Protobuf type {@code protocol.SubscribeResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.SubscribeResult)
+        // @@protoc_insertion_point(builder_implements:protocol.SubscribeResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult.Builder.class);
       }
@@ -13505,7 +13949,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubscribeResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubscribeResult_descriptor;
       }
 
       @java.lang.Override
@@ -13677,6 +14121,7 @@ public final class Protocol {
        * <code>bool expires = 1;</code>
        * @return The expires.
        */
+      @java.lang.Override
       public boolean getExpires() {
         return expires_;
       }
@@ -13707,6 +14152,7 @@ public final class Protocol {
        * <code>uint32 ttl = 2;</code>
        * @return The ttl.
        */
+      @java.lang.Override
       public int getTtl() {
         return ttl_;
       }
@@ -13737,6 +14183,7 @@ public final class Protocol {
        * <code>bool recoverable = 3;</code>
        * @return The recoverable.
        */
+      @java.lang.Override
       public boolean getRecoverable() {
         return recoverable_;
       }
@@ -13767,6 +14214,7 @@ public final class Protocol {
        * <code>uint32 seq = 4;</code>
        * @return The seq.
        */
+      @java.lang.Override
       public int getSeq() {
         return seq_;
       }
@@ -13797,6 +14245,7 @@ public final class Protocol {
        * <code>uint32 gen = 5;</code>
        * @return The gen.
        */
+      @java.lang.Override
       public int getGen() {
         return gen_;
       }
@@ -13911,7 +14360,7 @@ public final class Protocol {
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> publicationsBuilder_;
 
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> getPublicationsList() {
         if (publicationsBuilder_ == null) {
@@ -13921,7 +14370,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public int getPublicationsCount() {
         if (publicationsBuilder_ == null) {
@@ -13931,7 +14380,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPublications(int index) {
         if (publicationsBuilder_ == null) {
@@ -13941,7 +14390,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public Builder setPublications(
           int index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
@@ -13958,7 +14407,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public Builder setPublications(
           int index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder builderForValue) {
@@ -13972,7 +14421,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public Builder addPublications(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
         if (publicationsBuilder_ == null) {
@@ -13988,7 +14437,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public Builder addPublications(
           int index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
@@ -14005,7 +14454,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public Builder addPublications(
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder builderForValue) {
@@ -14019,7 +14468,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public Builder addPublications(
           int index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder builderForValue) {
@@ -14033,7 +14482,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public Builder addAllPublications(
           java.lang.Iterable<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> values) {
@@ -14048,7 +14497,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public Builder clearPublications() {
         if (publicationsBuilder_ == null) {
@@ -14061,7 +14510,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public Builder removePublications(int index) {
         if (publicationsBuilder_ == null) {
@@ -14074,14 +14523,14 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder getPublicationsBuilder(
           int index) {
         return getPublicationsFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder getPublicationsOrBuilder(
           int index) {
@@ -14091,7 +14540,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public java.util.List<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> 
            getPublicationsOrBuilderList() {
@@ -14102,14 +14551,14 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder addPublicationsBuilder() {
         return getPublicationsFieldBuilder().addBuilder(
             io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.getDefaultInstance());
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder addPublicationsBuilder(
           int index) {
@@ -14117,7 +14566,7 @@ public final class Protocol {
             index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.getDefaultInstance());
       }
       /**
-       * <code>repeated .proto.Publication publications = 7;</code>
+       * <code>repeated .protocol.Publication publications = 7;</code>
        */
       public java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder> 
            getPublicationsBuilderList() {
@@ -14143,6 +14592,7 @@ public final class Protocol {
        * <code>bool recovered = 8;</code>
        * @return The recovered.
        */
+      @java.lang.Override
       public boolean getRecovered() {
         return recovered_;
       }
@@ -14173,6 +14623,7 @@ public final class Protocol {
        * <code>uint64 offset = 9;</code>
        * @return The offset.
        */
+      @java.lang.Override
       public long getOffset() {
         return offset_;
       }
@@ -14210,10 +14661,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.SubscribeResult)
+      // @@protoc_insertion_point(builder_scope:protocol.SubscribeResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.SubscribeResult)
+    // @@protoc_insertion_point(class_scope:protocol.SubscribeResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult();
@@ -14251,7 +14702,7 @@ public final class Protocol {
   }
 
   public interface SubRefreshRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.SubRefreshRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.SubRefreshRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -14279,11 +14730,11 @@ public final class Protocol {
         getTokenBytes();
   }
   /**
-   * Protobuf type {@code proto.SubRefreshRequest}
+   * Protobuf type {@code protocol.SubRefreshRequest}
    */
-  public  static final class SubRefreshRequest extends
+  public static final class SubRefreshRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.SubRefreshRequest)
+      // @@protoc_insertion_point(message_implements:protocol.SubRefreshRequest)
       SubRefreshRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use SubRefreshRequest.newBuilder() to construct.
@@ -14358,13 +14809,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest.Builder.class);
     }
@@ -14375,6 +14826,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
+    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -14391,6 +14843,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -14411,6 +14864,7 @@ public final class Protocol {
      * <code>string token = 2;</code>
      * @return The token.
      */
+    @java.lang.Override
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
       if (ref instanceof java.lang.String) {
@@ -14427,6 +14881,7 @@ public final class Protocol {
      * <code>string token = 2;</code>
      * @return The bytes for token.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getTokenBytes() {
       java.lang.Object ref = token_;
@@ -14606,21 +15061,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.SubRefreshRequest}
+     * Protobuf type {@code protocol.SubRefreshRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.SubRefreshRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.SubRefreshRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest.Builder.class);
       }
@@ -14653,7 +15108,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshRequest_descriptor;
       }
 
       @java.lang.Override
@@ -14924,10 +15379,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.SubRefreshRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.SubRefreshRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.SubRefreshRequest)
+    // @@protoc_insertion_point(class_scope:protocol.SubRefreshRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest();
@@ -14965,7 +15420,7 @@ public final class Protocol {
   }
 
   public interface SubRefreshResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.SubRefreshResult)
+      // @@protoc_insertion_point(interface_extends:protocol.SubRefreshResult)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -14981,11 +15436,11 @@ public final class Protocol {
     int getTtl();
   }
   /**
-   * Protobuf type {@code proto.SubRefreshResult}
+   * Protobuf type {@code protocol.SubRefreshResult}
    */
-  public  static final class SubRefreshResult extends
+  public static final class SubRefreshResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.SubRefreshResult)
+      // @@protoc_insertion_point(message_implements:protocol.SubRefreshResult)
       SubRefreshResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use SubRefreshResult.newBuilder() to construct.
@@ -15056,13 +15511,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult.Builder.class);
     }
@@ -15073,6 +15528,7 @@ public final class Protocol {
      * <code>bool expires = 1;</code>
      * @return The expires.
      */
+    @java.lang.Override
     public boolean getExpires() {
       return expires_;
     }
@@ -15083,6 +15539,7 @@ public final class Protocol {
      * <code>uint32 ttl = 2;</code>
      * @return The ttl.
      */
+    @java.lang.Override
     public int getTtl() {
       return ttl_;
     }
@@ -15255,21 +15712,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.SubRefreshResult}
+     * Protobuf type {@code protocol.SubRefreshResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.SubRefreshResult)
+        // @@protoc_insertion_point(builder_implements:protocol.SubRefreshResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult.Builder.class);
       }
@@ -15302,7 +15759,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SubRefreshResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SubRefreshResult_descriptor;
       }
 
       @java.lang.Override
@@ -15412,6 +15869,7 @@ public final class Protocol {
        * <code>bool expires = 1;</code>
        * @return The expires.
        */
+      @java.lang.Override
       public boolean getExpires() {
         return expires_;
       }
@@ -15442,6 +15900,7 @@ public final class Protocol {
        * <code>uint32 ttl = 2;</code>
        * @return The ttl.
        */
+      @java.lang.Override
       public int getTtl() {
         return ttl_;
       }
@@ -15479,10 +15938,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.SubRefreshResult)
+      // @@protoc_insertion_point(builder_scope:protocol.SubRefreshResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.SubRefreshResult)
+    // @@protoc_insertion_point(class_scope:protocol.SubRefreshResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult();
@@ -15520,7 +15979,7 @@ public final class Protocol {
   }
 
   public interface UnsubscribeRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.UnsubscribeRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.UnsubscribeRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -15536,11 +15995,11 @@ public final class Protocol {
         getChannelBytes();
   }
   /**
-   * Protobuf type {@code proto.UnsubscribeRequest}
+   * Protobuf type {@code protocol.UnsubscribeRequest}
    */
-  public  static final class UnsubscribeRequest extends
+  public static final class UnsubscribeRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.UnsubscribeRequest)
+      // @@protoc_insertion_point(message_implements:protocol.UnsubscribeRequest)
       UnsubscribeRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use UnsubscribeRequest.newBuilder() to construct.
@@ -15608,13 +16067,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest.Builder.class);
     }
@@ -15625,6 +16084,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
+    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -15641,6 +16101,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -15810,21 +16271,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.UnsubscribeRequest}
+     * Protobuf type {@code protocol.UnsubscribeRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.UnsubscribeRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.UnsubscribeRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest.Builder.class);
       }
@@ -15855,7 +16316,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeRequest_descriptor;
       }
 
       @java.lang.Override
@@ -16045,10 +16506,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.UnsubscribeRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.UnsubscribeRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.UnsubscribeRequest)
+    // @@protoc_insertion_point(class_scope:protocol.UnsubscribeRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest();
@@ -16086,15 +16547,15 @@ public final class Protocol {
   }
 
   public interface UnsubscribeResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.UnsubscribeResult)
+      // @@protoc_insertion_point(interface_extends:protocol.UnsubscribeResult)
       com.google.protobuf.MessageOrBuilder {
   }
   /**
-   * Protobuf type {@code proto.UnsubscribeResult}
+   * Protobuf type {@code protocol.UnsubscribeResult}
    */
-  public  static final class UnsubscribeResult extends
+  public static final class UnsubscribeResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.UnsubscribeResult)
+      // @@protoc_insertion_point(message_implements:protocol.UnsubscribeResult)
       UnsubscribeResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use UnsubscribeResult.newBuilder() to construct.
@@ -16155,13 +16616,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult.Builder.class);
     }
@@ -16311,21 +16772,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.UnsubscribeResult}
+     * Protobuf type {@code protocol.UnsubscribeResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.UnsubscribeResult)
+        // @@protoc_insertion_point(builder_implements:protocol.UnsubscribeResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult.Builder.class);
       }
@@ -16354,7 +16815,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_UnsubscribeResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_UnsubscribeResult_descriptor;
       }
 
       @java.lang.Override
@@ -16463,10 +16924,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.UnsubscribeResult)
+      // @@protoc_insertion_point(builder_scope:protocol.UnsubscribeResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.UnsubscribeResult)
+    // @@protoc_insertion_point(class_scope:protocol.UnsubscribeResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult();
@@ -16504,7 +16965,7 @@ public final class Protocol {
   }
 
   public interface PublishRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.PublishRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.PublishRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -16526,11 +16987,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getData();
   }
   /**
-   * Protobuf type {@code proto.PublishRequest}
+   * Protobuf type {@code protocol.PublishRequest}
    */
-  public  static final class PublishRequest extends
+  public static final class PublishRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.PublishRequest)
+      // @@protoc_insertion_point(message_implements:protocol.PublishRequest)
       PublishRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use PublishRequest.newBuilder() to construct.
@@ -16604,13 +17065,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest.Builder.class);
     }
@@ -16621,6 +17082,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
+    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -16637,6 +17099,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -16657,6 +17120,7 @@ public final class Protocol {
      * <code>bytes data = 2;</code>
      * @return The data.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -16827,21 +17291,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.PublishRequest}
+     * Protobuf type {@code protocol.PublishRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.PublishRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.PublishRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest.Builder.class);
       }
@@ -16874,7 +17338,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishRequest_descriptor;
       }
 
       @java.lang.Override
@@ -17061,6 +17525,7 @@ public final class Protocol {
        * <code>bytes data = 2;</code>
        * @return The data.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -17101,10 +17566,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.PublishRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.PublishRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.PublishRequest)
+    // @@protoc_insertion_point(class_scope:protocol.PublishRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest();
@@ -17142,15 +17607,15 @@ public final class Protocol {
   }
 
   public interface PublishResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.PublishResult)
+      // @@protoc_insertion_point(interface_extends:protocol.PublishResult)
       com.google.protobuf.MessageOrBuilder {
   }
   /**
-   * Protobuf type {@code proto.PublishResult}
+   * Protobuf type {@code protocol.PublishResult}
    */
-  public  static final class PublishResult extends
+  public static final class PublishResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.PublishResult)
+      // @@protoc_insertion_point(message_implements:protocol.PublishResult)
       PublishResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use PublishResult.newBuilder() to construct.
@@ -17211,13 +17676,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult.Builder.class);
     }
@@ -17367,21 +17832,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.PublishResult}
+     * Protobuf type {@code protocol.PublishResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.PublishResult)
+        // @@protoc_insertion_point(builder_implements:protocol.PublishResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult.Builder.class);
       }
@@ -17410,7 +17875,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PublishResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PublishResult_descriptor;
       }
 
       @java.lang.Override
@@ -17519,10 +17984,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.PublishResult)
+      // @@protoc_insertion_point(builder_scope:protocol.PublishResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.PublishResult)
+    // @@protoc_insertion_point(class_scope:protocol.PublishResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult();
@@ -17560,7 +18025,7 @@ public final class Protocol {
   }
 
   public interface PresenceRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.PresenceRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.PresenceRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -17576,11 +18041,11 @@ public final class Protocol {
         getChannelBytes();
   }
   /**
-   * Protobuf type {@code proto.PresenceRequest}
+   * Protobuf type {@code protocol.PresenceRequest}
    */
-  public  static final class PresenceRequest extends
+  public static final class PresenceRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.PresenceRequest)
+      // @@protoc_insertion_point(message_implements:protocol.PresenceRequest)
       PresenceRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use PresenceRequest.newBuilder() to construct.
@@ -17648,13 +18113,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest.Builder.class);
     }
@@ -17665,6 +18130,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
+    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -17681,6 +18147,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -17850,21 +18317,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.PresenceRequest}
+     * Protobuf type {@code protocol.PresenceRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.PresenceRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.PresenceRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest.Builder.class);
       }
@@ -17895,7 +18362,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceRequest_descriptor;
       }
 
       @java.lang.Override
@@ -18085,10 +18552,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.PresenceRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.PresenceRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.PresenceRequest)
+    // @@protoc_insertion_point(class_scope:protocol.PresenceRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest();
@@ -18126,15 +18593,15 @@ public final class Protocol {
   }
 
   public interface PresenceResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.PresenceResult)
+      // @@protoc_insertion_point(interface_extends:protocol.PresenceResult)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+     * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
      */
     int getPresenceCount();
     /**
-     * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+     * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
      */
     boolean containsPresence(
         java.lang.String key);
@@ -18145,30 +18612,30 @@ public final class Protocol {
     java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo>
     getPresence();
     /**
-     * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+     * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
      */
     java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo>
     getPresenceMap();
     /**
-     * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+     * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
      */
 
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrDefault(
         java.lang.String key,
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo defaultValue);
     /**
-     * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+     * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
      */
 
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrThrow(
         java.lang.String key);
   }
   /**
-   * Protobuf type {@code proto.PresenceResult}
+   * Protobuf type {@code protocol.PresenceResult}
    */
-  public  static final class PresenceResult extends
+  public static final class PresenceResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.PresenceResult)
+      // @@protoc_insertion_point(message_implements:protocol.PresenceResult)
       PresenceResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use PresenceResult.newBuilder() to construct.
@@ -18243,7 +18710,7 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceResult_descriptor;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -18261,7 +18728,7 @@ public final class Protocol {
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult.Builder.class);
     }
@@ -18272,7 +18739,7 @@ public final class Protocol {
           java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> defaultEntry =
               com.google.protobuf.MapEntry
               .<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo>newDefaultInstance(
-                  io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceResult_PresenceEntry_descriptor, 
+                  io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceResult_PresenceEntry_descriptor, 
                   com.google.protobuf.WireFormat.FieldType.STRING,
                   "",
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
@@ -18293,9 +18760,10 @@ public final class Protocol {
       return internalGetPresence().getMap().size();
     }
     /**
-     * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+     * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
      */
 
+    @java.lang.Override
     public boolean containsPresence(
         java.lang.String key) {
       if (key == null) { throw new java.lang.NullPointerException(); }
@@ -18304,20 +18772,23 @@ public final class Protocol {
     /**
      * Use {@link #getPresenceMap()} instead.
      */
+    @java.lang.Override
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> getPresence() {
       return getPresenceMap();
     }
     /**
-     * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+     * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
      */
+    @java.lang.Override
 
     public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> getPresenceMap() {
       return internalGetPresence().getMap();
     }
     /**
-     * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+     * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
      */
+    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrDefault(
         java.lang.String key,
@@ -18328,8 +18799,9 @@ public final class Protocol {
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
     /**
-     * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+     * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
      */
+    @java.lang.Override
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrThrow(
         java.lang.String key) {
@@ -18509,15 +18981,15 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.PresenceResult}
+     * Protobuf type {@code protocol.PresenceResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.PresenceResult)
+        // @@protoc_insertion_point(builder_implements:protocol.PresenceResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceResult_descriptor;
       }
 
       @SuppressWarnings({"rawtypes"})
@@ -18545,7 +19017,7 @@ public final class Protocol {
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult.Builder.class);
       }
@@ -18575,7 +19047,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceResult_descriptor;
       }
 
       @java.lang.Override
@@ -18705,9 +19177,10 @@ public final class Protocol {
         return internalGetPresence().getMap().size();
       }
       /**
-       * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+       * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
        */
 
+      @java.lang.Override
       public boolean containsPresence(
           java.lang.String key) {
         if (key == null) { throw new java.lang.NullPointerException(); }
@@ -18716,20 +19189,23 @@ public final class Protocol {
       /**
        * Use {@link #getPresenceMap()} instead.
        */
+      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> getPresence() {
         return getPresenceMap();
       }
       /**
-       * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+       * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
        */
+      @java.lang.Override
 
       public java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> getPresenceMap() {
         return internalGetPresence().getMap();
       }
       /**
-       * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+       * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
        */
+      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrDefault(
           java.lang.String key,
@@ -18740,8 +19216,9 @@ public final class Protocol {
         return map.containsKey(key) ? map.get(key) : defaultValue;
       }
       /**
-       * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+       * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
        */
+      @java.lang.Override
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrThrow(
           java.lang.String key) {
@@ -18760,7 +19237,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+       * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
        */
 
       public Builder removePresence(
@@ -18779,7 +19256,7 @@ public final class Protocol {
         return internalGetMutablePresence().getMutableMap();
       }
       /**
-       * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+       * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
        */
       public Builder putPresence(
           java.lang.String key,
@@ -18791,7 +19268,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>map&lt;string, .proto.ClientInfo&gt; presence = 1;</code>
+       * <code>map&lt;string, .protocol.ClientInfo&gt; presence = 1;</code>
        */
 
       public Builder putAllPresence(
@@ -18813,10 +19290,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.PresenceResult)
+      // @@protoc_insertion_point(builder_scope:protocol.PresenceResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.PresenceResult)
+    // @@protoc_insertion_point(class_scope:protocol.PresenceResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult();
@@ -18854,7 +19331,7 @@ public final class Protocol {
   }
 
   public interface PresenceStatsRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.PresenceStatsRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.PresenceStatsRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -18870,11 +19347,11 @@ public final class Protocol {
         getChannelBytes();
   }
   /**
-   * Protobuf type {@code proto.PresenceStatsRequest}
+   * Protobuf type {@code protocol.PresenceStatsRequest}
    */
-  public  static final class PresenceStatsRequest extends
+  public static final class PresenceStatsRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.PresenceStatsRequest)
+      // @@protoc_insertion_point(message_implements:protocol.PresenceStatsRequest)
       PresenceStatsRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use PresenceStatsRequest.newBuilder() to construct.
@@ -18942,13 +19419,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest.Builder.class);
     }
@@ -18959,6 +19436,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
+    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -18975,6 +19453,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -19144,21 +19623,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.PresenceStatsRequest}
+     * Protobuf type {@code protocol.PresenceStatsRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.PresenceStatsRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.PresenceStatsRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest.Builder.class);
       }
@@ -19189,7 +19668,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsRequest_descriptor;
       }
 
       @java.lang.Override
@@ -19379,10 +19858,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.PresenceStatsRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.PresenceStatsRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.PresenceStatsRequest)
+    // @@protoc_insertion_point(class_scope:protocol.PresenceStatsRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest();
@@ -19420,7 +19899,7 @@ public final class Protocol {
   }
 
   public interface PresenceStatsResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.PresenceStatsResult)
+      // @@protoc_insertion_point(interface_extends:protocol.PresenceStatsResult)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -19436,11 +19915,11 @@ public final class Protocol {
     int getNumUsers();
   }
   /**
-   * Protobuf type {@code proto.PresenceStatsResult}
+   * Protobuf type {@code protocol.PresenceStatsResult}
    */
-  public  static final class PresenceStatsResult extends
+  public static final class PresenceStatsResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.PresenceStatsResult)
+      // @@protoc_insertion_point(message_implements:protocol.PresenceStatsResult)
       PresenceStatsResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use PresenceStatsResult.newBuilder() to construct.
@@ -19511,13 +19990,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult.Builder.class);
     }
@@ -19528,6 +20007,7 @@ public final class Protocol {
      * <code>uint32 num_clients = 1;</code>
      * @return The numClients.
      */
+    @java.lang.Override
     public int getNumClients() {
       return numClients_;
     }
@@ -19538,6 +20018,7 @@ public final class Protocol {
      * <code>uint32 num_users = 2;</code>
      * @return The numUsers.
      */
+    @java.lang.Override
     public int getNumUsers() {
       return numUsers_;
     }
@@ -19709,21 +20190,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.PresenceStatsResult}
+     * Protobuf type {@code protocol.PresenceStatsResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.PresenceStatsResult)
+        // @@protoc_insertion_point(builder_implements:protocol.PresenceStatsResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult.Builder.class);
       }
@@ -19756,7 +20237,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PresenceStatsResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PresenceStatsResult_descriptor;
       }
 
       @java.lang.Override
@@ -19866,6 +20347,7 @@ public final class Protocol {
        * <code>uint32 num_clients = 1;</code>
        * @return The numClients.
        */
+      @java.lang.Override
       public int getNumClients() {
         return numClients_;
       }
@@ -19896,6 +20378,7 @@ public final class Protocol {
        * <code>uint32 num_users = 2;</code>
        * @return The numUsers.
        */
+      @java.lang.Override
       public int getNumUsers() {
         return numUsers_;
       }
@@ -19933,10 +20416,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.PresenceStatsResult)
+      // @@protoc_insertion_point(builder_scope:protocol.PresenceStatsResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.PresenceStatsResult)
+    // @@protoc_insertion_point(class_scope:protocol.PresenceStatsResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult();
@@ -19974,7 +20457,7 @@ public final class Protocol {
   }
 
   public interface HistoryRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.HistoryRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.HistoryRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -19990,11 +20473,11 @@ public final class Protocol {
         getChannelBytes();
   }
   /**
-   * Protobuf type {@code proto.HistoryRequest}
+   * Protobuf type {@code protocol.HistoryRequest}
    */
-  public  static final class HistoryRequest extends
+  public static final class HistoryRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.HistoryRequest)
+      // @@protoc_insertion_point(message_implements:protocol.HistoryRequest)
       HistoryRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use HistoryRequest.newBuilder() to construct.
@@ -20062,13 +20545,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest.Builder.class);
     }
@@ -20079,6 +20562,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The channel.
      */
+    @java.lang.Override
     public java.lang.String getChannel() {
       java.lang.Object ref = channel_;
       if (ref instanceof java.lang.String) {
@@ -20095,6 +20579,7 @@ public final class Protocol {
      * <code>string channel = 1;</code>
      * @return The bytes for channel.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getChannelBytes() {
       java.lang.Object ref = channel_;
@@ -20264,21 +20749,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.HistoryRequest}
+     * Protobuf type {@code protocol.HistoryRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.HistoryRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.HistoryRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest.Builder.class);
       }
@@ -20309,7 +20794,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryRequest_descriptor;
       }
 
       @java.lang.Override
@@ -20499,10 +20984,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.HistoryRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.HistoryRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.HistoryRequest)
+    // @@protoc_insertion_point(class_scope:protocol.HistoryRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest();
@@ -20540,39 +21025,39 @@ public final class Protocol {
   }
 
   public interface HistoryResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.HistoryResult)
+      // @@protoc_insertion_point(interface_extends:protocol.HistoryResult)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
     java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> 
         getPublicationsList();
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPublications(int index);
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
     int getPublicationsCount();
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
     java.util.List<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> 
         getPublicationsOrBuilderList();
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder getPublicationsOrBuilder(
         int index);
   }
   /**
-   * Protobuf type {@code proto.HistoryResult}
+   * Protobuf type {@code protocol.HistoryResult}
    */
-  public  static final class HistoryResult extends
+  public static final class HistoryResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.HistoryResult)
+      // @@protoc_insertion_point(message_implements:protocol.HistoryResult)
       HistoryResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use HistoryResult.newBuilder() to construct.
@@ -20647,13 +21132,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult.Builder.class);
     }
@@ -20661,33 +21146,38 @@ public final class Protocol {
     public static final int PUBLICATIONS_FIELD_NUMBER = 1;
     private java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> publications_;
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
+    @java.lang.Override
     public java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> getPublicationsList() {
       return publications_;
     }
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> 
         getPublicationsOrBuilderList() {
       return publications_;
     }
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
+    @java.lang.Override
     public int getPublicationsCount() {
       return publications_.size();
     }
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPublications(int index) {
       return publications_.get(index);
     }
     /**
-     * <code>repeated .proto.Publication publications = 1;</code>
+     * <code>repeated .protocol.Publication publications = 1;</code>
      */
+    @java.lang.Override
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder getPublicationsOrBuilder(
         int index) {
       return publications_.get(index);
@@ -20851,21 +21341,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.HistoryResult}
+     * Protobuf type {@code protocol.HistoryResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.HistoryResult)
+        // @@protoc_insertion_point(builder_implements:protocol.HistoryResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult.Builder.class);
       }
@@ -20901,7 +21391,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_HistoryResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_HistoryResult_descriptor;
       }
 
       @java.lang.Override
@@ -21048,7 +21538,7 @@ public final class Protocol {
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> publicationsBuilder_;
 
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> getPublicationsList() {
         if (publicationsBuilder_ == null) {
@@ -21058,7 +21548,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public int getPublicationsCount() {
         if (publicationsBuilder_ == null) {
@@ -21068,7 +21558,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPublications(int index) {
         if (publicationsBuilder_ == null) {
@@ -21078,7 +21568,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public Builder setPublications(
           int index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
@@ -21095,7 +21585,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public Builder setPublications(
           int index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder builderForValue) {
@@ -21109,7 +21599,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public Builder addPublications(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
         if (publicationsBuilder_ == null) {
@@ -21125,7 +21615,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public Builder addPublications(
           int index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
@@ -21142,7 +21632,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public Builder addPublications(
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder builderForValue) {
@@ -21156,7 +21646,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public Builder addPublications(
           int index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder builderForValue) {
@@ -21170,7 +21660,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public Builder addAllPublications(
           java.lang.Iterable<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication> values) {
@@ -21185,7 +21675,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public Builder clearPublications() {
         if (publicationsBuilder_ == null) {
@@ -21198,7 +21688,7 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public Builder removePublications(int index) {
         if (publicationsBuilder_ == null) {
@@ -21211,14 +21701,14 @@ public final class Protocol {
         return this;
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder getPublicationsBuilder(
           int index) {
         return getPublicationsFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder getPublicationsOrBuilder(
           int index) {
@@ -21228,7 +21718,7 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public java.util.List<? extends io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublicationOrBuilder> 
            getPublicationsOrBuilderList() {
@@ -21239,14 +21729,14 @@ public final class Protocol {
         }
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder addPublicationsBuilder() {
         return getPublicationsFieldBuilder().addBuilder(
             io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.getDefaultInstance());
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder addPublicationsBuilder(
           int index) {
@@ -21254,7 +21744,7 @@ public final class Protocol {
             index, io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.getDefaultInstance());
       }
       /**
-       * <code>repeated .proto.Publication publications = 1;</code>
+       * <code>repeated .protocol.Publication publications = 1;</code>
        */
       public java.util.List<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder> 
            getPublicationsBuilderList() {
@@ -21287,10 +21777,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.HistoryResult)
+      // @@protoc_insertion_point(builder_scope:protocol.HistoryResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.HistoryResult)
+    // @@protoc_insertion_point(class_scope:protocol.HistoryResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult();
@@ -21328,15 +21818,15 @@ public final class Protocol {
   }
 
   public interface PingRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.PingRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.PingRequest)
       com.google.protobuf.MessageOrBuilder {
   }
   /**
-   * Protobuf type {@code proto.PingRequest}
+   * Protobuf type {@code protocol.PingRequest}
    */
-  public  static final class PingRequest extends
+  public static final class PingRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.PingRequest)
+      // @@protoc_insertion_point(message_implements:protocol.PingRequest)
       PingRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use PingRequest.newBuilder() to construct.
@@ -21397,13 +21887,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest.Builder.class);
     }
@@ -21553,21 +22043,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.PingRequest}
+     * Protobuf type {@code protocol.PingRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.PingRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.PingRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest.Builder.class);
       }
@@ -21596,7 +22086,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingRequest_descriptor;
       }
 
       @java.lang.Override
@@ -21705,10 +22195,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.PingRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.PingRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.PingRequest)
+    // @@protoc_insertion_point(class_scope:protocol.PingRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest();
@@ -21746,15 +22236,15 @@ public final class Protocol {
   }
 
   public interface PingResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.PingResult)
+      // @@protoc_insertion_point(interface_extends:protocol.PingResult)
       com.google.protobuf.MessageOrBuilder {
   }
   /**
-   * Protobuf type {@code proto.PingResult}
+   * Protobuf type {@code protocol.PingResult}
    */
-  public  static final class PingResult extends
+  public static final class PingResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.PingResult)
+      // @@protoc_insertion_point(message_implements:protocol.PingResult)
       PingResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use PingResult.newBuilder() to construct.
@@ -21815,13 +22305,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult.Builder.class);
     }
@@ -21971,21 +22461,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.PingResult}
+     * Protobuf type {@code protocol.PingResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.PingResult)
+        // @@protoc_insertion_point(builder_implements:protocol.PingResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult.Builder.class);
       }
@@ -22014,7 +22504,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_PingResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_PingResult_descriptor;
       }
 
       @java.lang.Override
@@ -22123,10 +22613,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.PingResult)
+      // @@protoc_insertion_point(builder_scope:protocol.PingResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.PingResult)
+    // @@protoc_insertion_point(class_scope:protocol.PingResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult();
@@ -22164,7 +22654,7 @@ public final class Protocol {
   }
 
   public interface RPCRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.RPCRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.RPCRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -22186,11 +22676,11 @@ public final class Protocol {
         getMethodBytes();
   }
   /**
-   * Protobuf type {@code proto.RPCRequest}
+   * Protobuf type {@code protocol.RPCRequest}
    */
-  public  static final class RPCRequest extends
+  public static final class RPCRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.RPCRequest)
+      // @@protoc_insertion_point(message_implements:protocol.RPCRequest)
       RPCRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use RPCRequest.newBuilder() to construct.
@@ -22264,13 +22754,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest.Builder.class);
     }
@@ -22281,6 +22771,7 @@ public final class Protocol {
      * <code>bytes data = 1;</code>
      * @return The data.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -22291,6 +22782,7 @@ public final class Protocol {
      * <code>string method = 2;</code>
      * @return The method.
      */
+    @java.lang.Override
     public java.lang.String getMethod() {
       java.lang.Object ref = method_;
       if (ref instanceof java.lang.String) {
@@ -22307,6 +22799,7 @@ public final class Protocol {
      * <code>string method = 2;</code>
      * @return The bytes for method.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getMethodBytes() {
       java.lang.Object ref = method_;
@@ -22487,21 +22980,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.RPCRequest}
+     * Protobuf type {@code protocol.RPCRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.RPCRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.RPCRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest.Builder.class);
       }
@@ -22534,7 +23027,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCRequest_descriptor;
       }
 
       @java.lang.Override
@@ -22645,6 +23138,7 @@ public final class Protocol {
        * <code>bytes data = 1;</code>
        * @return The data.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -22761,10 +23255,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.RPCRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.RPCRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.RPCRequest)
+    // @@protoc_insertion_point(class_scope:protocol.RPCRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest();
@@ -22802,7 +23296,7 @@ public final class Protocol {
   }
 
   public interface RPCResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.RPCResult)
+      // @@protoc_insertion_point(interface_extends:protocol.RPCResult)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -22812,11 +23306,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getData();
   }
   /**
-   * Protobuf type {@code proto.RPCResult}
+   * Protobuf type {@code protocol.RPCResult}
    */
-  public  static final class RPCResult extends
+  public static final class RPCResult extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.RPCResult)
+      // @@protoc_insertion_point(message_implements:protocol.RPCResult)
       RPCResultOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use RPCResult.newBuilder() to construct.
@@ -22883,13 +23377,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCResult_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCResult_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCResult_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCResult_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult.Builder.class);
     }
@@ -22900,6 +23394,7 @@ public final class Protocol {
      * <code>bytes data = 1;</code>
      * @return The data.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -23060,21 +23555,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.RPCResult}
+     * Protobuf type {@code protocol.RPCResult}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.RPCResult)
+        // @@protoc_insertion_point(builder_implements:protocol.RPCResult)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCResult_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCResult_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCResult_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult.Builder.class);
       }
@@ -23105,7 +23600,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_RPCResult_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_RPCResult_descriptor;
       }
 
       @java.lang.Override
@@ -23211,6 +23706,7 @@ public final class Protocol {
        * <code>bytes data = 1;</code>
        * @return The data.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -23251,10 +23747,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.RPCResult)
+      // @@protoc_insertion_point(builder_scope:protocol.RPCResult)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.RPCResult)
+    // @@protoc_insertion_point(class_scope:protocol.RPCResult)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult();
@@ -23292,7 +23788,7 @@ public final class Protocol {
   }
 
   public interface SendRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:proto.SendRequest)
+      // @@protoc_insertion_point(interface_extends:protocol.SendRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -23302,11 +23798,11 @@ public final class Protocol {
     com.google.protobuf.ByteString getData();
   }
   /**
-   * Protobuf type {@code proto.SendRequest}
+   * Protobuf type {@code protocol.SendRequest}
    */
-  public  static final class SendRequest extends
+  public static final class SendRequest extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:proto.SendRequest)
+      // @@protoc_insertion_point(message_implements:protocol.SendRequest)
       SendRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     // Use SendRequest.newBuilder() to construct.
@@ -23373,13 +23869,13 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SendRequest_descriptor;
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SendRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SendRequest_fieldAccessorTable
+      return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SendRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest.Builder.class);
     }
@@ -23390,6 +23886,7 @@ public final class Protocol {
      * <code>bytes data = 1;</code>
      * @return The data.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString getData() {
       return data_;
     }
@@ -23550,21 +24047,21 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code proto.SendRequest}
+     * Protobuf type {@code protocol.SendRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:proto.SendRequest)
+        // @@protoc_insertion_point(builder_implements:protocol.SendRequest)
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SendRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SendRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SendRequest_fieldAccessorTable
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SendRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest.class, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest.Builder.class);
       }
@@ -23595,7 +24092,7 @@ public final class Protocol {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_proto_SendRequest_descriptor;
+        return io.github.centrifugal.centrifuge.internal.protocol.Protocol.internal_static_protocol_SendRequest_descriptor;
       }
 
       @java.lang.Override
@@ -23701,6 +24198,7 @@ public final class Protocol {
        * <code>bytes data = 1;</code>
        * @return The data.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString getData() {
         return data_;
       }
@@ -23741,10 +24239,10 @@ public final class Protocol {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:proto.SendRequest)
+      // @@protoc_insertion_point(builder_scope:protocol.SendRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:proto.SendRequest)
+    // @@protoc_insertion_point(class_scope:protocol.SendRequest)
     private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest DEFAULT_INSTANCE;
     static {
       DEFAULT_INSTANCE = new io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest();
@@ -23782,190 +24280,190 @@ public final class Protocol {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Error_descriptor;
+    internal_static_protocol_Error_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Error_fieldAccessorTable;
+      internal_static_protocol_Error_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Command_descriptor;
+    internal_static_protocol_Command_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Command_fieldAccessorTable;
+      internal_static_protocol_Command_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Reply_descriptor;
+    internal_static_protocol_Reply_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Reply_fieldAccessorTable;
+      internal_static_protocol_Reply_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Push_descriptor;
+    internal_static_protocol_Push_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Push_fieldAccessorTable;
+      internal_static_protocol_Push_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_ClientInfo_descriptor;
+    internal_static_protocol_ClientInfo_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_ClientInfo_fieldAccessorTable;
+      internal_static_protocol_ClientInfo_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Publication_descriptor;
+    internal_static_protocol_Publication_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Publication_fieldAccessorTable;
+      internal_static_protocol_Publication_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Join_descriptor;
+    internal_static_protocol_Join_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Join_fieldAccessorTable;
+      internal_static_protocol_Join_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Leave_descriptor;
+    internal_static_protocol_Leave_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Leave_fieldAccessorTable;
+      internal_static_protocol_Leave_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Unsub_descriptor;
+    internal_static_protocol_Unsub_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Unsub_fieldAccessorTable;
+      internal_static_protocol_Unsub_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Sub_descriptor;
+    internal_static_protocol_Sub_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Sub_fieldAccessorTable;
+      internal_static_protocol_Sub_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_Message_descriptor;
+    internal_static_protocol_Message_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_Message_fieldAccessorTable;
+      internal_static_protocol_Message_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_ConnectRequest_descriptor;
+    internal_static_protocol_ConnectRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_ConnectRequest_fieldAccessorTable;
+      internal_static_protocol_ConnectRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_ConnectRequest_SubsEntry_descriptor;
+    internal_static_protocol_ConnectRequest_SubsEntry_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_ConnectRequest_SubsEntry_fieldAccessorTable;
+      internal_static_protocol_ConnectRequest_SubsEntry_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_ConnectResult_descriptor;
+    internal_static_protocol_ConnectResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_ConnectResult_fieldAccessorTable;
+      internal_static_protocol_ConnectResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_ConnectResult_SubsEntry_descriptor;
+    internal_static_protocol_ConnectResult_SubsEntry_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_ConnectResult_SubsEntry_fieldAccessorTable;
+      internal_static_protocol_ConnectResult_SubsEntry_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_RefreshRequest_descriptor;
+    internal_static_protocol_RefreshRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_RefreshRequest_fieldAccessorTable;
+      internal_static_protocol_RefreshRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_RefreshResult_descriptor;
+    internal_static_protocol_RefreshResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_RefreshResult_fieldAccessorTable;
+      internal_static_protocol_RefreshResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_SubscribeRequest_descriptor;
+    internal_static_protocol_SubscribeRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_SubscribeRequest_fieldAccessorTable;
+      internal_static_protocol_SubscribeRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_SubscribeResult_descriptor;
+    internal_static_protocol_SubscribeResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_SubscribeResult_fieldAccessorTable;
+      internal_static_protocol_SubscribeResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_SubRefreshRequest_descriptor;
+    internal_static_protocol_SubRefreshRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_SubRefreshRequest_fieldAccessorTable;
+      internal_static_protocol_SubRefreshRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_SubRefreshResult_descriptor;
+    internal_static_protocol_SubRefreshResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_SubRefreshResult_fieldAccessorTable;
+      internal_static_protocol_SubRefreshResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_UnsubscribeRequest_descriptor;
+    internal_static_protocol_UnsubscribeRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_UnsubscribeRequest_fieldAccessorTable;
+      internal_static_protocol_UnsubscribeRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_UnsubscribeResult_descriptor;
+    internal_static_protocol_UnsubscribeResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_UnsubscribeResult_fieldAccessorTable;
+      internal_static_protocol_UnsubscribeResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_PublishRequest_descriptor;
+    internal_static_protocol_PublishRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_PublishRequest_fieldAccessorTable;
+      internal_static_protocol_PublishRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_PublishResult_descriptor;
+    internal_static_protocol_PublishResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_PublishResult_fieldAccessorTable;
+      internal_static_protocol_PublishResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_PresenceRequest_descriptor;
+    internal_static_protocol_PresenceRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_PresenceRequest_fieldAccessorTable;
+      internal_static_protocol_PresenceRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_PresenceResult_descriptor;
+    internal_static_protocol_PresenceResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_PresenceResult_fieldAccessorTable;
+      internal_static_protocol_PresenceResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_PresenceResult_PresenceEntry_descriptor;
+    internal_static_protocol_PresenceResult_PresenceEntry_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_PresenceResult_PresenceEntry_fieldAccessorTable;
+      internal_static_protocol_PresenceResult_PresenceEntry_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_PresenceStatsRequest_descriptor;
+    internal_static_protocol_PresenceStatsRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_PresenceStatsRequest_fieldAccessorTable;
+      internal_static_protocol_PresenceStatsRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_PresenceStatsResult_descriptor;
+    internal_static_protocol_PresenceStatsResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_PresenceStatsResult_fieldAccessorTable;
+      internal_static_protocol_PresenceStatsResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_HistoryRequest_descriptor;
+    internal_static_protocol_HistoryRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_HistoryRequest_fieldAccessorTable;
+      internal_static_protocol_HistoryRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_HistoryResult_descriptor;
+    internal_static_protocol_HistoryResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_HistoryResult_fieldAccessorTable;
+      internal_static_protocol_HistoryResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_PingRequest_descriptor;
+    internal_static_protocol_PingRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_PingRequest_fieldAccessorTable;
+      internal_static_protocol_PingRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_PingResult_descriptor;
+    internal_static_protocol_PingResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_PingResult_fieldAccessorTable;
+      internal_static_protocol_PingResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_RPCRequest_descriptor;
+    internal_static_protocol_RPCRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_RPCRequest_fieldAccessorTable;
+      internal_static_protocol_RPCRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_RPCResult_descriptor;
+    internal_static_protocol_RPCResult_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_RPCResult_fieldAccessorTable;
+      internal_static_protocol_RPCResult_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_proto_SendRequest_descriptor;
+    internal_static_protocol_SendRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_proto_SendRequest_fieldAccessorTable;
+      internal_static_protocol_SendRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -23975,297 +24473,298 @@ public final class Protocol {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014client.proto\022\005proto\"&\n\005Error\022\014\n\004code\030\001" +
-      " \001(\r\022\017\n\007message\030\002 \001(\t\"H\n\007Command\022\n\n\002id\030\001" +
-      " \001(\r\022!\n\006method\030\002 \001(\0162\021.proto.MethodType\022" +
-      "\016\n\006params\030\003 \001(\014\"@\n\005Reply\022\n\n\002id\030\001 \001(\r\022\033\n\005" +
-      "error\030\002 \001(\0132\014.proto.Error\022\016\n\006result\030\003 \001(" +
-      "\014\"D\n\004Push\022\035\n\004type\030\001 \001(\0162\017.proto.PushType" +
-      "\022\017\n\007channel\030\002 \001(\t\022\014\n\004data\030\003 \001(\014\"P\n\nClien" +
-      "tInfo\022\014\n\004user\030\001 \001(\t\022\016\n\006client\030\002 \001(\t\022\021\n\tc" +
-      "onn_info\030\003 \001(\014\022\021\n\tchan_info\030\004 \001(\014\"s\n\013Pub" +
-      "lication\022\013\n\003seq\030\001 \001(\r\022\013\n\003gen\030\002 \001(\r\022\013\n\003ui" +
-      "d\030\003 \001(\t\022\014\n\004data\030\004 \001(\014\022\037\n\004info\030\005 \001(\0132\021.pr" +
-      "oto.ClientInfo\022\016\n\006offset\030\006 \001(\004\"\'\n\004Join\022\037" +
-      "\n\004info\030\001 \001(\0132\021.proto.ClientInfo\"(\n\005Leave" +
-      "\022\037\n\004info\030\001 \001(\0132\021.proto.ClientInfo\"\034\n\005Uns" +
-      "ub\022\023\n\013resubscribe\030\001 \001(\010\"S\n\003Sub\022\023\n\013recove" +
-      "rable\030\001 \001(\010\022\013\n\003seq\030\002 \001(\r\022\013\n\003gen\030\003 \001(\r\022\r\n" +
-      "\005epoch\030\004 \001(\t\022\016\n\006offset\030\005 \001(\004\"\027\n\007Message\022" +
-      "\014\n\004data\030\001 \001(\014\"\242\001\n\016ConnectRequest\022\r\n\005toke" +
-      "n\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022-\n\004subs\030\003 \003(\0132\037.pr" +
-      "oto.ConnectRequest.SubsEntry\032D\n\tSubsEntr" +
-      "y\022\013\n\003key\030\001 \001(\t\022&\n\005value\030\002 \001(\0132\027.proto.Su" +
-      "bscribeRequest:\0028\001\"\317\001\n\rConnectResult\022\016\n\006" +
-      "client\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022\017\n\007expires" +
-      "\030\003 \001(\010\022\013\n\003ttl\030\004 \001(\r\022\014\n\004data\030\005 \001(\014\022,\n\004sub" +
-      "s\030\006 \003(\0132\036.proto.ConnectResult.SubsEntry\032" +
-      "C\n\tSubsEntry\022\013\n\003key\030\001 \001(\t\022%\n\005value\030\002 \001(\013" +
-      "2\026.proto.SubscribeResult:\0028\001\"\037\n\016RefreshR" +
-      "equest\022\r\n\005token\030\001 \001(\t\"N\n\rRefreshResult\022\016" +
-      "\n\006client\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022\017\n\007expir" +
-      "es\030\003 \001(\010\022\013\n\003ttl\030\004 \001(\r\"|\n\020SubscribeReques" +
-      "t\022\017\n\007channel\030\001 \001(\t\022\r\n\005token\030\002 \001(\t\022\017\n\007rec" +
-      "over\030\003 \001(\010\022\013\n\003seq\030\004 \001(\r\022\013\n\003gen\030\005 \001(\r\022\r\n\005" +
-      "epoch\030\006 \001(\t\022\016\n\006offset\030\007 \001(\004\"\272\001\n\017Subscrib" +
-      "eResult\022\017\n\007expires\030\001 \001(\010\022\013\n\003ttl\030\002 \001(\r\022\023\n" +
-      "\013recoverable\030\003 \001(\010\022\013\n\003seq\030\004 \001(\r\022\013\n\003gen\030\005" +
-      " \001(\r\022\r\n\005epoch\030\006 \001(\t\022(\n\014publications\030\007 \003(" +
-      "\0132\022.proto.Publication\022\021\n\trecovered\030\010 \001(\010" +
-      "\022\016\n\006offset\030\t \001(\004\"3\n\021SubRefreshRequest\022\017\n" +
-      "\007channel\030\001 \001(\t\022\r\n\005token\030\002 \001(\t\"0\n\020SubRefr" +
-      "eshResult\022\017\n\007expires\030\001 \001(\010\022\013\n\003ttl\030\002 \001(\r\"" +
-      "%\n\022UnsubscribeRequest\022\017\n\007channel\030\001 \001(\t\"\023" +
-      "\n\021UnsubscribeResult\"/\n\016PublishRequest\022\017\n" +
-      "\007channel\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\"\017\n\rPublishR" +
-      "esult\"\"\n\017PresenceRequest\022\017\n\007channel\030\001 \001(" +
-      "\t\"\213\001\n\016PresenceResult\0225\n\010presence\030\001 \003(\0132#" +
-      ".proto.PresenceResult.PresenceEntry\032B\n\rP" +
-      "resenceEntry\022\013\n\003key\030\001 \001(\t\022 \n\005value\030\002 \001(\013" +
-      "2\021.proto.ClientInfo:\0028\001\"\'\n\024PresenceStats" +
-      "Request\022\017\n\007channel\030\001 \001(\t\"=\n\023PresenceStat" +
-      "sResult\022\023\n\013num_clients\030\001 \001(\r\022\021\n\tnum_user" +
-      "s\030\002 \001(\r\"!\n\016HistoryRequest\022\017\n\007channel\030\001 \001" +
-      "(\t\"9\n\rHistoryResult\022(\n\014publications\030\001 \003(" +
-      "\0132\022.proto.Publication\"\r\n\013PingRequest\"\014\n\n" +
-      "PingResult\"*\n\nRPCRequest\022\014\n\004data\030\001 \001(\014\022\016" +
-      "\n\006method\030\002 \001(\t\"\031\n\tRPCResult\022\014\n\004data\030\001 \001(" +
-      "\014\"\033\n\013SendRequest\022\014\n\004data\030\001 \001(\014*\260\001\n\nMetho" +
-      "dType\022\013\n\007CONNECT\020\000\022\r\n\tSUBSCRIBE\020\001\022\017\n\013UNS" +
-      "UBSCRIBE\020\002\022\013\n\007PUBLISH\020\003\022\014\n\010PRESENCE\020\004\022\022\n" +
-      "\016PRESENCE_STATS\020\005\022\013\n\007HISTORY\020\006\022\010\n\004PING\020\007" +
-      "\022\010\n\004SEND\020\010\022\007\n\003RPC\020\t\022\013\n\007REFRESH\020\n\022\017\n\013SUB_" +
-      "REFRESH\020\013*Q\n\010PushType\022\017\n\013PUBLICATION\020\000\022\010" +
-      "\n\004JOIN\020\001\022\t\n\005LEAVE\020\002\022\t\n\005UNSUB\020\003\022\013\n\007MESSAG" +
-      "E\020\004\022\007\n\003SUB\020\005B>\n2io.github.centrifugal.ce" +
-      "ntrifuge.internal.protocolB\010Protocolb\006pr" +
-      "oto3"
+      "\n\014client.proto\022\010protocol\"&\n\005Error\022\014\n\004cod" +
+      "e\030\001 \001(\r\022\017\n\007message\030\002 \001(\t\"K\n\007Command\022\n\n\002i" +
+      "d\030\001 \001(\r\022$\n\006method\030\002 \001(\0162\024.protocol.Metho" +
+      "dType\022\016\n\006params\030\003 \001(\014\"C\n\005Reply\022\n\n\002id\030\001 \001" +
+      "(\r\022\036\n\005error\030\002 \001(\0132\017.protocol.Error\022\016\n\006re" +
+      "sult\030\003 \001(\014\"G\n\004Push\022 \n\004type\030\001 \001(\0162\022.proto" +
+      "col.PushType\022\017\n\007channel\030\002 \001(\t\022\014\n\004data\030\003 " +
+      "\001(\014\"P\n\nClientInfo\022\014\n\004user\030\001 \001(\t\022\016\n\006clien" +
+      "t\030\002 \001(\t\022\021\n\tconn_info\030\003 \001(\014\022\021\n\tchan_info\030" +
+      "\004 \001(\014\"v\n\013Publication\022\013\n\003seq\030\001 \001(\r\022\013\n\003gen" +
+      "\030\002 \001(\r\022\013\n\003uid\030\003 \001(\t\022\014\n\004data\030\004 \001(\014\022\"\n\004inf" +
+      "o\030\005 \001(\0132\024.protocol.ClientInfo\022\016\n\006offset\030" +
+      "\006 \001(\004\"*\n\004Join\022\"\n\004info\030\001 \001(\0132\024.protocol.C" +
+      "lientInfo\"+\n\005Leave\022\"\n\004info\030\001 \001(\0132\024.proto" +
+      "col.ClientInfo\"\034\n\005Unsub\022\023\n\013resubscribe\030\001" +
+      " \001(\010\"S\n\003Sub\022\023\n\013recoverable\030\001 \001(\010\022\013\n\003seq\030" +
+      "\002 \001(\r\022\013\n\003gen\030\003 \001(\r\022\r\n\005epoch\030\004 \001(\t\022\016\n\006off" +
+      "set\030\005 \001(\004\"\027\n\007Message\022\014\n\004data\030\001 \001(\014\"\307\001\n\016C" +
+      "onnectRequest\022\r\n\005token\030\001 \001(\t\022\014\n\004data\030\002 \001" +
+      "(\014\0220\n\004subs\030\003 \003(\0132\".protocol.ConnectReque" +
+      "st.SubsEntry\022\014\n\004name\030\004 \001(\t\022\017\n\007version\030\005 " +
+      "\001(\t\032G\n\tSubsEntry\022\013\n\003key\030\001 \001(\t\022)\n\005value\030\002" +
+      " \001(\0132\032.protocol.SubscribeRequest:\0028\001\"\325\001\n" +
+      "\rConnectResult\022\016\n\006client\030\001 \001(\t\022\017\n\007versio" +
+      "n\030\002 \001(\t\022\017\n\007expires\030\003 \001(\010\022\013\n\003ttl\030\004 \001(\r\022\014\n" +
+      "\004data\030\005 \001(\014\022/\n\004subs\030\006 \003(\0132!.protocol.Con" +
+      "nectResult.SubsEntry\032F\n\tSubsEntry\022\013\n\003key" +
+      "\030\001 \001(\t\022(\n\005value\030\002 \001(\0132\031.protocol.Subscri" +
+      "beResult:\0028\001\"\037\n\016RefreshRequest\022\r\n\005token\030" +
+      "\001 \001(\t\"N\n\rRefreshResult\022\016\n\006client\030\001 \001(\t\022\017" +
+      "\n\007version\030\002 \001(\t\022\017\n\007expires\030\003 \001(\010\022\013\n\003ttl\030" +
+      "\004 \001(\r\"|\n\020SubscribeRequest\022\017\n\007channel\030\001 \001" +
+      "(\t\022\r\n\005token\030\002 \001(\t\022\017\n\007recover\030\003 \001(\010\022\013\n\003se" +
+      "q\030\004 \001(\r\022\013\n\003gen\030\005 \001(\r\022\r\n\005epoch\030\006 \001(\t\022\016\n\006o" +
+      "ffset\030\007 \001(\004\"\275\001\n\017SubscribeResult\022\017\n\007expir" +
+      "es\030\001 \001(\010\022\013\n\003ttl\030\002 \001(\r\022\023\n\013recoverable\030\003 \001" +
+      "(\010\022\013\n\003seq\030\004 \001(\r\022\013\n\003gen\030\005 \001(\r\022\r\n\005epoch\030\006 " +
+      "\001(\t\022+\n\014publications\030\007 \003(\0132\025.protocol.Pub" +
+      "lication\022\021\n\trecovered\030\010 \001(\010\022\016\n\006offset\030\t " +
+      "\001(\004\"3\n\021SubRefreshRequest\022\017\n\007channel\030\001 \001(" +
+      "\t\022\r\n\005token\030\002 \001(\t\"0\n\020SubRefreshResult\022\017\n\007" +
+      "expires\030\001 \001(\010\022\013\n\003ttl\030\002 \001(\r\"%\n\022Unsubscrib" +
+      "eRequest\022\017\n\007channel\030\001 \001(\t\"\023\n\021Unsubscribe" +
+      "Result\"/\n\016PublishRequest\022\017\n\007channel\030\001 \001(" +
+      "\t\022\014\n\004data\030\002 \001(\014\"\017\n\rPublishResult\"\"\n\017Pres" +
+      "enceRequest\022\017\n\007channel\030\001 \001(\t\"\221\001\n\016Presenc" +
+      "eResult\0228\n\010presence\030\001 \003(\0132&.protocol.Pre" +
+      "senceResult.PresenceEntry\032E\n\rPresenceEnt" +
+      "ry\022\013\n\003key\030\001 \001(\t\022#\n\005value\030\002 \001(\0132\024.protoco" +
+      "l.ClientInfo:\0028\001\"\'\n\024PresenceStatsRequest" +
+      "\022\017\n\007channel\030\001 \001(\t\"=\n\023PresenceStatsResult" +
+      "\022\023\n\013num_clients\030\001 \001(\r\022\021\n\tnum_users\030\002 \001(\r" +
+      "\"!\n\016HistoryRequest\022\017\n\007channel\030\001 \001(\t\"<\n\rH" +
+      "istoryResult\022+\n\014publications\030\001 \003(\0132\025.pro" +
+      "tocol.Publication\"\r\n\013PingRequest\"\014\n\nPing" +
+      "Result\"*\n\nRPCRequest\022\014\n\004data\030\001 \001(\014\022\016\n\006me" +
+      "thod\030\002 \001(\t\"\031\n\tRPCResult\022\014\n\004data\030\001 \001(\014\"\033\n" +
+      "\013SendRequest\022\014\n\004data\030\001 \001(\014*\260\001\n\nMethodTyp" +
+      "e\022\013\n\007CONNECT\020\000\022\r\n\tSUBSCRIBE\020\001\022\017\n\013UNSUBSC" +
+      "RIBE\020\002\022\013\n\007PUBLISH\020\003\022\014\n\010PRESENCE\020\004\022\022\n\016PRE" +
+      "SENCE_STATS\020\005\022\013\n\007HISTORY\020\006\022\010\n\004PING\020\007\022\010\n\004" +
+      "SEND\020\010\022\007\n\003RPC\020\t\022\013\n\007REFRESH\020\n\022\017\n\013SUB_REFR" +
+      "ESH\020\013*Q\n\010PushType\022\017\n\013PUBLICATION\020\000\022\010\n\004JO" +
+      "IN\020\001\022\t\n\005LEAVE\020\002\022\t\n\005UNSUB\020\003\022\013\n\007MESSAGE\020\004\022" +
+      "\007\n\003SUB\020\005B>\n2io.github.centrifugal.centri" +
+      "fuge.internal.protocolB\010Protocolb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_proto_Error_descriptor =
+    internal_static_protocol_Error_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_proto_Error_fieldAccessorTable = new
+    internal_static_protocol_Error_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Error_descriptor,
+        internal_static_protocol_Error_descriptor,
         new java.lang.String[] { "Code", "Message", });
-    internal_static_proto_Command_descriptor =
+    internal_static_protocol_Command_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_proto_Command_fieldAccessorTable = new
+    internal_static_protocol_Command_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Command_descriptor,
+        internal_static_protocol_Command_descriptor,
         new java.lang.String[] { "Id", "Method", "Params", });
-    internal_static_proto_Reply_descriptor =
+    internal_static_protocol_Reply_descriptor =
       getDescriptor().getMessageTypes().get(2);
-    internal_static_proto_Reply_fieldAccessorTable = new
+    internal_static_protocol_Reply_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Reply_descriptor,
+        internal_static_protocol_Reply_descriptor,
         new java.lang.String[] { "Id", "Error", "Result", });
-    internal_static_proto_Push_descriptor =
+    internal_static_protocol_Push_descriptor =
       getDescriptor().getMessageTypes().get(3);
-    internal_static_proto_Push_fieldAccessorTable = new
+    internal_static_protocol_Push_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Push_descriptor,
+        internal_static_protocol_Push_descriptor,
         new java.lang.String[] { "Type", "Channel", "Data", });
-    internal_static_proto_ClientInfo_descriptor =
+    internal_static_protocol_ClientInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
-    internal_static_proto_ClientInfo_fieldAccessorTable = new
+    internal_static_protocol_ClientInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_ClientInfo_descriptor,
+        internal_static_protocol_ClientInfo_descriptor,
         new java.lang.String[] { "User", "Client", "ConnInfo", "ChanInfo", });
-    internal_static_proto_Publication_descriptor =
+    internal_static_protocol_Publication_descriptor =
       getDescriptor().getMessageTypes().get(5);
-    internal_static_proto_Publication_fieldAccessorTable = new
+    internal_static_protocol_Publication_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Publication_descriptor,
+        internal_static_protocol_Publication_descriptor,
         new java.lang.String[] { "Seq", "Gen", "Uid", "Data", "Info", "Offset", });
-    internal_static_proto_Join_descriptor =
+    internal_static_protocol_Join_descriptor =
       getDescriptor().getMessageTypes().get(6);
-    internal_static_proto_Join_fieldAccessorTable = new
+    internal_static_protocol_Join_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Join_descriptor,
+        internal_static_protocol_Join_descriptor,
         new java.lang.String[] { "Info", });
-    internal_static_proto_Leave_descriptor =
+    internal_static_protocol_Leave_descriptor =
       getDescriptor().getMessageTypes().get(7);
-    internal_static_proto_Leave_fieldAccessorTable = new
+    internal_static_protocol_Leave_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Leave_descriptor,
+        internal_static_protocol_Leave_descriptor,
         new java.lang.String[] { "Info", });
-    internal_static_proto_Unsub_descriptor =
+    internal_static_protocol_Unsub_descriptor =
       getDescriptor().getMessageTypes().get(8);
-    internal_static_proto_Unsub_fieldAccessorTable = new
+    internal_static_protocol_Unsub_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Unsub_descriptor,
+        internal_static_protocol_Unsub_descriptor,
         new java.lang.String[] { "Resubscribe", });
-    internal_static_proto_Sub_descriptor =
+    internal_static_protocol_Sub_descriptor =
       getDescriptor().getMessageTypes().get(9);
-    internal_static_proto_Sub_fieldAccessorTable = new
+    internal_static_protocol_Sub_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Sub_descriptor,
+        internal_static_protocol_Sub_descriptor,
         new java.lang.String[] { "Recoverable", "Seq", "Gen", "Epoch", "Offset", });
-    internal_static_proto_Message_descriptor =
+    internal_static_protocol_Message_descriptor =
       getDescriptor().getMessageTypes().get(10);
-    internal_static_proto_Message_fieldAccessorTable = new
+    internal_static_protocol_Message_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_Message_descriptor,
+        internal_static_protocol_Message_descriptor,
         new java.lang.String[] { "Data", });
-    internal_static_proto_ConnectRequest_descriptor =
+    internal_static_protocol_ConnectRequest_descriptor =
       getDescriptor().getMessageTypes().get(11);
-    internal_static_proto_ConnectRequest_fieldAccessorTable = new
+    internal_static_protocol_ConnectRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_ConnectRequest_descriptor,
-        new java.lang.String[] { "Token", "Data", "Subs", });
-    internal_static_proto_ConnectRequest_SubsEntry_descriptor =
-      internal_static_proto_ConnectRequest_descriptor.getNestedTypes().get(0);
-    internal_static_proto_ConnectRequest_SubsEntry_fieldAccessorTable = new
+        internal_static_protocol_ConnectRequest_descriptor,
+        new java.lang.String[] { "Token", "Data", "Subs", "Name", "Version", });
+    internal_static_protocol_ConnectRequest_SubsEntry_descriptor =
+      internal_static_protocol_ConnectRequest_descriptor.getNestedTypes().get(0);
+    internal_static_protocol_ConnectRequest_SubsEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_ConnectRequest_SubsEntry_descriptor,
+        internal_static_protocol_ConnectRequest_SubsEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
-    internal_static_proto_ConnectResult_descriptor =
+    internal_static_protocol_ConnectResult_descriptor =
       getDescriptor().getMessageTypes().get(12);
-    internal_static_proto_ConnectResult_fieldAccessorTable = new
+    internal_static_protocol_ConnectResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_ConnectResult_descriptor,
+        internal_static_protocol_ConnectResult_descriptor,
         new java.lang.String[] { "Client", "Version", "Expires", "Ttl", "Data", "Subs", });
-    internal_static_proto_ConnectResult_SubsEntry_descriptor =
-      internal_static_proto_ConnectResult_descriptor.getNestedTypes().get(0);
-    internal_static_proto_ConnectResult_SubsEntry_fieldAccessorTable = new
+    internal_static_protocol_ConnectResult_SubsEntry_descriptor =
+      internal_static_protocol_ConnectResult_descriptor.getNestedTypes().get(0);
+    internal_static_protocol_ConnectResult_SubsEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_ConnectResult_SubsEntry_descriptor,
+        internal_static_protocol_ConnectResult_SubsEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
-    internal_static_proto_RefreshRequest_descriptor =
+    internal_static_protocol_RefreshRequest_descriptor =
       getDescriptor().getMessageTypes().get(13);
-    internal_static_proto_RefreshRequest_fieldAccessorTable = new
+    internal_static_protocol_RefreshRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_RefreshRequest_descriptor,
+        internal_static_protocol_RefreshRequest_descriptor,
         new java.lang.String[] { "Token", });
-    internal_static_proto_RefreshResult_descriptor =
+    internal_static_protocol_RefreshResult_descriptor =
       getDescriptor().getMessageTypes().get(14);
-    internal_static_proto_RefreshResult_fieldAccessorTable = new
+    internal_static_protocol_RefreshResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_RefreshResult_descriptor,
+        internal_static_protocol_RefreshResult_descriptor,
         new java.lang.String[] { "Client", "Version", "Expires", "Ttl", });
-    internal_static_proto_SubscribeRequest_descriptor =
+    internal_static_protocol_SubscribeRequest_descriptor =
       getDescriptor().getMessageTypes().get(15);
-    internal_static_proto_SubscribeRequest_fieldAccessorTable = new
+    internal_static_protocol_SubscribeRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_SubscribeRequest_descriptor,
+        internal_static_protocol_SubscribeRequest_descriptor,
         new java.lang.String[] { "Channel", "Token", "Recover", "Seq", "Gen", "Epoch", "Offset", });
-    internal_static_proto_SubscribeResult_descriptor =
+    internal_static_protocol_SubscribeResult_descriptor =
       getDescriptor().getMessageTypes().get(16);
-    internal_static_proto_SubscribeResult_fieldAccessorTable = new
+    internal_static_protocol_SubscribeResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_SubscribeResult_descriptor,
+        internal_static_protocol_SubscribeResult_descriptor,
         new java.lang.String[] { "Expires", "Ttl", "Recoverable", "Seq", "Gen", "Epoch", "Publications", "Recovered", "Offset", });
-    internal_static_proto_SubRefreshRequest_descriptor =
+    internal_static_protocol_SubRefreshRequest_descriptor =
       getDescriptor().getMessageTypes().get(17);
-    internal_static_proto_SubRefreshRequest_fieldAccessorTable = new
+    internal_static_protocol_SubRefreshRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_SubRefreshRequest_descriptor,
+        internal_static_protocol_SubRefreshRequest_descriptor,
         new java.lang.String[] { "Channel", "Token", });
-    internal_static_proto_SubRefreshResult_descriptor =
+    internal_static_protocol_SubRefreshResult_descriptor =
       getDescriptor().getMessageTypes().get(18);
-    internal_static_proto_SubRefreshResult_fieldAccessorTable = new
+    internal_static_protocol_SubRefreshResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_SubRefreshResult_descriptor,
+        internal_static_protocol_SubRefreshResult_descriptor,
         new java.lang.String[] { "Expires", "Ttl", });
-    internal_static_proto_UnsubscribeRequest_descriptor =
+    internal_static_protocol_UnsubscribeRequest_descriptor =
       getDescriptor().getMessageTypes().get(19);
-    internal_static_proto_UnsubscribeRequest_fieldAccessorTable = new
+    internal_static_protocol_UnsubscribeRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_UnsubscribeRequest_descriptor,
+        internal_static_protocol_UnsubscribeRequest_descriptor,
         new java.lang.String[] { "Channel", });
-    internal_static_proto_UnsubscribeResult_descriptor =
+    internal_static_protocol_UnsubscribeResult_descriptor =
       getDescriptor().getMessageTypes().get(20);
-    internal_static_proto_UnsubscribeResult_fieldAccessorTable = new
+    internal_static_protocol_UnsubscribeResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_UnsubscribeResult_descriptor,
+        internal_static_protocol_UnsubscribeResult_descriptor,
         new java.lang.String[] { });
-    internal_static_proto_PublishRequest_descriptor =
+    internal_static_protocol_PublishRequest_descriptor =
       getDescriptor().getMessageTypes().get(21);
-    internal_static_proto_PublishRequest_fieldAccessorTable = new
+    internal_static_protocol_PublishRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_PublishRequest_descriptor,
+        internal_static_protocol_PublishRequest_descriptor,
         new java.lang.String[] { "Channel", "Data", });
-    internal_static_proto_PublishResult_descriptor =
+    internal_static_protocol_PublishResult_descriptor =
       getDescriptor().getMessageTypes().get(22);
-    internal_static_proto_PublishResult_fieldAccessorTable = new
+    internal_static_protocol_PublishResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_PublishResult_descriptor,
+        internal_static_protocol_PublishResult_descriptor,
         new java.lang.String[] { });
-    internal_static_proto_PresenceRequest_descriptor =
+    internal_static_protocol_PresenceRequest_descriptor =
       getDescriptor().getMessageTypes().get(23);
-    internal_static_proto_PresenceRequest_fieldAccessorTable = new
+    internal_static_protocol_PresenceRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_PresenceRequest_descriptor,
+        internal_static_protocol_PresenceRequest_descriptor,
         new java.lang.String[] { "Channel", });
-    internal_static_proto_PresenceResult_descriptor =
+    internal_static_protocol_PresenceResult_descriptor =
       getDescriptor().getMessageTypes().get(24);
-    internal_static_proto_PresenceResult_fieldAccessorTable = new
+    internal_static_protocol_PresenceResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_PresenceResult_descriptor,
+        internal_static_protocol_PresenceResult_descriptor,
         new java.lang.String[] { "Presence", });
-    internal_static_proto_PresenceResult_PresenceEntry_descriptor =
-      internal_static_proto_PresenceResult_descriptor.getNestedTypes().get(0);
-    internal_static_proto_PresenceResult_PresenceEntry_fieldAccessorTable = new
+    internal_static_protocol_PresenceResult_PresenceEntry_descriptor =
+      internal_static_protocol_PresenceResult_descriptor.getNestedTypes().get(0);
+    internal_static_protocol_PresenceResult_PresenceEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_PresenceResult_PresenceEntry_descriptor,
+        internal_static_protocol_PresenceResult_PresenceEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
-    internal_static_proto_PresenceStatsRequest_descriptor =
+    internal_static_protocol_PresenceStatsRequest_descriptor =
       getDescriptor().getMessageTypes().get(25);
-    internal_static_proto_PresenceStatsRequest_fieldAccessorTable = new
+    internal_static_protocol_PresenceStatsRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_PresenceStatsRequest_descriptor,
+        internal_static_protocol_PresenceStatsRequest_descriptor,
         new java.lang.String[] { "Channel", });
-    internal_static_proto_PresenceStatsResult_descriptor =
+    internal_static_protocol_PresenceStatsResult_descriptor =
       getDescriptor().getMessageTypes().get(26);
-    internal_static_proto_PresenceStatsResult_fieldAccessorTable = new
+    internal_static_protocol_PresenceStatsResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_PresenceStatsResult_descriptor,
+        internal_static_protocol_PresenceStatsResult_descriptor,
         new java.lang.String[] { "NumClients", "NumUsers", });
-    internal_static_proto_HistoryRequest_descriptor =
+    internal_static_protocol_HistoryRequest_descriptor =
       getDescriptor().getMessageTypes().get(27);
-    internal_static_proto_HistoryRequest_fieldAccessorTable = new
+    internal_static_protocol_HistoryRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_HistoryRequest_descriptor,
+        internal_static_protocol_HistoryRequest_descriptor,
         new java.lang.String[] { "Channel", });
-    internal_static_proto_HistoryResult_descriptor =
+    internal_static_protocol_HistoryResult_descriptor =
       getDescriptor().getMessageTypes().get(28);
-    internal_static_proto_HistoryResult_fieldAccessorTable = new
+    internal_static_protocol_HistoryResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_HistoryResult_descriptor,
+        internal_static_protocol_HistoryResult_descriptor,
         new java.lang.String[] { "Publications", });
-    internal_static_proto_PingRequest_descriptor =
+    internal_static_protocol_PingRequest_descriptor =
       getDescriptor().getMessageTypes().get(29);
-    internal_static_proto_PingRequest_fieldAccessorTable = new
+    internal_static_protocol_PingRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_PingRequest_descriptor,
+        internal_static_protocol_PingRequest_descriptor,
         new java.lang.String[] { });
-    internal_static_proto_PingResult_descriptor =
+    internal_static_protocol_PingResult_descriptor =
       getDescriptor().getMessageTypes().get(30);
-    internal_static_proto_PingResult_fieldAccessorTable = new
+    internal_static_protocol_PingResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_PingResult_descriptor,
+        internal_static_protocol_PingResult_descriptor,
         new java.lang.String[] { });
-    internal_static_proto_RPCRequest_descriptor =
+    internal_static_protocol_RPCRequest_descriptor =
       getDescriptor().getMessageTypes().get(31);
-    internal_static_proto_RPCRequest_fieldAccessorTable = new
+    internal_static_protocol_RPCRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_RPCRequest_descriptor,
+        internal_static_protocol_RPCRequest_descriptor,
         new java.lang.String[] { "Data", "Method", });
-    internal_static_proto_RPCResult_descriptor =
+    internal_static_protocol_RPCResult_descriptor =
       getDescriptor().getMessageTypes().get(32);
-    internal_static_proto_RPCResult_fieldAccessorTable = new
+    internal_static_protocol_RPCResult_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_RPCResult_descriptor,
+        internal_static_protocol_RPCResult_descriptor,
         new java.lang.String[] { "Data", });
-    internal_static_proto_SendRequest_descriptor =
+    internal_static_protocol_SendRequest_descriptor =
       getDescriptor().getMessageTypes().get(33);
-    internal_static_proto_SendRequest_fieldAccessorTable = new
+    internal_static_protocol_SendRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_proto_SendRequest_descriptor,
+        internal_static_protocol_SendRequest_descriptor,
         new java.lang.String[] { "Data", });
   }
 

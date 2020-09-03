@@ -152,9 +152,18 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 
 ## Generate proto
 
+Make sure options set in client.proto:
+
+```
+option java_package = "io.github.centrifugal.centrifuge.internal.protocol";
+option java_outer_classname = "Protocol";
+```
+
+Then:
+
 ```
 protoc --java_out=./ client.proto
-mv io/github/centrifugal/centrifuge/internal/protocol/* centrifuge/src/main/java/io/github/centrifugal/centrifuge/internal/protocol/centrifuge/internal/protocol
+mv io/github/centrifugal/centrifuge/internal/protocol/Protocol.java centrifuge/src/main/java/io/github/centrifugal/centrifuge/internal/protocol/Protocol.java
 rm -r io/
 ```
 
