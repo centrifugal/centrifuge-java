@@ -42,6 +42,8 @@ public class Client {
 
     private Options opts;
     private String token = "";
+    private String name = "java";
+    private String version = "";
     private com.google.protobuf.ByteString connectData;
     private EventListener listener;
     private String client;
@@ -81,6 +83,28 @@ public class Client {
     public void setToken(String token) {
         this.executor.submit(() -> {
             Client.this.token = token;
+        });
+    }
+
+    /**
+     * Set client name.
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.executor.submit(() -> {
+            Client.this.name = name;
+        });
+    }
+
+    /**
+     * Set client version.
+     *
+     * @param version
+     */
+    public void setVersion(String version) {
+        this.executor.submit(() -> {
+            Client.this.version = version;
         });
     }
 
@@ -660,6 +684,8 @@ public class Client {
     private void sendConnect() {
         Protocol.ConnectRequest.Builder build = Protocol.ConnectRequest.newBuilder();
         if (this.token.length() > 0) build.setToken(this.token);
+        if (this.name.length() > 0) build.setName(this.name);
+        if (this.version.length() > 0) build.setVersion(this.version);
         if (this.connectData != null) build.setData(this.connectData);
         Protocol.ConnectRequest req = build.build();
 
