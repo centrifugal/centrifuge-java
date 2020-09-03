@@ -24,6 +24,7 @@ import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
 
 import java8.util.concurrent.CompletableFuture;
+
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -61,6 +62,7 @@ public class Client {
     private Boolean disconnecting = false;
     private Backoff backoff;
     private Boolean needReconnect = true;
+    private Boolean shuttingDown;
 
     ExecutorService getExecutor() {
         return executor;
@@ -246,10 +248,36 @@ public class Client {
      * Disconnect from server and do not reconnect.
      */
     public void disconnect() {
+        this.executor.submit(this::cleanDisconnect);
+    }
+
+    private void cleanDisconnect() {
+        String disconnectReason = "{\"reason\": \"clean disconnect\", \"reconnect\": false}";
+        Client.this._disconnect(disconnectReason, false);
+    }
+
+    /**
+     * Shutdown client disconnects from server and clean ups client resources
+     * shutting down internal executors. Client is not usable after calling this method.
+     *
+     * @param awaitMilliseconds is time in milliseconds to wait for executor
+     *                          termination (0 means no waiting).
+     *
+     * @return boolean that indicates whether executor terminated in awaitMilliseconds. For
+     * zero awaitMilliseconds shutdown always returns false.
+     */
+    public boolean shutdown(long awaitMilliseconds) throws InterruptedException {
         this.executor.submit(() -> {
-            String disconnectReason = "{\"reason\": \"clean disconnect\", \"reconnect\": false}";
-            Client.this._disconnect(disconnectReason, false);
+            this.shuttingDown = true;
+            this.cleanDisconnect();
         });
+        this.scheduler.shutdownNow();
+        this.reconnectExecutor.shutdownNow();
+        if (awaitMilliseconds > 0) {
+            // Keep this the last, executor will be closed in connection close handler.
+            return this.executor.awaitTermination(awaitMilliseconds, TimeUnit.MILLISECONDS);
+        }
+        return false;
     }
 
     private void _disconnect(String disconnectReason, Boolean needReconnect) {
@@ -299,6 +327,9 @@ public class Client {
         }
         if (this.needReconnect) {
             this.scheduleReconnect();
+        }
+        if (this.shuttingDown) {
+            this.executor.shutdown();
         }
     }
 
