@@ -12,10 +12,13 @@ public class Subscription {
 
     private Client client;
     private String channel;
+    private long lastOffset;
+    private boolean recoverable;
+    private boolean needRecover;
+    private String lastEpoch;
     private SubscriptionEventListener listener;
     private SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
     private Map<String, CompletableFuture<ReplyError>> futures = new ConcurrentHashMap<>();
-    private ReplyError subError;
 
     Boolean getNeedResubscribe() {
         return needResubscribe;
@@ -41,14 +44,45 @@ public class Subscription {
         this.listener = listener;
     }
 
+    long getLastOffset() {
+        return lastOffset;
+    }
+
+    void setLastOffset(long lastOffset) {
+        this.lastOffset = lastOffset;
+    }
+
+    String getLastEpoch() {
+        return lastEpoch;
+    }
+
+    private void setLastEpoch(String lastEpoch) {
+        this.lastEpoch = lastEpoch;
+    }
+
     void moveToUnsubscribed() {
         this.state = SubscriptionState.UNSUBSCRIBED;
     }
 
-    void moveToSubscribeSuccess(Protocol.SubscribeResult result) {
+    void moveToSubscribeSuccess(Protocol.SubscribeResult result, boolean recover) {
         this.state = SubscriptionState.SUBSCRIBED;
-        SubscribeSuccessEvent event = new SubscribeSuccessEvent();
+        this.setRecoverable(result.getRecoverable());
+        this.setLastEpoch(result.getEpoch());
+
+        SubscribeSuccessEvent event = new SubscribeSuccessEvent(recover, result.getRecovered());
         this.listener.onSubscribeSuccess(this, event);
+
+        if (result.getPublicationsCount() > 0) {
+            for (Protocol.Publication publication : result.getPublicationsList()) {
+                PublishEvent publishEvent = new PublishEvent();
+                publishEvent.setData(publication.getData().toByteArray());
+                publishEvent.setOffset(publication.getOffset());
+                this.listener.onPublish(this, publishEvent);
+                this.setLastOffset(publication.getOffset());
+            }
+        } else {
+            this.setLastOffset(result.getOffset());
+        }
 
         for(Map.Entry<String, CompletableFuture<ReplyError>> entry: this.futures.entrySet()) {
             CompletableFuture<ReplyError> f = entry.getValue();
@@ -78,16 +112,19 @@ public class Subscription {
                 return;
             }
             Subscription.this.client.subscribe(Subscription.this);
+            Subscription.this.setNeedRecover(true);
         });
     }
 
     public void unsubscribe() {
         this._unsubscribe(true);
+        this.setNeedRecover(false);
     }
 
     void unsubscribeNoResubscribe() {
         this.needResubscribe = false;
         this._unsubscribe(false);
+        this.setNeedRecover(false);
     }
 
     private void _unsubscribe(boolean shouldSendUnsubscribe) {
@@ -199,5 +236,21 @@ public class Subscription {
         if (this.state == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
         }
+    }
+
+    boolean isRecoverable() {
+        return recoverable;
+    }
+
+    public void setRecoverable(boolean recoverable) {
+        this.recoverable = recoverable;
+    }
+
+    boolean getNeedRecover() {
+        return this.needRecover;
+    }
+
+    void setNeedRecover(boolean needRecover) {
+        this.needRecover = needRecover;
     }
 }

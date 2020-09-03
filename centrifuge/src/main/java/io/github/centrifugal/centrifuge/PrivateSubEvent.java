@@ -7,7 +7,7 @@ public class PrivateSubEvent {
         return channel;
     }
 
-    public void setChannel(String channel) {
+    void setChannel(String channel) {
         this.channel = channel;
     }
 
@@ -15,7 +15,7 @@ public class PrivateSubEvent {
         return client;
     }
 
-    public void setClient(String client) {
+    void setClient(String client) {
         this.client = client;
     }
 

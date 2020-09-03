@@ -5,7 +5,7 @@ public class MessageEvent {
         return data;
     }
 
-    public void setData(byte[] data) {
+    void setData(byte[] data) {
         this.data = data;
     }
 
