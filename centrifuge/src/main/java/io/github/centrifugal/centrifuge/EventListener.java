@@ -18,6 +18,26 @@ public abstract class EventListener {
 
     };
 
+    public void onSubscribe(Client client, ServerSubscribeEvent event) {
+
+    };
+
+    public void onUnsubscribe(Client client, ServerUnsubscribeEvent event) {
+
+    };
+
+    public void onPublish(Client client, ServerPublishEvent event) {
+
+    };
+
+    public void onJoin(Client client, ServerJoinEvent event) {
+
+    };
+
+    public void onLeave(Client client, ServerLeaveEvent event) {
+
+    };
+
     public void onRefresh(Client client, RefreshEvent event, TokenCallback cb) {
         cb.Fail(new UnsupportedOperationException());
     };

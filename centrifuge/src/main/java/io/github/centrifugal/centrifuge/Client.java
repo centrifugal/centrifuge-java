@@ -58,6 +58,7 @@ public class Client {
 
     private ConnectionState state = ConnectionState.NEW;
     private final Map<String, Subscription> subs = new ConcurrentHashMap<>();
+    private final Map<String, ServerSubscription> serverSubs = new ConcurrentHashMap<>();
     private Boolean connecting = false;
     private Boolean disconnecting = false;
     private Backoff backoff;
@@ -317,6 +318,9 @@ public class Client {
                 }
             }
         }
+        for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
+            this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(entry.getKey()));
+        }
 
         if (previousState != ConnectionState.DISCONNECTED) {
             DisconnectEvent event = new DisconnectEvent();
@@ -489,6 +493,10 @@ public class Client {
         return this.subs.get(channel);
     }
 
+    private ServerSubscription getServerSub(String channel) {
+        return this.serverSubs.get(channel);
+    }
+
     /**
      * Create new subscription to channel with certain SubscriptionEventListener
      *
@@ -632,6 +640,15 @@ public class Client {
                     }
                 }
             }
+            for (Map.Entry<String, Protocol.SubscribeResult> entry : result.getSubsMap().entrySet()) {
+                Protocol.SubscribeResult subResult = entry.getValue();
+                ServerSubscription serverSub = new ServerSubscription(subResult.getRecoverable(), subResult.getOffset(), subResult.getEpoch());
+                String channel = entry.getKey();
+                this.serverSubs.put(channel, serverSub);
+                this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, false, false));
+                serverSub.setLastEpoch(subResult.getEpoch());
+                serverSub.setLastOffset(subResult.getOffset());
+            }
             this.backoff.reset();
 
             for (Map.Entry<Integer, Protocol.Command> entry : this.connectCommands.entrySet()) {
@@ -767,38 +784,72 @@ public class Client {
                     event.setOffset(pub.getOffset());
                     sub.getListener().onPublish(sub, event);
                     sub.setLastOffset(pub.getOffset());
+                } else {
+                    ServerSubscription serverSub = this.getServerSub(channel);
+                    if (serverSub != null) {
+                        ServerPublishEvent event = new ServerPublishEvent();
+                        event.setChannel(channel);
+                        event.setData(pub.getData().toByteArray());
+                        event.setOffset(pub.getOffset());
+                        this.listener.onPublish(this, event);
+                        serverSub.setLastOffset(pub.getOffset());
+                    }
                 }
+            } else if (push.getType() == Protocol.PushType.SUB) {
+                Protocol.Sub sub = Protocol.Sub.parseFrom(push.getData());
+                ServerSubscription serverSub = new ServerSubscription(sub.getRecoverable(), sub.getOffset(), sub.getEpoch());
+                this.serverSubs.put(channel, serverSub);
+                this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, false, false));
+                serverSub.setLastEpoch(sub.getEpoch());
+                serverSub.setLastOffset(sub.getOffset());
             } else if (push.getType() == Protocol.PushType.JOIN) {
                 Protocol.Join join = Protocol.Join.parseFrom(push.getData());
+                ClientInfo info = new ClientInfo();
+                info.setClient(join.getInfo().getClient());
+                info.setUser(join.getInfo().getUser());
+                info.setConnInfo(join.getInfo().getConnInfo().toByteArray());
+                info.setChanInfo(join.getInfo().getChanInfo().toByteArray());
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {
                     JoinEvent event = new JoinEvent();
-                    ClientInfo info = new ClientInfo();
-                    info.setClient(join.getInfo().getClient());
-                    info.setUser(join.getInfo().getUser());
-                    info.setConnInfo(join.getInfo().getConnInfo().toByteArray());
-                    info.setChanInfo(join.getInfo().getChanInfo().toByteArray());
                     event.setInfo(info);
                     sub.getListener().onJoin(sub, event);
+                } else {
+                    ServerSubscription serverSub = this.getServerSub(channel);
+                    if (serverSub != null) {
+                        this.listener.onJoin(this, new ServerJoinEvent(channel, info));
+                    }
                 }
             } else if (push.getType() == Protocol.PushType.LEAVE) {
                 Protocol.Leave leave = Protocol.Leave.parseFrom(push.getData());
+                LeaveEvent event = new LeaveEvent();
+                ClientInfo info = new ClientInfo();
+                info.setClient(leave.getInfo().getClient());
+                info.setUser(leave.getInfo().getUser());
+                info.setConnInfo(leave.getInfo().getConnInfo().toByteArray());
+                info.setChanInfo(leave.getInfo().getChanInfo().toByteArray());
+
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {
-                    LeaveEvent event = new LeaveEvent();
-                    ClientInfo info = new ClientInfo();
-                    info.setClient(leave.getInfo().getClient());
-                    info.setUser(leave.getInfo().getUser());
-                    info.setConnInfo(leave.getInfo().getConnInfo().toByteArray());
-                    info.setChanInfo(leave.getInfo().getChanInfo().toByteArray());
                     event.setInfo(info);
                     sub.getListener().onLeave(sub, event);
+                } else {
+                    ServerSubscription serverSub = this.getServerSub(channel);
+                    if (serverSub != null) {
+                        this.listener.onLeave(this, new ServerLeaveEvent(channel, info));
+                    }
                 }
             } else if (push.getType() == Protocol.PushType.UNSUB) {
                 Protocol.Unsub.parseFrom(push.getData());
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {
                     sub.unsubscribeNoResubscribe();
+                } else {
+                    ServerSubscription serverSub = this.getServerSub(channel);
+                    if (serverSub != null) {
+                        this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(channel));
+                        this.serverSubs.remove(channel);
+                    }
                 }
             } else if (push.getType() == Protocol.PushType.MESSAGE) {
                 Protocol.Message msg = Protocol.Message.parseFrom(push.getData());
