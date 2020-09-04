@@ -62,7 +62,7 @@ public class Client {
     private Boolean disconnecting = false;
     private Backoff backoff;
     private Boolean needReconnect = true;
-    private Boolean shuttingDown;
+    private Boolean closing;
 
     ExecutorService getExecutor() {
         return executor;
@@ -80,7 +80,7 @@ public class Client {
     /**
      * Set connection JWT. This is a token you have to receive from your application backend.
      *
-     * @param token
+     * @param token is a token for a client authentication.
      */
     public void setToken(String token) {
         this.executor.submit(() -> {
@@ -91,7 +91,9 @@ public class Client {
     /**
      * Set client name.
      *
-     * @param name
+     * @param name sets name of this client. This should not be unique per client – it
+     *             identifies client application name actually, so name should have a limited
+     *             number of possible values. By default this client uses "java" as a name.
      */
     public void setName(String name) {
         this.executor.submit(() -> {
@@ -102,7 +104,7 @@ public class Client {
     /**
      * Set client version.
      *
-     * @param version
+     * @param version means version of client.
      */
     public void setVersion(String version) {
         this.executor.submit(() -> {
@@ -111,9 +113,9 @@ public class Client {
     }
 
     /**
-     * Set connection data This is a data you have to receive from your application backend.
+     * Set connect data allows to send custom data to server inside Connect command.
      *
-     * @param data
+     * @param data to be sent.
      */
     public void setConnectData(byte[] data) {
         this.executor.submit(() -> {
@@ -257,18 +259,19 @@ public class Client {
     }
 
     /**
-     * Shutdown client disconnects from server and clean ups client resources
-     * shutting down internal executors. Client is not usable after calling this method.
+     * Close  disconnects client from server and cleans up client resources including
+     * shutdown of internal executors. Client is not usable after calling this method.
+     * If you only need to temporary disconnect from server use disconnect method.
      *
      * @param awaitMilliseconds is time in milliseconds to wait for executor
      *                          termination (0 means no waiting).
      *
      * @return boolean that indicates whether executor terminated in awaitMilliseconds. For
-     * zero awaitMilliseconds shutdown always returns false.
+     * zero awaitMilliseconds close always returns false.
      */
-    public boolean shutdown(long awaitMilliseconds) throws InterruptedException {
+    public boolean close(long awaitMilliseconds) throws InterruptedException {
         this.executor.submit(() -> {
-            this.shuttingDown = true;
+            this.closing = true;
             this.cleanDisconnect();
         });
         this.scheduler.shutdownNow();
@@ -328,8 +331,9 @@ public class Client {
         if (this.needReconnect) {
             this.scheduleReconnect();
         }
-        if (this.shuttingDown) {
+        if (this.closing) {
             this.executor.shutdown();
+            this.closing = false;
         }
     }
 
