@@ -11,6 +11,11 @@ import io.github.centrifugal.centrifuge.Options;
 import io.github.centrifugal.centrifuge.EventListener;
 import io.github.centrifugal.centrifuge.PublishResult;
 import io.github.centrifugal.centrifuge.ReplyError;
+import io.github.centrifugal.centrifuge.ServerJoinEvent;
+import io.github.centrifugal.centrifuge.ServerLeaveEvent;
+import io.github.centrifugal.centrifuge.ServerPublishEvent;
+import io.github.centrifugal.centrifuge.ServerSubscribeEvent;
+import io.github.centrifugal.centrifuge.ServerUnsubscribeEvent;
 import io.github.centrifugal.centrifuge.Subscription;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
 import io.github.centrifugal.centrifuge.ConnectEvent;
@@ -66,6 +71,32 @@ public class Main {
             public void onMessage(Client client, MessageEvent event) {
                 String data = new String(event.getData(), UTF_8);
                 System.out.println("message received: " + data);
+            }
+
+            @Override
+            public void onSubscribe(Client client, ServerSubscribeEvent event) {
+                System.out.println("server side subscribe: " + event.getChannel());
+            }
+
+            @Override
+            public void onUnsubscribe(Client client, ServerUnsubscribeEvent event) {
+                System.out.println("server side unsubscribe: " + event.getChannel());
+            }
+
+            @Override
+            public void onPublish(Client client, ServerPublishEvent event) {
+                String data = new String(event.getData(), UTF_8);
+                System.out.println("server side publication: " + event.getChannel() + ": " + data);
+            }
+
+            @Override
+            public void onJoin(Client client, ServerJoinEvent event) {
+                System.out.println("server side join: " + event.getChannel() + " from client " + event.getInfo().getClient());
+            }
+
+            @Override
+            public void onLeave(Client client, ServerLeaveEvent event) {
+                System.out.println("server side leave: " + event.getChannel() + " from client " + event.getInfo().getClient());
             }
         };
 

@@ -318,9 +318,6 @@ public class Client {
                 }
             }
         }
-        for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
-            this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(entry.getKey()));
-        }
 
         if (previousState != ConnectionState.DISCONNECTED) {
             DisconnectEvent event = new DisconnectEvent();
@@ -329,6 +326,9 @@ public class Client {
             for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
                 CompletableFuture f = entry.getValue();
                 f.completeExceptionally(new IOException());
+            }
+            for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
+                this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(entry.getKey()));
             }
             this.listener.onDisconnect(this, event);
         }
