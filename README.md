@@ -149,7 +149,7 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 - [x] ping/pong to find broken connection
 - [x] server-side subscriptions
 - [x] message recovery mechanism for client-side subscriptions (works with Centrifugo >= 2.5.0 with `v3_use_offset` option set to `true`)
-- [ ] message recovery mechanism for server-side subscriptions
+- [x] message recovery mechanism for server-side subscriptions
 
 ## Generate proto
 

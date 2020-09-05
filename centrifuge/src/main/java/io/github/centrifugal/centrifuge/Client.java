@@ -642,12 +642,31 @@ public class Client {
             }
             for (Map.Entry<String, Protocol.SubscribeResult> entry : result.getSubsMap().entrySet()) {
                 Protocol.SubscribeResult subResult = entry.getValue();
-                ServerSubscription serverSub = new ServerSubscription(subResult.getRecoverable(), subResult.getOffset(), subResult.getEpoch());
                 String channel = entry.getKey();
-                this.serverSubs.put(channel, serverSub);
-                this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, false, false));
+                ServerSubscription serverSub;
+                Boolean isResubscribe = false;
+                if (this.serverSubs.containsKey(channel)) {
+                    serverSub = this.serverSubs.get(channel);
+                    isResubscribe = true;
+                } else {
+                    serverSub = new ServerSubscription(subResult.getRecoverable(), subResult.getOffset(), subResult.getEpoch());
+                    this.serverSubs.put(channel, serverSub);
+                }
+                serverSub.setRecoverable(subResult.getRecoverable());
                 serverSub.setLastEpoch(subResult.getEpoch());
-                serverSub.setLastOffset(subResult.getOffset());
+                this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, isResubscribe, subResult.getRecovered()));
+                if (subResult.getPublicationsCount() > 0) {
+                    for (Protocol.Publication publication : subResult.getPublicationsList()) {
+                        ServerPublishEvent publishEvent = new ServerPublishEvent();
+                        publishEvent.setChannel(channel);
+                        publishEvent.setData(publication.getData().toByteArray());
+                        publishEvent.setOffset(publication.getOffset());
+                        this.listener.onPublish(this, publishEvent);
+                        serverSub.setLastOffset(publication.getOffset());
+                    }
+                } else {
+                    serverSub.setLastOffset(subResult.getOffset());
+                }
             }
             this.backoff.reset();
 
@@ -739,6 +758,17 @@ public class Client {
         if (this.name.length() > 0) build.setName(this.name);
         if (this.version.length() > 0) build.setVersion(this.version);
         if (this.connectData != null) build.setData(this.connectData);
+        if (this.serverSubs.size() > 0) {
+            for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
+                Protocol.SubscribeRequest.Builder subReqBuild = Protocol.SubscribeRequest.newBuilder();
+                if (entry.getValue().getRecoverable()) {
+                    subReqBuild.setEpoch(entry.getValue().getEpoch());
+                    subReqBuild.setOffset(entry.getValue().getOffset());
+                    subReqBuild.setRecover(true);
+                }
+                build.putSubs(entry.getKey(), subReqBuild.build());
+            }
+        }
         Protocol.ConnectRequest req = build.build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
@@ -799,8 +829,9 @@ public class Client {
                 Protocol.Sub sub = Protocol.Sub.parseFrom(push.getData());
                 ServerSubscription serverSub = new ServerSubscription(sub.getRecoverable(), sub.getOffset(), sub.getEpoch());
                 this.serverSubs.put(channel, serverSub);
-                this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, false, false));
+                serverSub.setRecoverable(sub.getRecoverable());
                 serverSub.setLastEpoch(sub.getEpoch());
+                this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, false, false));
                 serverSub.setLastOffset(sub.getOffset());
             } else if (push.getType() == Protocol.PushType.JOIN) {
                 Protocol.Join join = Protocol.Join.parseFrom(push.getData());

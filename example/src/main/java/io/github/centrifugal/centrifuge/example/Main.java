@@ -75,7 +75,7 @@ public class Main {
 
             @Override
             public void onSubscribe(Client client, ServerSubscribeEvent event) {
-                System.out.println("server side subscribe: " + event.getChannel());
+                System.out.println("server side subscribe: " + event.getChannel() + ", recovered " + event.getRecovered());
             }
 
             @Override

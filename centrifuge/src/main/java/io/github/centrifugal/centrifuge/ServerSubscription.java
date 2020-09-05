@@ -5,6 +5,18 @@ class ServerSubscription {
     private String epoch;
     private boolean recoverable;
 
+    long getOffset() {
+        return offset;
+    }
+
+    String getEpoch() {
+        return epoch;
+    }
+
+    boolean getRecoverable() {
+        return recoverable;
+    }
+
     ServerSubscription(Boolean recoverable, long offset, String epoch) {
         this.recoverable = recoverable;
         this.offset = offset;
@@ -17,5 +29,9 @@ class ServerSubscription {
 
     void setLastEpoch(String lastEpoch) {
         this.epoch = lastEpoch;
+    }
+
+    void setRecoverable(Boolean recoverable) {
+        this.recoverable = recoverable;
     }
 }

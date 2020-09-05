@@ -7,7 +7,7 @@ public class Backoff {
 
     private long ms = 100;
     private long max = 20000;
-    private int factor = 2;
+    private int factor = 4;
     private double jitter;
     private int attempts;
 
