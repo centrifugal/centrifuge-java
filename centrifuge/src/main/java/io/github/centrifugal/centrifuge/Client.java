@@ -136,8 +136,9 @@ public class Client {
         this.url = url;
         this.opts = opts;
         this.listener = listener;
-        this.backoff = new Backoff();
+        this.backoff = opts.getBackoff();
     }
+
 
     private int _id = 0;
 
@@ -199,7 +200,7 @@ public class Client {
                     /* TODO: refactor this. */
                     if (!reason.equals("")) {
                         try {
-                            JsonObject jsonObject = new JsonParser().parse(reason).getAsJsonObject();
+                            JsonObject jsonObject = JsonParser.parseString(reason).getAsJsonObject();
                             String disconnectReason = jsonObject.get("reason").getAsString();
                             Boolean shouldReconnect = jsonObject.get("reconnect").getAsBoolean();
                             Client.this.handleConnectionClose(disconnectReason, shouldReconnect);
@@ -209,7 +210,7 @@ public class Client {
                         }
                     }
                     if (!Client.this.disconnectReason.equals("")) {
-                        JsonObject jsonObject = new JsonParser().parse(Client.this.disconnectReason).getAsJsonObject();
+                        JsonObject jsonObject = JsonParser.parseString(Client.this.disconnectReason).getAsJsonObject();
                         String disconnectReason = jsonObject.get("reason").getAsString();
                         Boolean shouldReconnect = jsonObject.get("reconnect").getAsBoolean();
                         Client.this.disconnectReason = "";

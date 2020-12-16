@@ -5,13 +5,18 @@ import java.math.BigInteger;
 
 public class Backoff {
 
-    private long ms = 100;
-    private long max = 20000;
-    private int factor = 4;
+    private long ms;
+    private long max;
+    private int factor;
     private double jitter;
     private int attempts;
 
-    public Backoff() {}
+    private Backoff(long baseMs, int factor, double jitter, long maxMs) {
+        ms = baseMs;
+        max = maxMs;
+        this.factor = factor;
+        this.jitter = jitter;
+    }
 
     public long duration() {
         BigInteger ms = BigInteger.valueOf(this.ms)
@@ -30,27 +35,38 @@ public class Backoff {
         this.attempts = 0;
     }
 
-    public Backoff setMin(long min) {
-        this.ms = min;
-        return this;
-    }
-
-    public Backoff setMax(long max) {
-        this.max = max;
-        return this;
-    }
-
-    public Backoff setFactor(int factor) {
-        this.factor = factor;
-        return this;
-    }
-
-    public Backoff setJitter(double jitter) {
-        this.jitter = jitter;
-        return this;
-    }
-
     public int getAttempts() {
         return this.attempts;
+    }
+
+    public static class Builder {
+        private long mBaseMs = 100;
+        private long mMaxMs = 20000;
+        private int mFactor = 4;
+        private double mJitter;
+
+        public Builder setBaseMs(long ms) {
+            mBaseMs = ms;
+            return this;
+        }
+
+        public Builder setMaxMs(long max) {
+            mMaxMs = max;
+            return this;
+        }
+
+        public Builder setFactor(int factor) {
+            mFactor = factor;
+            return this;
+        }
+
+        public Builder setJitter(double jitter) {
+            mJitter = jitter;
+            return this;
+        }
+
+        public Backoff build() {
+            return new Backoff(mBaseMs, mFactor, mJitter, mMaxMs);
+        }
     }
 }
