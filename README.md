@@ -39,7 +39,7 @@ Client client = new Client(
 client.connect();
 ```
 
-Note that *you must use* `?format=protobuf` in connection URL as this client communicates with Centrifugo/Centrifuge over Protobuf protocol.
+Note that **you must use** `?format=protobuf` in connection URL as this client communicates with Centrifugo/Centrifuge over Protobuf protocol. While this client uses binary Protobuf protocol nothing stops you from sending JSON-encoded data over it.
 
 Also in case of running in Android emulator don't forget to use proper connection address to Centrifuge/Centrifugo (as `localhost` is pointing to emulator vm and obviously your server instance is not available there).
 
@@ -137,19 +137,24 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 - [x] presence method of Subscription
 - [x] presence stats method of Subscription
 - [x] history method of Subscription
+- [x] top-level publish method
+- [ ] top-level presence method
+- [ ] top-level presence stats method
+- [ ] top-level history method
+- [ ] top-level unsubscribe method
 - [x] send asynchronous messages to server
 - [x] handle asynchronous messages from server
 - [x] send RPC commands
-- [x] publish to channel without being subscribed
-- [x] subscribe to private channels with JWT
+- [x] subscribe to private channels with token (JWT)
 - [x] connection JWT refresh
-- [ ] private channel subscription JWT refresh
+- [ ] private channel subscription token (JWT) refresh
 - [ ] handle connection expired error
 - [ ] handle subscription expired error
 - [x] ping/pong to find broken connection
 - [x] server-side subscriptions
 - [x] message recovery mechanism for client-side subscriptions (works with Centrifugo >= 2.5.0 with `v3_use_offset` option set to `true`)
 - [x] message recovery mechanism for server-side subscriptions
+- [ ] history stream pagination
 
 ## Generate proto
 
