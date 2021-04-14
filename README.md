@@ -156,7 +156,15 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 - [x] message recovery mechanism for server-side subscriptions
 - [ ] history stream pagination
 
-## Generate proto
+## License
+
+Library is available under the MIT license. See LICENSE for details.
+
+## For Contributors
+
+This section contains an information for library contributors. You don't need generating protobuf code if you just want to use `centrifuge-java` in your project.
+
+### Generate proto
 
 Make sure options set in client.proto:
 
@@ -173,15 +181,7 @@ mv io/github/centrifugal/centrifuge/internal/protocol/Protocol.java centrifuge/s
 rm -r io/
 ```
 
-## License
-
-Library is available under the MIT license. See LICENSE for details.
-
-## Contributors
-
-* Thanks to [Maks Atygaev](https://github.com/atygaev) for initial library boilerplate
-
-## Release
+### Release
 
 Bump version in `centrifuge/build.gradle`. Write changelog. Create new library tag. Then run:
 
@@ -199,3 +199,7 @@ I.e.
 2) Go to `Staging repositories`
 3) Find release, push `Close` button, wait
 4) Push `Release` button
+
+## Special thanks
+
+* Thanks to [Maks Atygaev](https://github.com/atygaev) for initial library boilerplate
