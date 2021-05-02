@@ -1,15 +1,13 @@
 package io.github.centrifugal.centrifuge;
 
 public class ErrorEvent {
-    private String message;
+    private final Throwable exception;
 
-    public String getMessage() {
-        return message;
+    ErrorEvent(Throwable t) {
+        this.exception = t;
     }
 
     public Throwable getException() {
         return exception;
     }
-
-    private Throwable exception;
 }
