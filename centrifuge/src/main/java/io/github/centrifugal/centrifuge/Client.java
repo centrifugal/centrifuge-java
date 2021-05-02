@@ -35,13 +35,13 @@ import okio.ByteString;
 
 public class Client {
     private WebSocket ws;
-    private String url;
+    private final String url;
 
     Options getOpts() {
         return opts;
     }
 
-    private Options opts;
+    private final Options opts;
     private String token = "";
     private String name = "java";
     private String version = "";
@@ -229,7 +229,11 @@ public class Client {
     }
 
     private void handleConnectionOpen() {
-        this.sendConnect();
+        try {
+            this.sendConnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleConnectionMessage(byte[] bytes) {
@@ -383,7 +387,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.SUBSCRIBE)
+                .setMethod(Protocol.Command.MethodType.SUBSCRIBE)
                 .setParams(req.toByteString())
                 .build();
 
@@ -461,7 +465,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.UNSUBSCRIBE)
+                .setMethod(Protocol.Command.MethodType.UNSUBSCRIBE)
                 .setParams(req.toByteString())
                 .build();
 
@@ -591,7 +595,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.PING)
+                .setMethod(Protocol.Command.MethodType.PING)
                 .setParams(req.toByteString())
                 .build();
 
@@ -773,7 +777,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.CONNECT)
+                .setMethod(Protocol.Command.MethodType.CONNECT)
                 .setParams(req.toByteString())
                 .build();
 
@@ -805,7 +809,7 @@ public class Client {
         try {
             Protocol.Push push = Protocol.Push.parseFrom(reply.getResult());
             String channel = push.getChannel();
-            if (push.getType() == Protocol.PushType.PUBLICATION) {
+            if (push.getType() == Protocol.Push.PushType.PUBLICATION) {
                 Protocol.Publication pub = Protocol.Publication.parseFrom(push.getData());
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {
@@ -825,15 +829,15 @@ public class Client {
                         serverSub.setLastOffset(pub.getOffset());
                     }
                 }
-            } else if (push.getType() == Protocol.PushType.SUB) {
-                Protocol.Sub sub = Protocol.Sub.parseFrom(push.getData());
+            } else if (push.getType() == Protocol.Push.PushType.SUBSCRIBE) {
+                Protocol.Subscribe sub = Protocol.Subscribe.parseFrom(push.getData());
                 ServerSubscription serverSub = new ServerSubscription(sub.getRecoverable(), sub.getOffset(), sub.getEpoch());
                 this.serverSubs.put(channel, serverSub);
                 serverSub.setRecoverable(sub.getRecoverable());
                 serverSub.setLastEpoch(sub.getEpoch());
                 this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, false, false));
                 serverSub.setLastOffset(sub.getOffset());
-            } else if (push.getType() == Protocol.PushType.JOIN) {
+            } else if (push.getType() == Protocol.Push.PushType.JOIN) {
                 Protocol.Join join = Protocol.Join.parseFrom(push.getData());
                 ClientInfo info = new ClientInfo();
                 info.setClient(join.getInfo().getClient());
@@ -851,7 +855,7 @@ public class Client {
                         this.listener.onJoin(this, new ServerJoinEvent(channel, info));
                     }
                 }
-            } else if (push.getType() == Protocol.PushType.LEAVE) {
+            } else if (push.getType() == Protocol.Push.PushType.LEAVE) {
                 Protocol.Leave leave = Protocol.Leave.parseFrom(push.getData());
                 LeaveEvent event = new LeaveEvent();
                 ClientInfo info = new ClientInfo();
@@ -870,8 +874,8 @@ public class Client {
                         this.listener.onLeave(this, new ServerLeaveEvent(channel, info));
                     }
                 }
-            } else if (push.getType() == Protocol.PushType.UNSUB) {
-                Protocol.Unsub.parseFrom(push.getData());
+            } else if (push.getType() == Protocol.Push.PushType.UNSUBSCRIBE) {
+                Protocol.Unsubscribe.parseFrom(push.getData());
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {
                     sub.unsubscribeNoResubscribe();
@@ -882,7 +886,7 @@ public class Client {
                         this.serverSubs.remove(channel);
                     }
                 }
-            } else if (push.getType() == Protocol.PushType.MESSAGE) {
+            } else if (push.getType() == Protocol.Push.PushType.MESSAGE) {
                 Protocol.Message msg = Protocol.Message.parseFrom(push.getData());
                 MessageEvent event = new MessageEvent();
                 event.setData(msg.getData().toByteArray());
@@ -911,7 +915,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.SEND)
+                .setMethod(Protocol.Command.MethodType.SEND)
                 .setParams(req.toByteString())
                 .build();
 
@@ -1002,7 +1006,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.RPC)
+                .setMethod(Protocol.Command.MethodType.RPC)
                 .setParams(req.toByteString())
                 .build();
 
@@ -1052,7 +1056,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.PUBLISH)
+                .setMethod(Protocol.Command.MethodType.PUBLISH)
                 .setParams(req.toByteString())
                 .build();
 
@@ -1087,7 +1091,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.HISTORY)
+                .setMethod(Protocol.Command.MethodType.HISTORY)
                 .setParams(req.toByteString())
                 .build();
 
@@ -1137,7 +1141,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.PRESENCE)
+                .setMethod(Protocol.Command.MethodType.PRESENCE)
                 .setParams(req.toByteString())
                 .build();
 
@@ -1184,7 +1188,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.PRESENCE_STATS)
+                .setMethod(Protocol.Command.MethodType.PRESENCE_STATS)
                 .setParams(req.toByteString())
                 .build();
 
@@ -1222,7 +1226,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.MethodType.REFRESH)
+                .setMethod(Protocol.Command.MethodType.REFRESH)
                 .setParams(req.toByteString())
                 .build();
 
