@@ -181,12 +181,25 @@ mv io/github/centrifugal/centrifuge/internal/protocol/Protocol.java centrifuge/s
 rm -r io/
 ```
 
-### Release
+## For maintainer
+
+### release
+
+Create configuration file `gradle.properties` in `GRADLE_USER_HOME`:
+
+```
+signing.keyId=<LAST_8_SYMBOLS_OF_KEY_ID>
+signing.password=<PASSWORD>
+signing.secretKeyRingFile=/Path/to/.gnupg/secring.gpg
+
+ossrhUsername=<USERNAME>
+ossrhPassword=<PASSWORD>
+```
 
 Bump version in `centrifuge/build.gradle`. Write changelog. Create new library tag. Then run:
 
 ```
-./gradlew uploadArchives
+./gradlew publish
 ```
 
 Then follow instructions:
