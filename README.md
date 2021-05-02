@@ -176,7 +176,7 @@ option java_outer_classname = "Protocol";
 Then:
 
 ```
-protoc --java_out=./ client.proto
+protoc --java_out=lite:./ client.proto
 mv io/github/centrifugal/centrifuge/internal/protocol/Protocol.java centrifuge/src/main/java/io/github/centrifugal/centrifuge/internal/protocol/Protocol.java
 rm -r io/
 ```
