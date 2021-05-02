@@ -1,3 +1,11 @@
+0.0.6
+=====
+
+* Support message recovery
+* Migrate to protobuf-javalite
+* Pass exception to ErrorEvent
+* Print stack trace in case of connect error
+
 0.0.5
 =====
 
