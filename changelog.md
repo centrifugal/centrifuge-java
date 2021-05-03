@@ -2,6 +2,7 @@
 =====
 
 * Support message recovery
+* Support server-side subscriptions
 * Migrate to protobuf-javalite
 * Pass exception to ErrorEvent
 * Print stack trace in case of connect error
