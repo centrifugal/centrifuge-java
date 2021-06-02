@@ -1,3 +1,8 @@
+0.0.7
+=====
+
+* attempt to fix JDK version problems
+
 0.0.6
 =====
 
