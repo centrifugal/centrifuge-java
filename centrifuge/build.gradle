@@ -21,7 +21,7 @@ archivesBaseName = "centrifuge-java"
 version = "0.0.7"
 
 dependencies {
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
     implementation 'com.google.protobuf:protobuf-javalite:3.11.4'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
     implementation 'com.google.code.gson:gson:2.8.6'
