@@ -58,4 +58,20 @@ public class Options {
     public Proxy getProxy() {
         return proxy;
     }
+
+    private String proxyLogin;
+    private String proxyPassword;
+
+    public void setProxyCredentials(String login, String password) {
+        this.proxyLogin = login;
+        this.proxyPassword = password;
+    }
+
+    public String getProxyLogin() {
+        return proxyLogin;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
 }
