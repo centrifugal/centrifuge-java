@@ -1,5 +1,6 @@
 package io.github.centrifugal.centrifuge;
 
+import java.net.Proxy;
 import java.util.Map;
 
 /**
@@ -46,5 +47,15 @@ public class Options {
 
     public void setPingInterval(int pingInterval) {
         this.pingInterval = pingInterval;
+    }
+
+    private Proxy proxy;
+
+    public void setProxy(Proxy proxy) {
+        this.proxy = proxy;
+    }
+
+    public Proxy getProxy() {
+        return proxy;
     }
 }

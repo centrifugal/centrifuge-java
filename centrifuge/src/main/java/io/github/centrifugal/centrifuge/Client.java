@@ -172,7 +172,14 @@ public class Client {
         if (this.ws != null) {
             this.ws.cancel();
         }
-        this.ws = (new OkHttpClient()).newWebSocket(request, new WebSocketListener() {
+
+        OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder();
+
+        if(this.opts.getProxy() != null) {
+            okHttpBuilder.proxy(opts.getProxy());
+        }
+
+        this.ws = (okHttpBuilder.build()).newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                 super.onOpen(webSocket, response);
