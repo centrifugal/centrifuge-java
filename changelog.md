@@ -1,3 +1,8 @@
+0.0.8
+=====
+
+* Add possibility to connect over proxy - [#26](https://github.com/centrifugal/centrifuge-java/pull/26)
+
 0.0.7
 =====
 
