@@ -24,7 +24,7 @@ import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
 
 import java8.util.concurrent.CompletableFuture;
-
+import okhttp3.Credentials;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -172,7 +172,25 @@ public class Client {
         if (this.ws != null) {
             this.ws.cancel();
         }
-        this.ws = (new OkHttpClient()).newWebSocket(request, new WebSocketListener() {
+
+        OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder();
+
+        if (opts.getProxy() != null) {
+            okHttpBuilder.proxy(opts.getProxy());
+
+            if (this.opts.getProxyLogin() != null && this.opts.getProxyPassword() != null) {
+                okHttpBuilder.proxyAuthenticator((route, response) -> {
+                    String credentials = Credentials.basic(opts.getProxyLogin(), opts.getProxyPassword());
+
+                    return response.request()
+                            .newBuilder()
+                            .header("Proxy-Authorization", credentials)
+                            .build();
+                });
+            }
+        }
+
+        this.ws = (okHttpBuilder.build()).newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                 super.onOpen(webSocket, response);
