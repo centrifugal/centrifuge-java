@@ -46,11 +46,11 @@ public class Client {
     private String name = "java";
     private String version = "";
     private com.google.protobuf.ByteString connectData;
-    private EventListener listener;
+    private final EventListener listener;
     private String client;
-    private Map<Integer, CompletableFuture<Protocol.Reply>> futures = new ConcurrentHashMap<>();
-    private Map<Integer, Protocol.Command> connectCommands = new ConcurrentHashMap<>();
-    private Map<Integer, Protocol.Command> connectAsyncCommands = new ConcurrentHashMap<>();
+    private final Map<Integer, CompletableFuture<Protocol.Reply>> futures = new ConcurrentHashMap<>();
+    private final Map<Integer, Protocol.Command> connectCommands = new ConcurrentHashMap<>();
+    private final Map<Integer, Protocol.Command> connectAsyncCommands = new ConcurrentHashMap<>();
 
     ConnectionState getState() {
         return state;
@@ -61,7 +61,7 @@ public class Client {
     private final Map<String, ServerSubscription> serverSubs = new ConcurrentHashMap<>();
     private Boolean connecting = false;
     private Boolean disconnecting = false;
-    private Backoff backoff;
+    private final Backoff backoff;
     private Boolean needReconnect = true;
     private Boolean closing;
 
@@ -69,8 +69,8 @@ public class Client {
         return executor;
     }
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-    private ExecutorService reconnectExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService reconnectExecutor = Executors.newSingleThreadExecutor();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture pingTask;
     private ScheduledFuture refreshTask;
@@ -167,6 +167,7 @@ public class Client {
         Request request = new Request.Builder()
                 .url(this.url)
                 .headers(headers.build())
+                .addHeader("Sec-WebSocket-Protocol", "centrifuge-protobuf")
                 .build();
 
         if (this.ws != null) {
