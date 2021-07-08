@@ -2,6 +2,8 @@ package io.github.centrifugal.centrifuge.example;
 
 import io.github.centrifugal.centrifuge.Client;
 import io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
+import io.github.centrifugal.centrifuge.HistoryOptions;
+import io.github.centrifugal.centrifuge.HistoryResult;
 import io.github.centrifugal.centrifuge.PresenceStatsResult;
 import io.github.centrifugal.centrifuge.RefreshEvent;
 import io.github.centrifugal.centrifuge.ReplyCallback;
@@ -16,6 +18,7 @@ import io.github.centrifugal.centrifuge.ServerLeaveEvent;
 import io.github.centrifugal.centrifuge.ServerPublishEvent;
 import io.github.centrifugal.centrifuge.ServerSubscribeEvent;
 import io.github.centrifugal.centrifuge.ServerUnsubscribeEvent;
+import io.github.centrifugal.centrifuge.StreamPosition;
 import io.github.centrifugal.centrifuge.Subscription;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
 import io.github.centrifugal.centrifuge.ConnectEvent;
@@ -213,6 +216,23 @@ public class Main {
                     return;
                 }
                 System.out.println("Num clients connected: " + res.getNumClients());
+            }
+        });
+
+        sub.history(new HistoryOptions.Builder().withLimit(-1).build(), new ReplyCallback<HistoryResult>() {
+            @Override
+            public void onFailure(Throwable e) {
+                System.out.println("history error: " + e);
+            }
+
+            @Override
+            public void onDone(ReplyError err, HistoryResult res) {
+                if (err != null) {
+                    System.out.println("error history: " + err.getMessage() + " " + err.getCode());
+                    return;
+                }
+                System.out.println("Num history publication: " + res.getPublications().size());
+                System.out.println("Top stream offset: " + res.getOffset());
             }
         });
 
