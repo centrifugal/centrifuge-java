@@ -12,4 +12,23 @@ public class HistoryResult {
     }
 
     private List<Publication> publications;
+
+    public long getOffset() {
+        return offset;
+    }
+
+    void setOffset(long offset) {
+        this.offset = offset;
+    }
+
+    public String getEpoch() {
+        return epoch;
+    }
+
+    void setEpoch(String epoch) {
+        this.epoch = epoch;
+    }
+
+    private long offset;
+    private String epoch;
 }

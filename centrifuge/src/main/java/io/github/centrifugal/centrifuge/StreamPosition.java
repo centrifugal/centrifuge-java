@@ -1,26 +1,36 @@
 package io.github.centrifugal.centrifuge;
 
-class StreamPosition {
-    private long Offset;
+import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
 
-    private String Epoch;
+public class StreamPosition {
+    private long offset;
 
-    StreamPosition() {
+    private String epoch;
+
+    public StreamPosition() {}
+
+    public StreamPosition(long offset, String epoch) {
+        this.offset = offset;
+        this.epoch = epoch;
     }
 
     long getOffset() {
-        return Offset;
+        return offset;
     }
 
     void setOffset(long offset) {
-        Offset = offset;
+        this.offset = offset;
     }
 
     String getEpoch() {
-        return Epoch;
+        return epoch;
     }
 
     void setEpoch(String epoch) {
-        Epoch = epoch;
+        this.epoch = epoch;
+    }
+
+    Protocol.StreamPosition toProto () {
+        return Protocol.StreamPosition.newBuilder().setEpoch(this.epoch).setOffset(this.offset).build();
     }
 }
