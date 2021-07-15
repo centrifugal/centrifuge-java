@@ -682,7 +682,9 @@ public class Client {
                         publishEvent.setData(publication.getData().toByteArray());
                         publishEvent.setOffset(publication.getOffset());
                         this.listener.onPublish(this, publishEvent);
-                        serverSub.setLastOffset(publication.getOffset());
+                        if (publication.getOffset() > 0) {
+                            serverSub.setLastOffset(publication.getOffset());
+                        }
                     }
                 } else {
                     serverSub.setLastOffset(subResult.getOffset());
@@ -833,7 +835,9 @@ public class Client {
                     event.setData(pub.getData().toByteArray());
                     event.setOffset(pub.getOffset());
                     sub.getListener().onPublish(sub, event);
-                    sub.setLastOffset(pub.getOffset());
+                    if (pub.getOffset() > 0) {
+                        sub.setLastOffset(pub.getOffset());
+                    }
                 } else {
                     ServerSubscription serverSub = this.getServerSub(channel);
                     if (serverSub != null) {
@@ -842,7 +846,9 @@ public class Client {
                         event.setData(pub.getData().toByteArray());
                         event.setOffset(pub.getOffset());
                         this.listener.onPublish(this, event);
-                        serverSub.setLastOffset(pub.getOffset());
+                        if (pub.getOffset() > 0) {
+                            serverSub.setLastOffset(pub.getOffset());
+                        }
                     }
                 }
             } else if (push.getType() == Protocol.Push.PushType.SUBSCRIBE) {
