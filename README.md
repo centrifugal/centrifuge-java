@@ -14,6 +14,16 @@ Library available in Maven: https://search.maven.org/artifact/io.github.centrifu
 
 http://www.javadoc.io/doc/io.github.centrifugal/centrifuge-java
 
+## Before you start
+
+Centrifuge-java library uses Protobuf library (Lite version) for client protocol. This fact and the fact that Protobuf Lite uses reflection internally can cause connection errors when releasing your application with Android shrinking and obfuscation features enabled. See [#protocolbuffers/protobuf#6463](https://github.com/protocolbuffers/protobuf/issues/6463) for details. To deal with this add the following Proguard rule into `proguard-rules.pro` file in your project:
+
+```
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite {
+  <fields>;
+}
+```
+
 ## Basic usage
 
 Connect to server based on Centrifuge library:
