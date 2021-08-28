@@ -1442,6 +1442,10 @@ public final class Protocol {
        * <code>DISCONNECT = 7;</code>
        */
       DISCONNECT(7),
+      /**
+       * <code>REFRESH = 8;</code>
+       */
+      REFRESH(8),
       UNRECOGNIZED(-1),
       ;
 
@@ -1477,6 +1481,10 @@ public final class Protocol {
        * <code>DISCONNECT = 7;</code>
        */
       public static final int DISCONNECT_VALUE = 7;
+      /**
+       * <code>REFRESH = 8;</code>
+       */
+      public static final int REFRESH_VALUE = 8;
 
 
       @java.lang.Override
@@ -1508,6 +1516,7 @@ public final class Protocol {
           case 5: return SUBSCRIBE;
           case 6: return CONNECT;
           case 7: return DISCONNECT;
+          case 8: return REFRESH;
           default: return null;
         }
       }
@@ -3505,14 +3514,12 @@ public final class Protocol {
   public interface UnsubscribeOrBuilder extends
       // @@protoc_insertion_point(interface_extends:centrifugal.centrifuge.protocol.Unsubscribe)
       com.google.protobuf.MessageLiteOrBuilder {
-
-    /**
-     * <code>bool resubscribe = 1;</code>
-     * @return The resubscribe.
-     */
-    boolean getResubscribe();
   }
   /**
+   * <pre>
+   * Field 1 removed (bool resubscribe).
+   * </pre>
+   *
    * Protobuf type {@code centrifugal.centrifuge.protocol.Unsubscribe}
    */
   public  static final class Unsubscribe extends
@@ -3522,32 +3529,6 @@ public final class Protocol {
       UnsubscribeOrBuilder {
     private Unsubscribe() {
     }
-    public static final int RESUBSCRIBE_FIELD_NUMBER = 1;
-    private boolean resubscribe_;
-    /**
-     * <code>bool resubscribe = 1;</code>
-     * @return The resubscribe.
-     */
-    @java.lang.Override
-    public boolean getResubscribe() {
-      return resubscribe_;
-    }
-    /**
-     * <code>bool resubscribe = 1;</code>
-     * @param value The resubscribe to set.
-     */
-    private void setResubscribe(boolean value) {
-      
-      resubscribe_ = value;
-    }
-    /**
-     * <code>bool resubscribe = 1;</code>
-     */
-    private void clearResubscribe() {
-      
-      resubscribe_ = false;
-    }
-
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -3630,6 +3611,10 @@ public final class Protocol {
     }
 
     /**
+     * <pre>
+     * Field 1 removed (bool resubscribe).
+     * </pre>
+     *
      * Protobuf type {@code centrifugal.centrifuge.protocol.Unsubscribe}
      */
     public static final class Builder extends
@@ -3642,34 +3627,6 @@ public final class Protocol {
         super(DEFAULT_INSTANCE);
       }
 
-
-      /**
-       * <code>bool resubscribe = 1;</code>
-       * @return The resubscribe.
-       */
-      @java.lang.Override
-      public boolean getResubscribe() {
-        return instance.getResubscribe();
-      }
-      /**
-       * <code>bool resubscribe = 1;</code>
-       * @param value The resubscribe to set.
-       * @return This builder for chaining.
-       */
-      public Builder setResubscribe(boolean value) {
-        copyOnWrite();
-        instance.setResubscribe(value);
-        return this;
-      }
-      /**
-       * <code>bool resubscribe = 1;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearResubscribe() {
-        copyOnWrite();
-        instance.clearResubscribe();
-        return this;
-      }
 
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.Unsubscribe)
     }
@@ -3686,11 +3643,8 @@ public final class Protocol {
           return new Builder();
         }
         case BUILD_MESSAGE_INFO: {
-            java.lang.Object[] objects = new java.lang.Object[] {
-              "resubscribe_",
-            };
-            java.lang.String info =
-                "\u0000\u0001\u0000\u0000\u0001\u0001\u0001\u0000\u0000\u0000\u0001\u0007";
+            java.lang.Object[] objects = null;java.lang.String info =
+                "\u0000\u0000";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -4644,6 +4598,18 @@ public final class Protocol {
 
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
         java.lang.String key);
+
+    /**
+     * <code>bool expires = 5;</code>
+     * @return The expires.
+     */
+    boolean getExpires();
+
+    /**
+     * <code>uint32 ttl = 6;</code>
+     * @return The ttl.
+     */
+    int getTtl();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.Connect}
@@ -4870,6 +4836,58 @@ public final class Protocol {
     private java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult>
     getMutableSubsMap() {
       return internalGetMutableSubs();
+    }
+
+    public static final int EXPIRES_FIELD_NUMBER = 5;
+    private boolean expires_;
+    /**
+     * <code>bool expires = 5;</code>
+     * @return The expires.
+     */
+    @java.lang.Override
+    public boolean getExpires() {
+      return expires_;
+    }
+    /**
+     * <code>bool expires = 5;</code>
+     * @param value The expires to set.
+     */
+    private void setExpires(boolean value) {
+      
+      expires_ = value;
+    }
+    /**
+     * <code>bool expires = 5;</code>
+     */
+    private void clearExpires() {
+      
+      expires_ = false;
+    }
+
+    public static final int TTL_FIELD_NUMBER = 6;
+    private int ttl_;
+    /**
+     * <code>uint32 ttl = 6;</code>
+     * @return The ttl.
+     */
+    @java.lang.Override
+    public int getTtl() {
+      return ttl_;
+    }
+    /**
+     * <code>uint32 ttl = 6;</code>
+     * @param value The ttl to set.
+     */
+    private void setTtl(int value) {
+      
+      ttl_ = value;
+    }
+    /**
+     * <code>uint32 ttl = 6;</code>
+     */
+    private void clearTtl() {
+      
+      ttl_ = 0;
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect parseFrom(
@@ -5191,6 +5209,62 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>bool expires = 5;</code>
+       * @return The expires.
+       */
+      @java.lang.Override
+      public boolean getExpires() {
+        return instance.getExpires();
+      }
+      /**
+       * <code>bool expires = 5;</code>
+       * @param value The expires to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExpires(boolean value) {
+        copyOnWrite();
+        instance.setExpires(value);
+        return this;
+      }
+      /**
+       * <code>bool expires = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearExpires() {
+        copyOnWrite();
+        instance.clearExpires();
+        return this;
+      }
+
+      /**
+       * <code>uint32 ttl = 6;</code>
+       * @return The ttl.
+       */
+      @java.lang.Override
+      public int getTtl() {
+        return instance.getTtl();
+      }
+      /**
+       * <code>uint32 ttl = 6;</code>
+       * @param value The ttl to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTtl(int value) {
+        copyOnWrite();
+        instance.setTtl(value);
+        return this;
+      }
+      /**
+       * <code>uint32 ttl = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTtl() {
+        copyOnWrite();
+        instance.clearTtl();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.Connect)
     }
     @java.lang.Override
@@ -5212,10 +5286,12 @@ public final class Protocol {
               "data_",
               "subs_",
               SubsDefaultEntryHolder.defaultEntry,
+              "expires_",
+              "ttl_",
             };
             java.lang.String info =
-                "\u0000\u0004\u0000\u0000\u0001\u0004\u0004\u0001\u0000\u0000\u0001\u0208\u0002\u0208" +
-                "\u0003\n\u00042";
+                "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0001\u0000\u0000\u0001\u0208\u0002\u0208" +
+                "\u0003\n\u00042\u0005\u0007\u0006\u000b";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -5681,6 +5757,311 @@ public final class Protocol {
     private static volatile com.google.protobuf.Parser<Disconnect> PARSER;
 
     public static com.google.protobuf.Parser<Disconnect> parser() {
+      return DEFAULT_INSTANCE.getParserForType();
+    }
+  }
+
+  public interface RefreshOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:centrifugal.centrifuge.protocol.Refresh)
+      com.google.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>bool expires = 1;</code>
+     * @return The expires.
+     */
+    boolean getExpires();
+
+    /**
+     * <code>uint32 ttl = 2;</code>
+     * @return The ttl.
+     */
+    int getTtl();
+  }
+  /**
+   * Protobuf type {@code centrifugal.centrifuge.protocol.Refresh}
+   */
+  public  static final class Refresh extends
+      com.google.protobuf.GeneratedMessageLite<
+          Refresh, Refresh.Builder> implements
+      // @@protoc_insertion_point(message_implements:centrifugal.centrifuge.protocol.Refresh)
+      RefreshOrBuilder {
+    private Refresh() {
+    }
+    public static final int EXPIRES_FIELD_NUMBER = 1;
+    private boolean expires_;
+    /**
+     * <code>bool expires = 1;</code>
+     * @return The expires.
+     */
+    @java.lang.Override
+    public boolean getExpires() {
+      return expires_;
+    }
+    /**
+     * <code>bool expires = 1;</code>
+     * @param value The expires to set.
+     */
+    private void setExpires(boolean value) {
+      
+      expires_ = value;
+    }
+    /**
+     * <code>bool expires = 1;</code>
+     */
+    private void clearExpires() {
+      
+      expires_ = false;
+    }
+
+    public static final int TTL_FIELD_NUMBER = 2;
+    private int ttl_;
+    /**
+     * <code>uint32 ttl = 2;</code>
+     * @return The ttl.
+     */
+    @java.lang.Override
+    public int getTtl() {
+      return ttl_;
+    }
+    /**
+     * <code>uint32 ttl = 2;</code>
+     * @param value The ttl to set.
+     */
+    private void setTtl(int value) {
+      
+      ttl_ = value;
+    }
+    /**
+     * <code>uint32 ttl = 2;</code>
+     */
+    private void clearTtl() {
+      
+      ttl_ = 0;
+    }
+
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, input);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, input);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() {
+      return (Builder) DEFAULT_INSTANCE.createBuilder();
+    }
+    public static Builder newBuilder(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh prototype) {
+      return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+    }
+
+    /**
+     * Protobuf type {@code centrifugal.centrifuge.protocol.Refresh}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageLite.Builder<
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh, Builder> implements
+        // @@protoc_insertion_point(builder_implements:centrifugal.centrifuge.protocol.Refresh)
+        io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshOrBuilder {
+      // Construct using io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh.newBuilder()
+      private Builder() {
+        super(DEFAULT_INSTANCE);
+      }
+
+
+      /**
+       * <code>bool expires = 1;</code>
+       * @return The expires.
+       */
+      @java.lang.Override
+      public boolean getExpires() {
+        return instance.getExpires();
+      }
+      /**
+       * <code>bool expires = 1;</code>
+       * @param value The expires to set.
+       * @return This builder for chaining.
+       */
+      public Builder setExpires(boolean value) {
+        copyOnWrite();
+        instance.setExpires(value);
+        return this;
+      }
+      /**
+       * <code>bool expires = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearExpires() {
+        copyOnWrite();
+        instance.clearExpires();
+        return this;
+      }
+
+      /**
+       * <code>uint32 ttl = 2;</code>
+       * @return The ttl.
+       */
+      @java.lang.Override
+      public int getTtl() {
+        return instance.getTtl();
+      }
+      /**
+       * <code>uint32 ttl = 2;</code>
+       * @param value The ttl to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTtl(int value) {
+        copyOnWrite();
+        instance.setTtl(value);
+        return this;
+      }
+      /**
+       * <code>uint32 ttl = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTtl() {
+        copyOnWrite();
+        instance.clearTtl();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.Refresh)
+    }
+    @java.lang.Override
+    @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
+    protected final java.lang.Object dynamicMethod(
+        com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+        java.lang.Object arg0, java.lang.Object arg1) {
+      switch (method) {
+        case NEW_MUTABLE_INSTANCE: {
+          return new io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh();
+        }
+        case NEW_BUILDER: {
+          return new Builder();
+        }
+        case BUILD_MESSAGE_INFO: {
+            java.lang.Object[] objects = new java.lang.Object[] {
+              "expires_",
+              "ttl_",
+            };
+            java.lang.String info =
+                "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u0007\u0002\u000b" +
+                "";
+            return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+        }
+        // fall through
+        case GET_DEFAULT_INSTANCE: {
+          return DEFAULT_INSTANCE;
+        }
+        case GET_PARSER: {
+          com.google.protobuf.Parser<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh> parser = PARSER;
+          if (parser == null) {
+            synchronized (io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh.class) {
+              parser = PARSER;
+              if (parser == null) {
+                parser =
+                    new DefaultInstanceBasedParser<io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh>(
+                        DEFAULT_INSTANCE);
+                PARSER = parser;
+              }
+            }
+          }
+          return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      case SET_MEMOIZED_IS_INITIALIZED: {
+        return null;
+      }
+      }
+      throw new UnsupportedOperationException();
+    }
+
+
+    // @@protoc_insertion_point(class_scope:centrifugal.centrifuge.protocol.Refresh)
+    private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh DEFAULT_INSTANCE;
+    static {
+      Refresh defaultInstance = new Refresh();
+      // New instances are implicitly immutable so no need to make
+      // immutable.
+      DEFAULT_INSTANCE = defaultInstance;
+      com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+        Refresh.class, defaultInstance);
+    }
+
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static volatile com.google.protobuf.Parser<Refresh> PARSER;
+
+    public static com.google.protobuf.Parser<Refresh> parser() {
       return DEFAULT_INSTANCE.getParserForType();
     }
   }
