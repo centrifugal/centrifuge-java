@@ -1,3 +1,17 @@
+0.1.0
+=====
+
+Update to work with Centrifuge >= v0.18.0 and Centrifugo v3.
+
+**Breaking change:** client History API behavior changed – Centrifuge >= v0.18.0 and Centrifugo >= v3.0.0 won't return all publications in a stream by default, see Centrifuge [v0.18.0 release notes](https://github.com/centrifugal/centrifuge/releases/tag/v0.18.0) or [Centrifugo v3 migration guide](https://centrifugal.dev/docs/getting-started/migration_v3) for more information and workaround on server-side. History call now accepts options. Example on how to mimic previous behavior:
+
+```
+HistoryOptions opts = new HistoryOptions.Builder().withLimit(-1).build();
+subscription.history(opts, ...)
+```
+
+If you are using Centrifuge < v0.18.0 or Centrifugo v2 then default options will work the same way as before - i.e. return all publications in a history stream.
+
 0.0.8
 =====
 

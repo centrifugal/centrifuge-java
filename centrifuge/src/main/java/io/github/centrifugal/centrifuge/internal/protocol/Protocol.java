@@ -13571,6 +13571,12 @@ public final class Protocol {
      * @return The since.
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.StreamPosition getSince();
+
+    /**
+     * <code>bool reverse = 9;</code>
+     * @return The reverse.
+     */
+    boolean getReverse();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.HistoryRequest}
@@ -13712,6 +13718,32 @@ public final class Protocol {
      */
     private void clearSince() {  since_ = null;
       
+    }
+
+    public static final int REVERSE_FIELD_NUMBER = 9;
+    private boolean reverse_;
+    /**
+     * <code>bool reverse = 9;</code>
+     * @return The reverse.
+     */
+    @java.lang.Override
+    public boolean getReverse() {
+      return reverse_;
+    }
+    /**
+     * <code>bool reverse = 9;</code>
+     * @param value The reverse to set.
+     */
+    private void setReverse(boolean value) {
+      
+      reverse_ = value;
+    }
+    /**
+     * <code>bool reverse = 9;</code>
+     */
+    private void clearReverse() {
+      
+      reverse_ = false;
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest parseFrom(
@@ -13945,6 +13977,34 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>bool reverse = 9;</code>
+       * @return The reverse.
+       */
+      @java.lang.Override
+      public boolean getReverse() {
+        return instance.getReverse();
+      }
+      /**
+       * <code>bool reverse = 9;</code>
+       * @param value The reverse to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReverse(boolean value) {
+        copyOnWrite();
+        instance.setReverse(value);
+        return this;
+      }
+      /**
+       * <code>bool reverse = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearReverse() {
+        copyOnWrite();
+        instance.clearReverse();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.HistoryRequest)
     }
     @java.lang.Override
@@ -13964,10 +14024,11 @@ public final class Protocol {
               "channel_",
               "limit_",
               "since_",
+              "reverse_",
             };
             java.lang.String info =
-                "\u0000\u0003\u0000\u0000\u0001\b\u0003\u0000\u0000\u0000\u0001\u0208\u0007\u0004" +
-                "\b\t";
+                "\u0000\u0004\u0000\u0000\u0001\t\u0004\u0000\u0000\u0000\u0001\u0208\u0007\u0004" +
+                "\b\t\t\u0007";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through

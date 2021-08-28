@@ -163,11 +163,6 @@ public class Subscription {
         }
     }
 
-    public void history(ReplyCallback<HistoryResult> cb) {
-        HistoryOptions opts = new HistoryOptions.Builder().withLimit(0).withSince(null).build();
-        this.client.getExecutor().submit(() -> Subscription.this.historySynchronized(opts, cb));
-    }
-
     public void history(HistoryOptions opts, ReplyCallback<HistoryResult> cb) {
         this.client.getExecutor().submit(() -> Subscription.this.historySynchronized(opts, cb));
     }

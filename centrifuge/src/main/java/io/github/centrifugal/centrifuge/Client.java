@@ -1116,6 +1116,7 @@ public class Client {
     private void historySynchronized(String channel, HistoryOptions opts, ReplyCallback<HistoryResult> cb) {
         Protocol.HistoryRequest.Builder builder = Protocol.HistoryRequest.newBuilder()
                 .setChannel(channel)
+                .setReverse(opts.getReverse())
                 .setLimit(opts.getLimit());
         if (opts.getSince() != null) {
             builder.setSince(opts.getSince().toProto());

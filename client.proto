@@ -212,6 +212,7 @@ message HistoryRequest {
   // 2-6 skipped here for backwards compatibility.
   int32 limit = 7;
   StreamPosition since = 8;
+  bool reverse = 9;
 }
 
 message HistoryResult {
