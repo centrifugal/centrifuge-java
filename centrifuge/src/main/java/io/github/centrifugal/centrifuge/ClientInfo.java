@@ -42,12 +42,22 @@ public class ClientInfo {
     private byte[] connInfo;
     private byte[] chanInfo;
 
+    /**
+     * Parse ClientInfo from Protocol.ClientInfo. Can return null if the Protocol.ClientInfo is null
+     *
+     * @param protoClientInfo which is the ClientInfo from the protocol object
+     * @return ClientInfo that can be null if the Protocol.ClientInfo passed is null
+     */
     static ClientInfo fromProtocolClientInfo(Protocol.ClientInfo protoClientInfo) {
-        ClientInfo clientInfo = new ClientInfo();
-        clientInfo.setUser(protoClientInfo.getUser());
-        clientInfo.setClient(protoClientInfo.getClient());
-        clientInfo.setConnInfo(protoClientInfo.getConnInfo().toByteArray());
-        clientInfo.setChanInfo(protoClientInfo.getChanInfo().toByteArray());
-        return clientInfo;
+        if (protoClientInfo != null) {
+            ClientInfo clientInfo = new ClientInfo();
+            clientInfo.setUser(protoClientInfo.getUser());
+            clientInfo.setClient(protoClientInfo.getClient());
+            clientInfo.setConnInfo(protoClientInfo.getConnInfo().toByteArray());
+            clientInfo.setChanInfo(protoClientInfo.getChanInfo().toByteArray());
+            return clientInfo;
+        } else {
+            return null;
+        }
     };
 }
