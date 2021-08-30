@@ -12,6 +12,10 @@ subscription.history(opts, ...)
 
 If you are using Centrifuge < v0.18.0 or Centrifugo v2 then default options will work the same way as before - i.e. return all publications in a history stream.
 
+* Protocol definitions updated to the latest version
+* Support for top-level `presence`, `presenceStats` and `history` methods
+* When working with Centrifugo v3 or Centrifuge >= v0.18.0 it's now possible to avoid using `?format=protobuf` in connection URL. Client will negotiate Protobuf protocol with a server using WebSocket subprotocol mechanism (in request headers).
+
 0.0.8
 =====
 
