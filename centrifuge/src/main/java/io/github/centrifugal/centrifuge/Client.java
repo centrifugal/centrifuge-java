@@ -681,6 +681,8 @@ public class Client {
                         ServerPublishEvent publishEvent = new ServerPublishEvent();
                         publishEvent.setChannel(channel);
                         publishEvent.setData(publication.getData().toByteArray());
+                        ClientInfo info = ClientInfo.fromProtocolClientInfo(publication.getInfo());
+                        publishEvent.setInfo(info);
                         publishEvent.setOffset(publication.getOffset());
                         this.listener.onPublish(this, publishEvent);
                         if (publication.getOffset() > 0) {
@@ -830,10 +832,12 @@ public class Client {
             String channel = push.getChannel();
             if (push.getType() == Protocol.Push.PushType.PUBLICATION) {
                 Protocol.Publication pub = Protocol.Publication.parseFrom(push.getData());
+                ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {
                     PublishEvent event = new PublishEvent();
                     event.setData(pub.getData().toByteArray());
+                    event.setInfo(info);
                     event.setOffset(pub.getOffset());
                     sub.getListener().onPublish(sub, event);
                     if (pub.getOffset() > 0) {
@@ -845,6 +849,7 @@ public class Client {
                         ServerPublishEvent event = new ServerPublishEvent();
                         event.setChannel(channel);
                         event.setData(pub.getData().toByteArray());
+                        event.setInfo(info);
                         event.setOffset(pub.getOffset());
                         this.listener.onPublish(this, event);
                         if (pub.getOffset() > 0) {
@@ -862,11 +867,7 @@ public class Client {
                 serverSub.setLastOffset(sub.getOffset());
             } else if (push.getType() == Protocol.Push.PushType.JOIN) {
                 Protocol.Join join = Protocol.Join.parseFrom(push.getData());
-                ClientInfo info = new ClientInfo();
-                info.setClient(join.getInfo().getClient());
-                info.setUser(join.getInfo().getUser());
-                info.setConnInfo(join.getInfo().getConnInfo().toByteArray());
-                info.setChanInfo(join.getInfo().getChanInfo().toByteArray());
+                ClientInfo info = ClientInfo.fromProtocolClientInfo(join.getInfo());
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {
                     JoinEvent event = new JoinEvent();
@@ -881,11 +882,7 @@ public class Client {
             } else if (push.getType() == Protocol.Push.PushType.LEAVE) {
                 Protocol.Leave leave = Protocol.Leave.parseFrom(push.getData());
                 LeaveEvent event = new LeaveEvent();
-                ClientInfo info = new ClientInfo();
-                info.setClient(leave.getInfo().getClient());
-                info.setUser(leave.getInfo().getUser());
-                info.setConnInfo(leave.getInfo().getConnInfo().toByteArray());
-                info.setChanInfo(leave.getInfo().getChanInfo().toByteArray());
+                ClientInfo info = ClientInfo.fromProtocolClientInfo(leave.getInfo());
 
                 Subscription sub = this.getSub(channel);
                 if (sub != null) {

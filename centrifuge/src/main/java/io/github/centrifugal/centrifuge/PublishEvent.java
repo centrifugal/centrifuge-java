@@ -11,6 +11,17 @@ public class PublishEvent {
 
     private byte[] data;
 
+    public ClientInfo getInfo() {
+        return info;
+    }
+
+    void setInfo(ClientInfo info) {
+        this.info = info;
+    }
+
+    private ClientInfo info;
+
+
     public long getOffset() {
         return offset;
     }
