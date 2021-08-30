@@ -134,7 +134,7 @@ public class Subscription {
             this.listener.onUnsubscribe(this, new UnsubscribeEvent());
         }
         if (shouldSendUnsubscribe) {
-            this.client.sendUnsubscribe(this);
+            this.client.unsubscribe(this.getChannel());
         }
     }
 
@@ -163,11 +163,11 @@ public class Subscription {
         }
     }
 
-    public void history(ReplyCallback<HistoryResult> cb) {
-        this.client.getExecutor().submit(() -> Subscription.this.historySynchronized(cb));
+    public void history(HistoryOptions opts, ReplyCallback<HistoryResult> cb) {
+        this.client.getExecutor().submit(() -> Subscription.this.historySynchronized(opts, cb));
     }
 
-    private void historySynchronized(ReplyCallback<HistoryResult> cb) {
+    private void historySynchronized(HistoryOptions opts, ReplyCallback<HistoryResult> cb) {
         CompletableFuture<ReplyError> f = new CompletableFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
@@ -177,7 +177,7 @@ public class Subscription {
                 return;
             }
             this.futures.remove(uuid);
-            this.client.history(this.getChannel(), cb);
+            this.client.history(this.getChannel(), opts, cb);
         }).orTimeout(this.client.getOpts().getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             Subscription.this.futures.remove(uuid);
             cb.onFailure(e);

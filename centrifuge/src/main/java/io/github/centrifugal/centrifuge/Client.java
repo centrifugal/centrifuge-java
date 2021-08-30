@@ -471,13 +471,11 @@ public class Client {
         }
     }
 
-    void sendUnsubscribe(Subscription sub) {
-        this.executor.submit(() -> Client.this.sendUnsubscribeSynchronized(sub));
+    void unsubscribe(String channel) {
+        this.executor.submit(() -> Client.this.sendUnsubscribeSynchronized(channel));
     }
 
-    private void sendUnsubscribeSynchronized(Subscription sub) {
-        String channel = sub.getChannel();
-
+    private void sendUnsubscribeSynchronized(String channel) {
         Protocol.UnsubscribeRequest req = Protocol.UnsubscribeRequest.newBuilder()
                 .setChannel(channel)
                 .build();
@@ -685,7 +683,9 @@ public class Client {
                         publishEvent.setData(publication.getData().toByteArray());
                         publishEvent.setOffset(publication.getOffset());
                         this.listener.onPublish(this, publishEvent);
-                        serverSub.setLastOffset(publication.getOffset());
+                        if (publication.getOffset() > 0) {
+                            serverSub.setLastOffset(publication.getOffset());
+                        }
                     }
                 } else {
                     serverSub.setLastOffset(subResult.getOffset());
@@ -836,7 +836,9 @@ public class Client {
                     event.setData(pub.getData().toByteArray());
                     event.setOffset(pub.getOffset());
                     sub.getListener().onPublish(sub, event);
-                    sub.setLastOffset(pub.getOffset());
+                    if (pub.getOffset() > 0) {
+                        sub.setLastOffset(pub.getOffset());
+                    }
                 } else {
                     ServerSubscription serverSub = this.getServerSub(channel);
                     if (serverSub != null) {
@@ -845,7 +847,9 @@ public class Client {
                         event.setData(pub.getData().toByteArray());
                         event.setOffset(pub.getOffset());
                         this.listener.onPublish(this, event);
-                        serverSub.setLastOffset(pub.getOffset());
+                        if (pub.getOffset() > 0) {
+                            serverSub.setLastOffset(pub.getOffset());
+                        }
                     }
                 }
             } else if (push.getType() == Protocol.Push.PushType.SUBSCRIBE) {
@@ -1099,14 +1103,26 @@ public class Client {
         this.enqueueCommandFuture(cmd, f);
     }
 
-    void history(String channel, ReplyCallback<HistoryResult> cb) {
-        this.executor.submit(() -> Client.this.historySynchronized(channel, cb));
+    /**
+     * History can get channel publication history (useful for server-side subscriptions).
+     *
+     * @param channel
+     * @param opts
+     * @param cb
+     */
+    public void history(String channel, HistoryOptions opts, ReplyCallback<HistoryResult> cb) {
+        this.executor.submit(() -> Client.this.historySynchronized(channel, opts, cb));
     }
 
-    private void historySynchronized(String channel, ReplyCallback<HistoryResult> cb) {
-        Protocol.HistoryRequest req = Protocol.HistoryRequest.newBuilder()
+    private void historySynchronized(String channel, HistoryOptions opts, ReplyCallback<HistoryResult> cb) {
+        Protocol.HistoryRequest.Builder builder = Protocol.HistoryRequest.newBuilder()
                 .setChannel(channel)
-                .build();
+                .setReverse(opts.getReverse())
+                .setLimit(opts.getLimit());
+        if (opts.getSince() != null) {
+            builder.setSince(opts.getSince().toProto());
+        }
+        Protocol.HistoryRequest req = builder.build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
@@ -1133,6 +1149,8 @@ public class Client {
                         pubs.add(pub);
                     }
                     result.setPublications(pubs);
+                    result.setOffset(replyResult.getOffset());
+                    result.setEpoch(replyResult.getEpoch());
                     cb.onDone(null, result);
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();
@@ -1149,7 +1167,7 @@ public class Client {
         this.enqueueCommandFuture(cmd, f);
     }
 
-    void presence(String channel, ReplyCallback<PresenceResult> cb) {
+    public void presence(String channel, ReplyCallback<PresenceResult> cb) {
         this.executor.submit(() -> Client.this.presenceSynchronized(channel, cb));
     }
 
@@ -1196,7 +1214,7 @@ public class Client {
         this.enqueueCommandFuture(cmd, f);
     }
 
-    void presenceStats(String channel, ReplyCallback<PresenceStatsResult> cb) {
+    public void presenceStats(String channel, ReplyCallback<PresenceStatsResult> cb) {
         this.executor.submit(() -> Client.this.presenceStatsSynchronized(channel, cb));
     }
 

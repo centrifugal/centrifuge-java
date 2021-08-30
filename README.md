@@ -150,9 +150,9 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 - [x] presence stats method of Subscription
 - [x] history method of Subscription
 - [x] top-level publish method
-- [ ] top-level presence method
-- [ ] top-level presence stats method
-- [ ] top-level history method
+- [x] top-level presence method
+- [x] top-level presence stats method
+- [x] top-level history method
 - [ ] top-level unsubscribe method
 - [x] send asynchronous messages to server
 - [x] handle asynchronous messages from server
@@ -166,7 +166,7 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 - [x] server-side subscriptions
 - [x] message recovery mechanism for client-side subscriptions (works with Centrifugo >= 2.5.0 with `v3_use_offset` option set to `true`)
 - [x] message recovery mechanism for server-side subscriptions
-- [ ] history stream pagination
+- [x] history stream pagination
 
 ## License
 
