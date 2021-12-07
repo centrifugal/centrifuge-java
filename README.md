@@ -126,6 +126,10 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
+## Usage in background
+
+When a mobile application goes to the background there are OS-specific limitations for established persistent connections - which can be silently closed shortly. Thus in most cases you need to disconnect from a server when app moves to the background and connect again when app goes to the foreground.
+
 ## CI status
 
 [![Build Status](https://travis-ci.org/centrifugal/centrifuge-java.svg)](https://travis-ci.org/centrifugal/centrifuge-java)
