@@ -92,7 +92,7 @@ public final class Protocol {
      */
     private void setMessage(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       message_ = value;
     }
@@ -367,29 +367,197 @@ public final class Protocol {
       com.google.protobuf.MessageLiteOrBuilder {
 
     /**
+     * <pre>
+     * Id of command to let client match replies to commands.
+     * </pre>
+     *
      * <code>uint32 id = 1;</code>
      * @return The id.
      */
     int getId();
 
     /**
+     * <pre>
+     * Method is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
      * @return The enum numeric value on the wire for method.
      */
     int getMethodValue();
     /**
+     * <pre>
+     * Method is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
      * @return The method.
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.Command.MethodType getMethod();
 
     /**
+     * <pre>
+     * Params is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes params = 3;</code>
      * @return The params.
      */
     com.google.protobuf.ByteString getParams();
+
+    /**
+     * <pre>
+     * ProtocolVersion2 client can send one of the following requests. Server will
+     * only take the first non-null request out of these and may return an error if
+     * client passed more than one request. We are not using oneof here due to JSON
+     * interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+     * @return Whether the connect field is set.
+     */
+    boolean hasConnect();
+    /**
+     * <pre>
+     * ProtocolVersion2 client can send one of the following requests. Server will
+     * only take the first non-null request out of these and may return an error if
+     * client passed more than one request. We are not using oneof here due to JSON
+     * interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+     * @return The connect.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest getConnect();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+     * @return Whether the subscribe field is set.
+     */
+    boolean hasSubscribe();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+     * @return The subscribe.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubscribe();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+     * @return Whether the unsubscribe field is set.
+     */
+    boolean hasUnsubscribe();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+     * @return The unsubscribe.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest getUnsubscribe();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+     * @return Whether the publish field is set.
+     */
+    boolean hasPublish();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+     * @return The publish.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest getPublish();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+     * @return Whether the presence field is set.
+     */
+    boolean hasPresence();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+     * @return The presence.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest getPresence();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+     * @return Whether the presenceStats field is set.
+     */
+    boolean hasPresenceStats();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+     * @return The presenceStats.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest getPresenceStats();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+     * @return Whether the history field is set.
+     */
+    boolean hasHistory();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+     * @return The history.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest getHistory();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+     * @return Whether the ping field is set.
+     */
+    boolean hasPing();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+     * @return The ping.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest getPing();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+     * @return Whether the send field is set.
+     */
+    boolean hasSend();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+     * @return The send.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest getSend();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+     * @return Whether the rpc field is set.
+     */
+    boolean hasRpc();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+     * @return The rpc.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest getRpc();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+     * @return Whether the refresh field is set.
+     */
+    boolean hasRefresh();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+     * @return The refresh.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest getRefresh();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+     * @return Whether the subRefresh field is set.
+     */
+    boolean hasSubRefresh();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+     * @return The subRefresh.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest getSubRefresh();
   }
   /**
+   * <pre>
+   * Command sent from a client to a server.
+   * ProtocolVersion1 uses id, method and params fields.
+   * ProtocolVersion2 uses id and one of the possible request messages.
+   * </pre>
+   *
    * Protobuf type {@code centrifugal.centrifuge.protocol.Command}
    */
   public  static final class Command extends
@@ -582,6 +750,10 @@ public final class Protocol {
     public static final int ID_FIELD_NUMBER = 1;
     private int id_;
     /**
+     * <pre>
+     * Id of command to let client match replies to commands.
+     * </pre>
+     *
      * <code>uint32 id = 1;</code>
      * @return The id.
      */
@@ -590,6 +762,10 @@ public final class Protocol {
       return id_;
     }
     /**
+     * <pre>
+     * Id of command to let client match replies to commands.
+     * </pre>
+     *
      * <code>uint32 id = 1;</code>
      * @param value The id to set.
      */
@@ -598,6 +774,10 @@ public final class Protocol {
       id_ = value;
     }
     /**
+     * <pre>
+     * Id of command to let client match replies to commands.
+     * </pre>
+     *
      * <code>uint32 id = 1;</code>
      */
     private void clearId() {
@@ -608,6 +788,10 @@ public final class Protocol {
     public static final int METHOD_FIELD_NUMBER = 2;
     private int method_;
     /**
+     * <pre>
+     * Method is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
      * @return The enum numeric value on the wire for method.
      */
@@ -616,6 +800,10 @@ public final class Protocol {
       return method_;
     }
     /**
+     * <pre>
+     * Method is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
      * @return The method.
      */
@@ -625,6 +813,10 @@ public final class Protocol {
       return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Command.MethodType.UNRECOGNIZED : result;
     }
     /**
+     * <pre>
+     * Method is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
      * @param value The enum numeric value on the wire for method to set.
      */
@@ -632,6 +824,10 @@ public final class Protocol {
         method_ = value;
     }
     /**
+     * <pre>
+     * Method is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
      * @param value The method to set.
      */
@@ -640,6 +836,10 @@ public final class Protocol {
       
     }
     /**
+     * <pre>
+     * Method is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
      */
     private void clearMethod() {
@@ -650,6 +850,10 @@ public final class Protocol {
     public static final int PARAMS_FIELD_NUMBER = 3;
     private com.google.protobuf.ByteString params_;
     /**
+     * <pre>
+     * Params is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes params = 3;</code>
      * @return The params.
      */
@@ -658,20 +862,615 @@ public final class Protocol {
       return params_;
     }
     /**
+     * <pre>
+     * Params is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes params = 3;</code>
      * @param value The params to set.
      */
     private void setParams(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       params_ = value;
     }
     /**
+     * <pre>
+     * Params is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes params = 3;</code>
      */
     private void clearParams() {
       
       params_ = getDefaultInstance().getParams();
+    }
+
+    public static final int CONNECT_FIELD_NUMBER = 4;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest connect_;
+    /**
+     * <pre>
+     * ProtocolVersion2 client can send one of the following requests. Server will
+     * only take the first non-null request out of these and may return an error if
+     * client passed more than one request. We are not using oneof here due to JSON
+     * interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+     */
+    @java.lang.Override
+    public boolean hasConnect() {
+      return connect_ != null;
+    }
+    /**
+     * <pre>
+     * ProtocolVersion2 client can send one of the following requests. Server will
+     * only take the first non-null request out of these and may return an error if
+     * client passed more than one request. We are not using oneof here due to JSON
+     * interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest getConnect() {
+      return connect_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest.getDefaultInstance() : connect_;
+    }
+    /**
+     * <pre>
+     * ProtocolVersion2 client can send one of the following requests. Server will
+     * only take the first non-null request out of these and may return an error if
+     * client passed more than one request. We are not using oneof here due to JSON
+     * interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+     */
+    private void setConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest value) {
+      value.getClass();
+  connect_ = value;
+      
+      }
+    /**
+     * <pre>
+     * ProtocolVersion2 client can send one of the following requests. Server will
+     * only take the first non-null request out of these and may return an error if
+     * client passed more than one request. We are not using oneof here due to JSON
+     * interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest value) {
+      value.getClass();
+  if (connect_ != null &&
+          connect_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest.getDefaultInstance()) {
+        connect_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest.newBuilder(connect_).mergeFrom(value).buildPartial();
+      } else {
+        connect_ = value;
+      }
+      
+    }
+    /**
+     * <pre>
+     * ProtocolVersion2 client can send one of the following requests. Server will
+     * only take the first non-null request out of these and may return an error if
+     * client passed more than one request. We are not using oneof here due to JSON
+     * interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+     */
+    private void clearConnect() {  connect_ = null;
+      
+    }
+
+    public static final int SUBSCRIBE_FIELD_NUMBER = 5;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest subscribe_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+     */
+    @java.lang.Override
+    public boolean hasSubscribe() {
+      return subscribe_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubscribe() {
+      return subscribe_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest.getDefaultInstance() : subscribe_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+     */
+    private void setSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest value) {
+      value.getClass();
+  subscribe_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest value) {
+      value.getClass();
+  if (subscribe_ != null &&
+          subscribe_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest.getDefaultInstance()) {
+        subscribe_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest.newBuilder(subscribe_).mergeFrom(value).buildPartial();
+      } else {
+        subscribe_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+     */
+    private void clearSubscribe() {  subscribe_ = null;
+      
+    }
+
+    public static final int UNSUBSCRIBE_FIELD_NUMBER = 6;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest unsubscribe_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasUnsubscribe() {
+      return unsubscribe_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest getUnsubscribe() {
+      return unsubscribe_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest.getDefaultInstance() : unsubscribe_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+     */
+    private void setUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest value) {
+      value.getClass();
+  unsubscribe_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest value) {
+      value.getClass();
+  if (unsubscribe_ != null &&
+          unsubscribe_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest.getDefaultInstance()) {
+        unsubscribe_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest.newBuilder(unsubscribe_).mergeFrom(value).buildPartial();
+      } else {
+        unsubscribe_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+     */
+    private void clearUnsubscribe() {  unsubscribe_ = null;
+      
+    }
+
+    public static final int PUBLISH_FIELD_NUMBER = 7;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest publish_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+     */
+    @java.lang.Override
+    public boolean hasPublish() {
+      return publish_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest getPublish() {
+      return publish_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest.getDefaultInstance() : publish_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+     */
+    private void setPublish(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest value) {
+      value.getClass();
+  publish_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePublish(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest value) {
+      value.getClass();
+  if (publish_ != null &&
+          publish_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest.getDefaultInstance()) {
+        publish_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest.newBuilder(publish_).mergeFrom(value).buildPartial();
+      } else {
+        publish_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+     */
+    private void clearPublish() {  publish_ = null;
+      
+    }
+
+    public static final int PRESENCE_FIELD_NUMBER = 8;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest presence_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+     */
+    @java.lang.Override
+    public boolean hasPresence() {
+      return presence_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest getPresence() {
+      return presence_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest.getDefaultInstance() : presence_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+     */
+    private void setPresence(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest value) {
+      value.getClass();
+  presence_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePresence(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest value) {
+      value.getClass();
+  if (presence_ != null &&
+          presence_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest.getDefaultInstance()) {
+        presence_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest.newBuilder(presence_).mergeFrom(value).buildPartial();
+      } else {
+        presence_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+     */
+    private void clearPresence() {  presence_ = null;
+      
+    }
+
+    public static final int PRESENCE_STATS_FIELD_NUMBER = 9;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest presenceStats_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+     */
+    @java.lang.Override
+    public boolean hasPresenceStats() {
+      return presenceStats_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest getPresenceStats() {
+      return presenceStats_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest.getDefaultInstance() : presenceStats_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+     */
+    private void setPresenceStats(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest value) {
+      value.getClass();
+  presenceStats_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePresenceStats(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest value) {
+      value.getClass();
+  if (presenceStats_ != null &&
+          presenceStats_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest.getDefaultInstance()) {
+        presenceStats_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest.newBuilder(presenceStats_).mergeFrom(value).buildPartial();
+      } else {
+        presenceStats_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+     */
+    private void clearPresenceStats() {  presenceStats_ = null;
+      
+    }
+
+    public static final int HISTORY_FIELD_NUMBER = 10;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest history_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+     */
+    @java.lang.Override
+    public boolean hasHistory() {
+      return history_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest getHistory() {
+      return history_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest.getDefaultInstance() : history_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+     */
+    private void setHistory(io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest value) {
+      value.getClass();
+  history_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeHistory(io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest value) {
+      value.getClass();
+  if (history_ != null &&
+          history_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest.getDefaultInstance()) {
+        history_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest.newBuilder(history_).mergeFrom(value).buildPartial();
+      } else {
+        history_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+     */
+    private void clearHistory() {  history_ = null;
+      
+    }
+
+    public static final int PING_FIELD_NUMBER = 11;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest ping_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+     */
+    @java.lang.Override
+    public boolean hasPing() {
+      return ping_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest getPing() {
+      return ping_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest.getDefaultInstance() : ping_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+     */
+    private void setPing(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest value) {
+      value.getClass();
+  ping_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePing(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest value) {
+      value.getClass();
+  if (ping_ != null &&
+          ping_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest.getDefaultInstance()) {
+        ping_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest.newBuilder(ping_).mergeFrom(value).buildPartial();
+      } else {
+        ping_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+     */
+    private void clearPing() {  ping_ = null;
+      
+    }
+
+    public static final int SEND_FIELD_NUMBER = 12;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest send_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+     */
+    @java.lang.Override
+    public boolean hasSend() {
+      return send_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest getSend() {
+      return send_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest.getDefaultInstance() : send_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+     */
+    private void setSend(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest value) {
+      value.getClass();
+  send_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeSend(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest value) {
+      value.getClass();
+  if (send_ != null &&
+          send_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest.getDefaultInstance()) {
+        send_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest.newBuilder(send_).mergeFrom(value).buildPartial();
+      } else {
+        send_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+     */
+    private void clearSend() {  send_ = null;
+      
+    }
+
+    public static final int RPC_FIELD_NUMBER = 13;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest rpc_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+     */
+    @java.lang.Override
+    public boolean hasRpc() {
+      return rpc_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest getRpc() {
+      return rpc_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest.getDefaultInstance() : rpc_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+     */
+    private void setRpc(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest value) {
+      value.getClass();
+  rpc_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeRpc(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest value) {
+      value.getClass();
+  if (rpc_ != null &&
+          rpc_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest.getDefaultInstance()) {
+        rpc_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest.newBuilder(rpc_).mergeFrom(value).buildPartial();
+      } else {
+        rpc_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+     */
+    private void clearRpc() {  rpc_ = null;
+      
+    }
+
+    public static final int REFRESH_FIELD_NUMBER = 14;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest refresh_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+     */
+    @java.lang.Override
+    public boolean hasRefresh() {
+      return refresh_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest getRefresh() {
+      return refresh_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest.getDefaultInstance() : refresh_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+     */
+    private void setRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest value) {
+      value.getClass();
+  refresh_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest value) {
+      value.getClass();
+  if (refresh_ != null &&
+          refresh_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest.getDefaultInstance()) {
+        refresh_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest.newBuilder(refresh_).mergeFrom(value).buildPartial();
+      } else {
+        refresh_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+     */
+    private void clearRefresh() {  refresh_ = null;
+      
+    }
+
+    public static final int SUB_REFRESH_FIELD_NUMBER = 15;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest subRefresh_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+     */
+    @java.lang.Override
+    public boolean hasSubRefresh() {
+      return subRefresh_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest getSubRefresh() {
+      return subRefresh_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest.getDefaultInstance() : subRefresh_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+     */
+    private void setSubRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest value) {
+      value.getClass();
+  subRefresh_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeSubRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest value) {
+      value.getClass();
+  if (subRefresh_ != null &&
+          subRefresh_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest.getDefaultInstance()) {
+        subRefresh_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest.newBuilder(subRefresh_).mergeFrom(value).buildPartial();
+      } else {
+        subRefresh_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+     */
+    private void clearSubRefresh() {  subRefresh_ = null;
+      
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Command parseFrom(
@@ -756,6 +1555,12 @@ public final class Protocol {
     }
 
     /**
+     * <pre>
+     * Command sent from a client to a server.
+     * ProtocolVersion1 uses id, method and params fields.
+     * ProtocolVersion2 uses id and one of the possible request messages.
+     * </pre>
+     *
      * Protobuf type {@code centrifugal.centrifuge.protocol.Command}
      */
     public static final class Builder extends
@@ -770,6 +1575,10 @@ public final class Protocol {
 
 
       /**
+       * <pre>
+       * Id of command to let client match replies to commands.
+       * </pre>
+       *
        * <code>uint32 id = 1;</code>
        * @return The id.
        */
@@ -778,6 +1587,10 @@ public final class Protocol {
         return instance.getId();
       }
       /**
+       * <pre>
+       * Id of command to let client match replies to commands.
+       * </pre>
+       *
        * <code>uint32 id = 1;</code>
        * @param value The id to set.
        * @return This builder for chaining.
@@ -788,6 +1601,10 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Id of command to let client match replies to commands.
+       * </pre>
+       *
        * <code>uint32 id = 1;</code>
        * @return This builder for chaining.
        */
@@ -798,6 +1615,10 @@ public final class Protocol {
       }
 
       /**
+       * <pre>
+       * Method is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
        * @return The enum numeric value on the wire for method.
        */
@@ -806,6 +1627,10 @@ public final class Protocol {
         return instance.getMethodValue();
       }
       /**
+       * <pre>
+       * Method is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
        * @param value The method to set.
        * @return This builder for chaining.
@@ -816,6 +1641,10 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Method is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
        * @return The method.
        */
@@ -824,6 +1653,10 @@ public final class Protocol {
         return instance.getMethod();
       }
       /**
+       * <pre>
+       * Method is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
        * @param value The enum numeric value on the wire for method to set.
        * @return This builder for chaining.
@@ -834,6 +1667,10 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Method is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Command.MethodType method = 2;</code>
        * @return This builder for chaining.
        */
@@ -844,6 +1681,10 @@ public final class Protocol {
       }
 
       /**
+       * <pre>
+       * Params is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>bytes params = 3;</code>
        * @return The params.
        */
@@ -852,6 +1693,10 @@ public final class Protocol {
         return instance.getParams();
       }
       /**
+       * <pre>
+       * Params is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>bytes params = 3;</code>
        * @param value The params to set.
        * @return This builder for chaining.
@@ -862,12 +1707,622 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Params is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>bytes params = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearParams() {
         copyOnWrite();
         instance.clearParams();
+        return this;
+      }
+
+      /**
+       * <pre>
+       * ProtocolVersion2 client can send one of the following requests. Server will
+       * only take the first non-null request out of these and may return an error if
+       * client passed more than one request. We are not using oneof here due to JSON
+       * interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+       */
+      @java.lang.Override
+      public boolean hasConnect() {
+        return instance.hasConnect();
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 client can send one of the following requests. Server will
+       * only take the first non-null request out of these and may return an error if
+       * client passed more than one request. We are not using oneof here due to JSON
+       * interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest getConnect() {
+        return instance.getConnect();
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 client can send one of the following requests. Server will
+       * only take the first non-null request out of these and may return an error if
+       * client passed more than one request. We are not using oneof here due to JSON
+       * interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+       */
+      public Builder setConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest value) {
+        copyOnWrite();
+        instance.setConnect(value);
+        return this;
+        }
+      /**
+       * <pre>
+       * ProtocolVersion2 client can send one of the following requests. Server will
+       * only take the first non-null request out of these and may return an error if
+       * client passed more than one request. We are not using oneof here due to JSON
+       * interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+       */
+      public Builder setConnect(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setConnect(builderForValue.build());
+        return this;
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 client can send one of the following requests. Server will
+       * only take the first non-null request out of these and may return an error if
+       * client passed more than one request. We are not using oneof here due to JSON
+       * interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+       */
+      public Builder mergeConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectRequest value) {
+        copyOnWrite();
+        instance.mergeConnect(value);
+        return this;
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 client can send one of the following requests. Server will
+       * only take the first non-null request out of these and may return an error if
+       * client passed more than one request. We are not using oneof here due to JSON
+       * interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.ConnectRequest connect = 4;</code>
+       */
+      public Builder clearConnect() {  copyOnWrite();
+        instance.clearConnect();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+       */
+      @java.lang.Override
+      public boolean hasSubscribe() {
+        return instance.hasSubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubscribe() {
+        return instance.getSubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+       */
+      public Builder setSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest value) {
+        copyOnWrite();
+        instance.setSubscribe(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+       */
+      public Builder setSubscribe(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setSubscribe(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+       */
+      public Builder mergeSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest value) {
+        copyOnWrite();
+        instance.mergeSubscribe(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeRequest subscribe = 5;</code>
+       */
+      public Builder clearSubscribe() {  copyOnWrite();
+        instance.clearSubscribe();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+       */
+      @java.lang.Override
+      public boolean hasUnsubscribe() {
+        return instance.hasUnsubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest getUnsubscribe() {
+        return instance.getUnsubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+       */
+      public Builder setUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest value) {
+        copyOnWrite();
+        instance.setUnsubscribe(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+       */
+      public Builder setUnsubscribe(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setUnsubscribe(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+       */
+      public Builder mergeUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeRequest value) {
+        copyOnWrite();
+        instance.mergeUnsubscribe(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeRequest unsubscribe = 6;</code>
+       */
+      public Builder clearUnsubscribe() {  copyOnWrite();
+        instance.clearUnsubscribe();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+       */
+      @java.lang.Override
+      public boolean hasPublish() {
+        return instance.hasPublish();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest getPublish() {
+        return instance.getPublish();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+       */
+      public Builder setPublish(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest value) {
+        copyOnWrite();
+        instance.setPublish(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+       */
+      public Builder setPublish(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPublish(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+       */
+      public Builder mergePublish(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishRequest value) {
+        copyOnWrite();
+        instance.mergePublish(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishRequest publish = 7;</code>
+       */
+      public Builder clearPublish() {  copyOnWrite();
+        instance.clearPublish();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+       */
+      @java.lang.Override
+      public boolean hasPresence() {
+        return instance.hasPresence();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest getPresence() {
+        return instance.getPresence();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+       */
+      public Builder setPresence(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest value) {
+        copyOnWrite();
+        instance.setPresence(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+       */
+      public Builder setPresence(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPresence(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+       */
+      public Builder mergePresence(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceRequest value) {
+        copyOnWrite();
+        instance.mergePresence(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceRequest presence = 8;</code>
+       */
+      public Builder clearPresence() {  copyOnWrite();
+        instance.clearPresence();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+       */
+      @java.lang.Override
+      public boolean hasPresenceStats() {
+        return instance.hasPresenceStats();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest getPresenceStats() {
+        return instance.getPresenceStats();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+       */
+      public Builder setPresenceStats(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest value) {
+        copyOnWrite();
+        instance.setPresenceStats(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+       */
+      public Builder setPresenceStats(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPresenceStats(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+       */
+      public Builder mergePresenceStats(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsRequest value) {
+        copyOnWrite();
+        instance.mergePresenceStats(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsRequest presence_stats = 9;</code>
+       */
+      public Builder clearPresenceStats() {  copyOnWrite();
+        instance.clearPresenceStats();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+       */
+      @java.lang.Override
+      public boolean hasHistory() {
+        return instance.hasHistory();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest getHistory() {
+        return instance.getHistory();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+       */
+      public Builder setHistory(io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest value) {
+        copyOnWrite();
+        instance.setHistory(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+       */
+      public Builder setHistory(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setHistory(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+       */
+      public Builder mergeHistory(io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryRequest value) {
+        copyOnWrite();
+        instance.mergeHistory(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryRequest history = 10;</code>
+       */
+      public Builder clearHistory() {  copyOnWrite();
+        instance.clearHistory();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+       */
+      @java.lang.Override
+      public boolean hasPing() {
+        return instance.hasPing();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest getPing() {
+        return instance.getPing();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+       */
+      public Builder setPing(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest value) {
+        copyOnWrite();
+        instance.setPing(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+       */
+      public Builder setPing(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPing(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+       */
+      public Builder mergePing(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingRequest value) {
+        copyOnWrite();
+        instance.mergePing(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingRequest ping = 11;</code>
+       */
+      public Builder clearPing() {  copyOnWrite();
+        instance.clearPing();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+       */
+      @java.lang.Override
+      public boolean hasSend() {
+        return instance.hasSend();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest getSend() {
+        return instance.getSend();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+       */
+      public Builder setSend(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest value) {
+        copyOnWrite();
+        instance.setSend(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+       */
+      public Builder setSend(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setSend(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+       */
+      public Builder mergeSend(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SendRequest value) {
+        copyOnWrite();
+        instance.mergeSend(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SendRequest send = 12;</code>
+       */
+      public Builder clearSend() {  copyOnWrite();
+        instance.clearSend();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+       */
+      @java.lang.Override
+      public boolean hasRpc() {
+        return instance.hasRpc();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest getRpc() {
+        return instance.getRpc();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+       */
+      public Builder setRpc(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest value) {
+        copyOnWrite();
+        instance.setRpc(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+       */
+      public Builder setRpc(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setRpc(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+       */
+      public Builder mergeRpc(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCRequest value) {
+        copyOnWrite();
+        instance.mergeRpc(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCRequest rpc = 13;</code>
+       */
+      public Builder clearRpc() {  copyOnWrite();
+        instance.clearRpc();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+       */
+      @java.lang.Override
+      public boolean hasRefresh() {
+        return instance.hasRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest getRefresh() {
+        return instance.getRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+       */
+      public Builder setRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest value) {
+        copyOnWrite();
+        instance.setRefresh(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+       */
+      public Builder setRefresh(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setRefresh(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+       */
+      public Builder mergeRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshRequest value) {
+        copyOnWrite();
+        instance.mergeRefresh(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshRequest refresh = 14;</code>
+       */
+      public Builder clearRefresh() {  copyOnWrite();
+        instance.clearRefresh();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+       */
+      @java.lang.Override
+      public boolean hasSubRefresh() {
+        return instance.hasSubRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest getSubRefresh() {
+        return instance.getSubRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+       */
+      public Builder setSubRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest value) {
+        copyOnWrite();
+        instance.setSubRefresh(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+       */
+      public Builder setSubRefresh(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest.Builder builderForValue) {
+        copyOnWrite();
+        instance.setSubRefresh(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+       */
+      public Builder mergeSubRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshRequest value) {
+        copyOnWrite();
+        instance.mergeSubRefresh(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshRequest sub_refresh = 15;</code>
+       */
+      public Builder clearSubRefresh() {  copyOnWrite();
+        instance.clearSubRefresh();
         return this;
       }
 
@@ -890,10 +2345,23 @@ public final class Protocol {
               "id_",
               "method_",
               "params_",
+              "connect_",
+              "subscribe_",
+              "unsubscribe_",
+              "publish_",
+              "presence_",
+              "presenceStats_",
+              "history_",
+              "ping_",
+              "send_",
+              "rpc_",
+              "refresh_",
+              "subRefresh_",
             };
             java.lang.String info =
-                "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u000b\u0002\f" +
-                "\u0003\n";
+                "\u0000\u000f\u0000\u0000\u0001\u000f\u000f\u0000\u0000\u0000\u0001\u000b\u0002\f" +
+                "\u0003\n\u0004\t\u0005\t\u0006\t\u0007\t\b\t\t\t\n\t\u000b\t\f\t\r\t\u000e\t\u000f" +
+                "\t";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -953,29 +2421,194 @@ public final class Protocol {
       com.google.protobuf.MessageLiteOrBuilder {
 
     /**
+     * <pre>
+     * Id will only be set to a value &gt; 0 for replies to commands. For pushes
+     * it will have zero value.
+     * </pre>
+     *
      * <code>uint32 id = 1;</code>
      * @return The id.
      */
     int getId();
 
     /**
+     * <pre>
+     * Error can only be set in replies to commands. For pushes it will have zero value.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
      * @return Whether the error field is set.
      */
     boolean hasError();
     /**
+     * <pre>
+     * Error can only be set in replies to commands. For pushes it will have zero value.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
      * @return The error.
      */
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error getError();
 
     /**
+     * <pre>
+     * Result is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes result = 3;</code>
      * @return The result.
      */
     com.google.protobuf.ByteString getResult();
+
+    /**
+     * <pre>
+     * ProtocolVersion2 server can send one of the following fields. We are not using
+     * oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+     * @return Whether the push field is set.
+     */
+    boolean hasPush();
+    /**
+     * <pre>
+     * ProtocolVersion2 server can send one of the following fields. We are not using
+     * oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+     * @return The push.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push getPush();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+     * @return Whether the connect field is set.
+     */
+    boolean hasConnect();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+     * @return The connect.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult getConnect();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+     * @return Whether the subscribe field is set.
+     */
+    boolean hasSubscribe();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+     * @return The subscribe.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubscribe();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+     * @return Whether the unsubscribe field is set.
+     */
+    boolean hasUnsubscribe();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+     * @return The unsubscribe.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult getUnsubscribe();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+     * @return Whether the publish field is set.
+     */
+    boolean hasPublish();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+     * @return The publish.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult getPublish();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+     * @return Whether the presence field is set.
+     */
+    boolean hasPresence();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+     * @return The presence.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult getPresence();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+     * @return Whether the presenceStats field is set.
+     */
+    boolean hasPresenceStats();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+     * @return The presenceStats.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult getPresenceStats();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+     * @return Whether the history field is set.
+     */
+    boolean hasHistory();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+     * @return The history.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult getHistory();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+     * @return Whether the ping field is set.
+     */
+    boolean hasPing();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+     * @return The ping.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult getPing();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+     * @return Whether the rpc field is set.
+     */
+    boolean hasRpc();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+     * @return The rpc.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult getRpc();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+     * @return Whether the refresh field is set.
+     */
+    boolean hasRefresh();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+     * @return The refresh.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult getRefresh();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+     * @return Whether the subRefresh field is set.
+     */
+    boolean hasSubRefresh();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+     * @return The subRefresh.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult getSubRefresh();
   }
   /**
+   * <pre>
+   * Reply sent from a server to a client.
+   * ProtocolVersion1 uses id, error and result fields.
+   * ProtocolVersion2 uses id and one of the possible concrete result messages.
+   * </pre>
+   *
    * Protobuf type {@code centrifugal.centrifuge.protocol.Reply}
    */
   public  static final class Reply extends
@@ -989,6 +2622,11 @@ public final class Protocol {
     public static final int ID_FIELD_NUMBER = 1;
     private int id_;
     /**
+     * <pre>
+     * Id will only be set to a value &gt; 0 for replies to commands. For pushes
+     * it will have zero value.
+     * </pre>
+     *
      * <code>uint32 id = 1;</code>
      * @return The id.
      */
@@ -997,6 +2635,11 @@ public final class Protocol {
       return id_;
     }
     /**
+     * <pre>
+     * Id will only be set to a value &gt; 0 for replies to commands. For pushes
+     * it will have zero value.
+     * </pre>
+     *
      * <code>uint32 id = 1;</code>
      * @param value The id to set.
      */
@@ -1005,6 +2648,11 @@ public final class Protocol {
       id_ = value;
     }
     /**
+     * <pre>
+     * Id will only be set to a value &gt; 0 for replies to commands. For pushes
+     * it will have zero value.
+     * </pre>
+     *
      * <code>uint32 id = 1;</code>
      */
     private void clearId() {
@@ -1015,6 +2663,10 @@ public final class Protocol {
     public static final int ERROR_FIELD_NUMBER = 2;
     private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error error_;
     /**
+     * <pre>
+     * Error can only be set in replies to commands. For pushes it will have zero value.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
      */
     @java.lang.Override
@@ -1022,6 +2674,10 @@ public final class Protocol {
       return error_ != null;
     }
     /**
+     * <pre>
+     * Error can only be set in replies to commands. For pushes it will have zero value.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
      */
     @java.lang.Override
@@ -1029,6 +2685,10 @@ public final class Protocol {
       return error_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error.getDefaultInstance() : error_;
     }
     /**
+     * <pre>
+     * Error can only be set in replies to commands. For pushes it will have zero value.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
      */
     private void setError(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error value) {
@@ -1037,6 +2697,10 @@ public final class Protocol {
       
       }
     /**
+     * <pre>
+     * Error can only be set in replies to commands. For pushes it will have zero value.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
      */
     @java.lang.SuppressWarnings({"ReferenceEquality"})
@@ -1052,6 +2716,10 @@ public final class Protocol {
       
     }
     /**
+     * <pre>
+     * Error can only be set in replies to commands. For pushes it will have zero value.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
      */
     private void clearError() {  error_ = null;
@@ -1061,6 +2729,10 @@ public final class Protocol {
     public static final int RESULT_FIELD_NUMBER = 3;
     private com.google.protobuf.ByteString result_;
     /**
+     * <pre>
+     * Result is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes result = 3;</code>
      * @return The result.
      */
@@ -1069,20 +2741,605 @@ public final class Protocol {
       return result_;
     }
     /**
+     * <pre>
+     * Result is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes result = 3;</code>
      * @param value The result to set.
      */
     private void setResult(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       result_ = value;
     }
     /**
+     * <pre>
+     * Result is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes result = 3;</code>
      */
     private void clearResult() {
       
       result_ = getDefaultInstance().getResult();
+    }
+
+    public static final int PUSH_FIELD_NUMBER = 4;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push push_;
+    /**
+     * <pre>
+     * ProtocolVersion2 server can send one of the following fields. We are not using
+     * oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+     */
+    @java.lang.Override
+    public boolean hasPush() {
+      return push_ != null;
+    }
+    /**
+     * <pre>
+     * ProtocolVersion2 server can send one of the following fields. We are not using
+     * oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push getPush() {
+      return push_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push.getDefaultInstance() : push_;
+    }
+    /**
+     * <pre>
+     * ProtocolVersion2 server can send one of the following fields. We are not using
+     * oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+     */
+    private void setPush(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push value) {
+      value.getClass();
+  push_ = value;
+      
+      }
+    /**
+     * <pre>
+     * ProtocolVersion2 server can send one of the following fields. We are not using
+     * oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePush(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push value) {
+      value.getClass();
+  if (push_ != null &&
+          push_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push.getDefaultInstance()) {
+        push_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push.newBuilder(push_).mergeFrom(value).buildPartial();
+      } else {
+        push_ = value;
+      }
+      
+    }
+    /**
+     * <pre>
+     * ProtocolVersion2 server can send one of the following fields. We are not using
+     * oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+     */
+    private void clearPush() {  push_ = null;
+      
+    }
+
+    public static final int CONNECT_FIELD_NUMBER = 5;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult connect_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+     */
+    @java.lang.Override
+    public boolean hasConnect() {
+      return connect_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult getConnect() {
+      return connect_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult.getDefaultInstance() : connect_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+     */
+    private void setConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult value) {
+      value.getClass();
+  connect_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult value) {
+      value.getClass();
+  if (connect_ != null &&
+          connect_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult.getDefaultInstance()) {
+        connect_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult.newBuilder(connect_).mergeFrom(value).buildPartial();
+      } else {
+        connect_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+     */
+    private void clearConnect() {  connect_ = null;
+      
+    }
+
+    public static final int SUBSCRIBE_FIELD_NUMBER = 6;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult subscribe_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasSubscribe() {
+      return subscribe_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubscribe() {
+      return subscribe_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult.getDefaultInstance() : subscribe_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+     */
+    private void setSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult value) {
+      value.getClass();
+  subscribe_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult value) {
+      value.getClass();
+  if (subscribe_ != null &&
+          subscribe_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult.getDefaultInstance()) {
+        subscribe_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult.newBuilder(subscribe_).mergeFrom(value).buildPartial();
+      } else {
+        subscribe_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+     */
+    private void clearSubscribe() {  subscribe_ = null;
+      
+    }
+
+    public static final int UNSUBSCRIBE_FIELD_NUMBER = 7;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult unsubscribe_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+     */
+    @java.lang.Override
+    public boolean hasUnsubscribe() {
+      return unsubscribe_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult getUnsubscribe() {
+      return unsubscribe_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult.getDefaultInstance() : unsubscribe_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+     */
+    private void setUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult value) {
+      value.getClass();
+  unsubscribe_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult value) {
+      value.getClass();
+  if (unsubscribe_ != null &&
+          unsubscribe_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult.getDefaultInstance()) {
+        unsubscribe_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult.newBuilder(unsubscribe_).mergeFrom(value).buildPartial();
+      } else {
+        unsubscribe_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+     */
+    private void clearUnsubscribe() {  unsubscribe_ = null;
+      
+    }
+
+    public static final int PUBLISH_FIELD_NUMBER = 8;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult publish_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+     */
+    @java.lang.Override
+    public boolean hasPublish() {
+      return publish_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult getPublish() {
+      return publish_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult.getDefaultInstance() : publish_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+     */
+    private void setPublish(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult value) {
+      value.getClass();
+  publish_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePublish(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult value) {
+      value.getClass();
+  if (publish_ != null &&
+          publish_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult.getDefaultInstance()) {
+        publish_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult.newBuilder(publish_).mergeFrom(value).buildPartial();
+      } else {
+        publish_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+     */
+    private void clearPublish() {  publish_ = null;
+      
+    }
+
+    public static final int PRESENCE_FIELD_NUMBER = 9;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult presence_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+     */
+    @java.lang.Override
+    public boolean hasPresence() {
+      return presence_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult getPresence() {
+      return presence_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult.getDefaultInstance() : presence_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+     */
+    private void setPresence(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult value) {
+      value.getClass();
+  presence_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePresence(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult value) {
+      value.getClass();
+  if (presence_ != null &&
+          presence_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult.getDefaultInstance()) {
+        presence_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult.newBuilder(presence_).mergeFrom(value).buildPartial();
+      } else {
+        presence_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+     */
+    private void clearPresence() {  presence_ = null;
+      
+    }
+
+    public static final int PRESENCE_STATS_FIELD_NUMBER = 10;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult presenceStats_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+     */
+    @java.lang.Override
+    public boolean hasPresenceStats() {
+      return presenceStats_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult getPresenceStats() {
+      return presenceStats_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult.getDefaultInstance() : presenceStats_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+     */
+    private void setPresenceStats(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult value) {
+      value.getClass();
+  presenceStats_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePresenceStats(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult value) {
+      value.getClass();
+  if (presenceStats_ != null &&
+          presenceStats_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult.getDefaultInstance()) {
+        presenceStats_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult.newBuilder(presenceStats_).mergeFrom(value).buildPartial();
+      } else {
+        presenceStats_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+     */
+    private void clearPresenceStats() {  presenceStats_ = null;
+      
+    }
+
+    public static final int HISTORY_FIELD_NUMBER = 11;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult history_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+     */
+    @java.lang.Override
+    public boolean hasHistory() {
+      return history_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult getHistory() {
+      return history_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult.getDefaultInstance() : history_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+     */
+    private void setHistory(io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult value) {
+      value.getClass();
+  history_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeHistory(io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult value) {
+      value.getClass();
+  if (history_ != null &&
+          history_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult.getDefaultInstance()) {
+        history_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult.newBuilder(history_).mergeFrom(value).buildPartial();
+      } else {
+        history_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+     */
+    private void clearHistory() {  history_ = null;
+      
+    }
+
+    public static final int PING_FIELD_NUMBER = 12;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult ping_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+     */
+    @java.lang.Override
+    public boolean hasPing() {
+      return ping_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult getPing() {
+      return ping_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult.getDefaultInstance() : ping_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+     */
+    private void setPing(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult value) {
+      value.getClass();
+  ping_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePing(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult value) {
+      value.getClass();
+  if (ping_ != null &&
+          ping_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult.getDefaultInstance()) {
+        ping_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult.newBuilder(ping_).mergeFrom(value).buildPartial();
+      } else {
+        ping_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+     */
+    private void clearPing() {  ping_ = null;
+      
+    }
+
+    public static final int RPC_FIELD_NUMBER = 13;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult rpc_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+     */
+    @java.lang.Override
+    public boolean hasRpc() {
+      return rpc_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult getRpc() {
+      return rpc_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult.getDefaultInstance() : rpc_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+     */
+    private void setRpc(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult value) {
+      value.getClass();
+  rpc_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeRpc(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult value) {
+      value.getClass();
+  if (rpc_ != null &&
+          rpc_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult.getDefaultInstance()) {
+        rpc_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult.newBuilder(rpc_).mergeFrom(value).buildPartial();
+      } else {
+        rpc_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+     */
+    private void clearRpc() {  rpc_ = null;
+      
+    }
+
+    public static final int REFRESH_FIELD_NUMBER = 14;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult refresh_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+     */
+    @java.lang.Override
+    public boolean hasRefresh() {
+      return refresh_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult getRefresh() {
+      return refresh_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult.getDefaultInstance() : refresh_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+     */
+    private void setRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult value) {
+      value.getClass();
+  refresh_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult value) {
+      value.getClass();
+  if (refresh_ != null &&
+          refresh_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult.getDefaultInstance()) {
+        refresh_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult.newBuilder(refresh_).mergeFrom(value).buildPartial();
+      } else {
+        refresh_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+     */
+    private void clearRefresh() {  refresh_ = null;
+      
+    }
+
+    public static final int SUB_REFRESH_FIELD_NUMBER = 15;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult subRefresh_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+     */
+    @java.lang.Override
+    public boolean hasSubRefresh() {
+      return subRefresh_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult getSubRefresh() {
+      return subRefresh_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult.getDefaultInstance() : subRefresh_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+     */
+    private void setSubRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult value) {
+      value.getClass();
+  subRefresh_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeSubRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult value) {
+      value.getClass();
+  if (subRefresh_ != null &&
+          subRefresh_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult.getDefaultInstance()) {
+        subRefresh_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult.newBuilder(subRefresh_).mergeFrom(value).buildPartial();
+      } else {
+        subRefresh_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+     */
+    private void clearSubRefresh() {  subRefresh_ = null;
+      
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Reply parseFrom(
@@ -1167,6 +3424,12 @@ public final class Protocol {
     }
 
     /**
+     * <pre>
+     * Reply sent from a server to a client.
+     * ProtocolVersion1 uses id, error and result fields.
+     * ProtocolVersion2 uses id and one of the possible concrete result messages.
+     * </pre>
+     *
      * Protobuf type {@code centrifugal.centrifuge.protocol.Reply}
      */
     public static final class Builder extends
@@ -1181,6 +3444,11 @@ public final class Protocol {
 
 
       /**
+       * <pre>
+       * Id will only be set to a value &gt; 0 for replies to commands. For pushes
+       * it will have zero value.
+       * </pre>
+       *
        * <code>uint32 id = 1;</code>
        * @return The id.
        */
@@ -1189,6 +3457,11 @@ public final class Protocol {
         return instance.getId();
       }
       /**
+       * <pre>
+       * Id will only be set to a value &gt; 0 for replies to commands. For pushes
+       * it will have zero value.
+       * </pre>
+       *
        * <code>uint32 id = 1;</code>
        * @param value The id to set.
        * @return This builder for chaining.
@@ -1199,6 +3472,11 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Id will only be set to a value &gt; 0 for replies to commands. For pushes
+       * it will have zero value.
+       * </pre>
+       *
        * <code>uint32 id = 1;</code>
        * @return This builder for chaining.
        */
@@ -1209,6 +3487,10 @@ public final class Protocol {
       }
 
       /**
+       * <pre>
+       * Error can only be set in replies to commands. For pushes it will have zero value.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
        */
       @java.lang.Override
@@ -1216,6 +3498,10 @@ public final class Protocol {
         return instance.hasError();
       }
       /**
+       * <pre>
+       * Error can only be set in replies to commands. For pushes it will have zero value.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
        */
       @java.lang.Override
@@ -1223,6 +3509,10 @@ public final class Protocol {
         return instance.getError();
       }
       /**
+       * <pre>
+       * Error can only be set in replies to commands. For pushes it will have zero value.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
        */
       public Builder setError(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error value) {
@@ -1231,6 +3521,10 @@ public final class Protocol {
         return this;
         }
       /**
+       * <pre>
+       * Error can only be set in replies to commands. For pushes it will have zero value.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
        */
       public Builder setError(
@@ -1240,6 +3534,10 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Error can only be set in replies to commands. For pushes it will have zero value.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
        */
       public Builder mergeError(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error value) {
@@ -1248,6 +3546,10 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Error can only be set in replies to commands. For pushes it will have zero value.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Error error = 2;</code>
        */
       public Builder clearError() {  copyOnWrite();
@@ -1256,6 +3558,10 @@ public final class Protocol {
       }
 
       /**
+       * <pre>
+       * Result is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>bytes result = 3;</code>
        * @return The result.
        */
@@ -1264,6 +3570,10 @@ public final class Protocol {
         return instance.getResult();
       }
       /**
+       * <pre>
+       * Result is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>bytes result = 3;</code>
        * @param value The result to set.
        * @return This builder for chaining.
@@ -1274,12 +3584,610 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Result is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>bytes result = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearResult() {
         copyOnWrite();
         instance.clearResult();
+        return this;
+      }
+
+      /**
+       * <pre>
+       * ProtocolVersion2 server can send one of the following fields. We are not using
+       * oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+       */
+      @java.lang.Override
+      public boolean hasPush() {
+        return instance.hasPush();
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can send one of the following fields. We are not using
+       * oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push getPush() {
+        return instance.getPush();
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can send one of the following fields. We are not using
+       * oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+       */
+      public Builder setPush(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push value) {
+        copyOnWrite();
+        instance.setPush(value);
+        return this;
+        }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can send one of the following fields. We are not using
+       * oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+       */
+      public Builder setPush(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPush(builderForValue.build());
+        return this;
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can send one of the following fields. We are not using
+       * oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+       */
+      public Builder mergePush(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push value) {
+        copyOnWrite();
+        instance.mergePush(value);
+        return this;
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can send one of the following fields. We are not using
+       * oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Push push = 4;</code>
+       */
+      public Builder clearPush() {  copyOnWrite();
+        instance.clearPush();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+       */
+      @java.lang.Override
+      public boolean hasConnect() {
+        return instance.hasConnect();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult getConnect() {
+        return instance.getConnect();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+       */
+      public Builder setConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult value) {
+        copyOnWrite();
+        instance.setConnect(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+       */
+      public Builder setConnect(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setConnect(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+       */
+      public Builder mergeConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult value) {
+        copyOnWrite();
+        instance.mergeConnect(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.ConnectResult connect = 5;</code>
+       */
+      public Builder clearConnect() {  copyOnWrite();
+        instance.clearConnect();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+       */
+      @java.lang.Override
+      public boolean hasSubscribe() {
+        return instance.hasSubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubscribe() {
+        return instance.getSubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+       */
+      public Builder setSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult value) {
+        copyOnWrite();
+        instance.setSubscribe(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+       */
+      public Builder setSubscribe(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setSubscribe(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+       */
+      public Builder mergeSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult value) {
+        copyOnWrite();
+        instance.mergeSubscribe(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubscribeResult subscribe = 6;</code>
+       */
+      public Builder clearSubscribe() {  copyOnWrite();
+        instance.clearSubscribe();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+       */
+      @java.lang.Override
+      public boolean hasUnsubscribe() {
+        return instance.hasUnsubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult getUnsubscribe() {
+        return instance.getUnsubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+       */
+      public Builder setUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult value) {
+        copyOnWrite();
+        instance.setUnsubscribe(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+       */
+      public Builder setUnsubscribe(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setUnsubscribe(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+       */
+      public Builder mergeUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.UnsubscribeResult value) {
+        copyOnWrite();
+        instance.mergeUnsubscribe(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.UnsubscribeResult unsubscribe = 7;</code>
+       */
+      public Builder clearUnsubscribe() {  copyOnWrite();
+        instance.clearUnsubscribe();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+       */
+      @java.lang.Override
+      public boolean hasPublish() {
+        return instance.hasPublish();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult getPublish() {
+        return instance.getPublish();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+       */
+      public Builder setPublish(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult value) {
+        copyOnWrite();
+        instance.setPublish(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+       */
+      public Builder setPublish(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPublish(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+       */
+      public Builder mergePublish(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PublishResult value) {
+        copyOnWrite();
+        instance.mergePublish(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PublishResult publish = 8;</code>
+       */
+      public Builder clearPublish() {  copyOnWrite();
+        instance.clearPublish();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+       */
+      @java.lang.Override
+      public boolean hasPresence() {
+        return instance.hasPresence();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult getPresence() {
+        return instance.getPresence();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+       */
+      public Builder setPresence(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult value) {
+        copyOnWrite();
+        instance.setPresence(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+       */
+      public Builder setPresence(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPresence(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+       */
+      public Builder mergePresence(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceResult value) {
+        copyOnWrite();
+        instance.mergePresence(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceResult presence = 9;</code>
+       */
+      public Builder clearPresence() {  copyOnWrite();
+        instance.clearPresence();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+       */
+      @java.lang.Override
+      public boolean hasPresenceStats() {
+        return instance.hasPresenceStats();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult getPresenceStats() {
+        return instance.getPresenceStats();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+       */
+      public Builder setPresenceStats(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult value) {
+        copyOnWrite();
+        instance.setPresenceStats(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+       */
+      public Builder setPresenceStats(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPresenceStats(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+       */
+      public Builder mergePresenceStats(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PresenceStatsResult value) {
+        copyOnWrite();
+        instance.mergePresenceStats(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PresenceStatsResult presence_stats = 10;</code>
+       */
+      public Builder clearPresenceStats() {  copyOnWrite();
+        instance.clearPresenceStats();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+       */
+      @java.lang.Override
+      public boolean hasHistory() {
+        return instance.hasHistory();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult getHistory() {
+        return instance.getHistory();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+       */
+      public Builder setHistory(io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult value) {
+        copyOnWrite();
+        instance.setHistory(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+       */
+      public Builder setHistory(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setHistory(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+       */
+      public Builder mergeHistory(io.github.centrifugal.centrifuge.internal.protocol.Protocol.HistoryResult value) {
+        copyOnWrite();
+        instance.mergeHistory(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.HistoryResult history = 11;</code>
+       */
+      public Builder clearHistory() {  copyOnWrite();
+        instance.clearHistory();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+       */
+      @java.lang.Override
+      public boolean hasPing() {
+        return instance.hasPing();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult getPing() {
+        return instance.getPing();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+       */
+      public Builder setPing(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult value) {
+        copyOnWrite();
+        instance.setPing(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+       */
+      public Builder setPing(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPing(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+       */
+      public Builder mergePing(io.github.centrifugal.centrifuge.internal.protocol.Protocol.PingResult value) {
+        copyOnWrite();
+        instance.mergePing(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.PingResult ping = 12;</code>
+       */
+      public Builder clearPing() {  copyOnWrite();
+        instance.clearPing();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+       */
+      @java.lang.Override
+      public boolean hasRpc() {
+        return instance.hasRpc();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult getRpc() {
+        return instance.getRpc();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+       */
+      public Builder setRpc(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult value) {
+        copyOnWrite();
+        instance.setRpc(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+       */
+      public Builder setRpc(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setRpc(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+       */
+      public Builder mergeRpc(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RPCResult value) {
+        copyOnWrite();
+        instance.mergeRpc(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RPCResult rpc = 13;</code>
+       */
+      public Builder clearRpc() {  copyOnWrite();
+        instance.clearRpc();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+       */
+      @java.lang.Override
+      public boolean hasRefresh() {
+        return instance.hasRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult getRefresh() {
+        return instance.getRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+       */
+      public Builder setRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult value) {
+        copyOnWrite();
+        instance.setRefresh(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+       */
+      public Builder setRefresh(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setRefresh(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+       */
+      public Builder mergeRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.RefreshResult value) {
+        copyOnWrite();
+        instance.mergeRefresh(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.RefreshResult refresh = 14;</code>
+       */
+      public Builder clearRefresh() {  copyOnWrite();
+        instance.clearRefresh();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+       */
+      @java.lang.Override
+      public boolean hasSubRefresh() {
+        return instance.hasSubRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult getSubRefresh() {
+        return instance.getSubRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+       */
+      public Builder setSubRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult value) {
+        copyOnWrite();
+        instance.setSubRefresh(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+       */
+      public Builder setSubRefresh(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult.Builder builderForValue) {
+        copyOnWrite();
+        instance.setSubRefresh(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+       */
+      public Builder mergeSubRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubRefreshResult value) {
+        copyOnWrite();
+        instance.mergeSubRefresh(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.SubRefreshResult sub_refresh = 15;</code>
+       */
+      public Builder clearSubRefresh() {  copyOnWrite();
+        instance.clearSubRefresh();
         return this;
       }
 
@@ -1302,10 +4210,23 @@ public final class Protocol {
               "id_",
               "error_",
               "result_",
+              "push_",
+              "connect_",
+              "subscribe_",
+              "unsubscribe_",
+              "publish_",
+              "presence_",
+              "presenceStats_",
+              "history_",
+              "ping_",
+              "rpc_",
+              "refresh_",
+              "subRefresh_",
             };
             java.lang.String info =
-                "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u000b\u0002\t" +
-                "\u0003\n";
+                "\u0000\u000f\u0000\u0000\u0001\u000f\u000f\u0000\u0000\u0000\u0001\u000b\u0002\t" +
+                "\u0003\n\u0004\t\u0005\t\u0006\t\u0007\t\b\t\t\t\n\t\u000b\t\f\t\r\t\u000e\t\u000f" +
+                "\t";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -1365,11 +4286,19 @@ public final class Protocol {
       com.google.protobuf.MessageLiteOrBuilder {
 
     /**
+     * <pre>
+     * Type is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
      * @return The enum numeric value on the wire for type.
      */
     int getTypeValue();
     /**
+     * <pre>
+     * Type is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
      * @return The type.
      */
@@ -1388,12 +4317,132 @@ public final class Protocol {
         getChannelBytes();
 
     /**
+     * <pre>
+     * Data is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes data = 3;</code>
      * @return The data.
      */
     com.google.protobuf.ByteString getData();
+
+    /**
+     * <pre>
+     * ProtocolVersion2 server can push one of the following fields to the client. We are
+     * not using oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+     * @return Whether the pub field is set.
+     */
+    boolean hasPub();
+    /**
+     * <pre>
+     * ProtocolVersion2 server can push one of the following fields to the client. We are
+     * not using oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+     * @return The pub.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPub();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+     * @return Whether the join field is set.
+     */
+    boolean hasJoin();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+     * @return The join.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join getJoin();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+     * @return Whether the leave field is set.
+     */
+    boolean hasLeave();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+     * @return The leave.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave getLeave();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+     * @return Whether the unsubscribe field is set.
+     */
+    boolean hasUnsubscribe();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+     * @return The unsubscribe.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe getUnsubscribe();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+     * @return Whether the message field is set.
+     */
+    boolean hasMessage();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+     * @return The message.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message getMessage();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+     * @return Whether the subscribe field is set.
+     */
+    boolean hasSubscribe();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+     * @return The subscribe.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe getSubscribe();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+     * @return Whether the connect field is set.
+     */
+    boolean hasConnect();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+     * @return The connect.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect getConnect();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+     * @return Whether the disconnect field is set.
+     */
+    boolean hasDisconnect();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+     * @return The disconnect.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect getDisconnect();
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+     * @return Whether the refresh field is set.
+     */
+    boolean hasRefresh();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+     * @return The refresh.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh getRefresh();
   }
   /**
+   * <pre>
+   * Push can be sent to a client as part of Reply in case of bidirectional transport or
+   * without additional wrapping in case of unidirectional transports.
+   * ProtocolVersion1 uses type, channel and data fields.
+   * ProtocolVersion2 uses channel and one of the possible concrete push messages.
+   * </pre>
+   *
    * Protobuf type {@code centrifugal.centrifuge.protocol.Push}
    */
   public  static final class Push extends
@@ -1560,6 +4609,10 @@ public final class Protocol {
     public static final int TYPE_FIELD_NUMBER = 1;
     private int type_;
     /**
+     * <pre>
+     * Type is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
      * @return The enum numeric value on the wire for type.
      */
@@ -1568,6 +4621,10 @@ public final class Protocol {
       return type_;
     }
     /**
+     * <pre>
+     * Type is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
      * @return The type.
      */
@@ -1577,6 +4634,10 @@ public final class Protocol {
       return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push.PushType.UNRECOGNIZED : result;
     }
     /**
+     * <pre>
+     * Type is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
      * @param value The enum numeric value on the wire for type to set.
      */
@@ -1584,6 +4645,10 @@ public final class Protocol {
         type_ = value;
     }
     /**
+     * <pre>
+     * Type is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
      * @param value The type to set.
      */
@@ -1592,6 +4657,10 @@ public final class Protocol {
       
     }
     /**
+     * <pre>
+     * Type is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
      */
     private void clearType() {
@@ -1624,7 +4693,7 @@ public final class Protocol {
      */
     private void setChannel(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       channel_ = value;
     }
@@ -1649,6 +4718,10 @@ public final class Protocol {
     public static final int DATA_FIELD_NUMBER = 3;
     private com.google.protobuf.ByteString data_;
     /**
+     * <pre>
+     * Data is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes data = 3;</code>
      * @return The data.
      */
@@ -1657,20 +4730,467 @@ public final class Protocol {
       return data_;
     }
     /**
+     * <pre>
+     * Data is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes data = 3;</code>
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
     /**
+     * <pre>
+     * Data is used in ProtocolVersion1 only.
+     * </pre>
+     *
      * <code>bytes data = 3;</code>
      */
     private void clearData() {
       
       data_ = getDefaultInstance().getData();
+    }
+
+    public static final int PUB_FIELD_NUMBER = 4;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication pub_;
+    /**
+     * <pre>
+     * ProtocolVersion2 server can push one of the following fields to the client. We are
+     * not using oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+     */
+    @java.lang.Override
+    public boolean hasPub() {
+      return pub_ != null;
+    }
+    /**
+     * <pre>
+     * ProtocolVersion2 server can push one of the following fields to the client. We are
+     * not using oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPub() {
+      return pub_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.getDefaultInstance() : pub_;
+    }
+    /**
+     * <pre>
+     * ProtocolVersion2 server can push one of the following fields to the client. We are
+     * not using oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+     */
+    private void setPub(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
+      value.getClass();
+  pub_ = value;
+      
+      }
+    /**
+     * <pre>
+     * ProtocolVersion2 server can push one of the following fields to the client. We are
+     * not using oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergePub(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
+      value.getClass();
+  if (pub_ != null &&
+          pub_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.getDefaultInstance()) {
+        pub_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.newBuilder(pub_).mergeFrom(value).buildPartial();
+      } else {
+        pub_ = value;
+      }
+      
+    }
+    /**
+     * <pre>
+     * ProtocolVersion2 server can push one of the following fields to the client. We are
+     * not using oneof here due to JSON interoperability concerns.
+     * </pre>
+     *
+     * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+     */
+    private void clearPub() {  pub_ = null;
+      
+    }
+
+    public static final int JOIN_FIELD_NUMBER = 5;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join join_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+     */
+    @java.lang.Override
+    public boolean hasJoin() {
+      return join_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join getJoin() {
+      return join_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join.getDefaultInstance() : join_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+     */
+    private void setJoin(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join value) {
+      value.getClass();
+  join_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeJoin(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join value) {
+      value.getClass();
+  if (join_ != null &&
+          join_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join.getDefaultInstance()) {
+        join_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join.newBuilder(join_).mergeFrom(value).buildPartial();
+      } else {
+        join_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+     */
+    private void clearJoin() {  join_ = null;
+      
+    }
+
+    public static final int LEAVE_FIELD_NUMBER = 6;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave leave_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+     */
+    @java.lang.Override
+    public boolean hasLeave() {
+      return leave_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave getLeave() {
+      return leave_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave.getDefaultInstance() : leave_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+     */
+    private void setLeave(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave value) {
+      value.getClass();
+  leave_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeLeave(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave value) {
+      value.getClass();
+  if (leave_ != null &&
+          leave_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave.getDefaultInstance()) {
+        leave_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave.newBuilder(leave_).mergeFrom(value).buildPartial();
+      } else {
+        leave_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+     */
+    private void clearLeave() {  leave_ = null;
+      
+    }
+
+    public static final int UNSUBSCRIBE_FIELD_NUMBER = 7;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe unsubscribe_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+     */
+    @java.lang.Override
+    public boolean hasUnsubscribe() {
+      return unsubscribe_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe getUnsubscribe() {
+      return unsubscribe_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.getDefaultInstance() : unsubscribe_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+     */
+    private void setUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe value) {
+      value.getClass();
+  unsubscribe_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe value) {
+      value.getClass();
+  if (unsubscribe_ != null &&
+          unsubscribe_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.getDefaultInstance()) {
+        unsubscribe_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.newBuilder(unsubscribe_).mergeFrom(value).buildPartial();
+      } else {
+        unsubscribe_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+     */
+    private void clearUnsubscribe() {  unsubscribe_ = null;
+      
+    }
+
+    public static final int MESSAGE_FIELD_NUMBER = 8;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message message_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+     */
+    @java.lang.Override
+    public boolean hasMessage() {
+      return message_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message getMessage() {
+      return message_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message.getDefaultInstance() : message_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+     */
+    private void setMessage(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message value) {
+      value.getClass();
+  message_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeMessage(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message value) {
+      value.getClass();
+  if (message_ != null &&
+          message_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message.getDefaultInstance()) {
+        message_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message.newBuilder(message_).mergeFrom(value).buildPartial();
+      } else {
+        message_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+     */
+    private void clearMessage() {  message_ = null;
+      
+    }
+
+    public static final int SUBSCRIBE_FIELD_NUMBER = 9;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe subscribe_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+     */
+    @java.lang.Override
+    public boolean hasSubscribe() {
+      return subscribe_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe getSubscribe() {
+      return subscribe_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe.getDefaultInstance() : subscribe_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+     */
+    private void setSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe value) {
+      value.getClass();
+  subscribe_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe value) {
+      value.getClass();
+  if (subscribe_ != null &&
+          subscribe_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe.getDefaultInstance()) {
+        subscribe_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe.newBuilder(subscribe_).mergeFrom(value).buildPartial();
+      } else {
+        subscribe_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+     */
+    private void clearSubscribe() {  subscribe_ = null;
+      
+    }
+
+    public static final int CONNECT_FIELD_NUMBER = 10;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect connect_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+     */
+    @java.lang.Override
+    public boolean hasConnect() {
+      return connect_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect getConnect() {
+      return connect_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect.getDefaultInstance() : connect_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+     */
+    private void setConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect value) {
+      value.getClass();
+  connect_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect value) {
+      value.getClass();
+  if (connect_ != null &&
+          connect_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect.getDefaultInstance()) {
+        connect_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect.newBuilder(connect_).mergeFrom(value).buildPartial();
+      } else {
+        connect_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+     */
+    private void clearConnect() {  connect_ = null;
+      
+    }
+
+    public static final int DISCONNECT_FIELD_NUMBER = 11;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect disconnect_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+     */
+    @java.lang.Override
+    public boolean hasDisconnect() {
+      return disconnect_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect getDisconnect() {
+      return disconnect_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect.getDefaultInstance() : disconnect_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+     */
+    private void setDisconnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect value) {
+      value.getClass();
+  disconnect_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeDisconnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect value) {
+      value.getClass();
+  if (disconnect_ != null &&
+          disconnect_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect.getDefaultInstance()) {
+        disconnect_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect.newBuilder(disconnect_).mergeFrom(value).buildPartial();
+      } else {
+        disconnect_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+     */
+    private void clearDisconnect() {  disconnect_ = null;
+      
+    }
+
+    public static final int REFRESH_FIELD_NUMBER = 12;
+    private io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh refresh_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+     */
+    @java.lang.Override
+    public boolean hasRefresh() {
+      return refresh_ != null;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh getRefresh() {
+      return refresh_ == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh.getDefaultInstance() : refresh_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+     */
+    private void setRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh value) {
+      value.getClass();
+  refresh_ = value;
+      
+      }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+     */
+    @java.lang.SuppressWarnings({"ReferenceEquality"})
+    private void mergeRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh value) {
+      value.getClass();
+  if (refresh_ != null &&
+          refresh_ != io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh.getDefaultInstance()) {
+        refresh_ =
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh.newBuilder(refresh_).mergeFrom(value).buildPartial();
+      } else {
+        refresh_ = value;
+      }
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+     */
+    private void clearRefresh() {  refresh_ = null;
+      
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Push parseFrom(
@@ -1755,6 +5275,13 @@ public final class Protocol {
     }
 
     /**
+     * <pre>
+     * Push can be sent to a client as part of Reply in case of bidirectional transport or
+     * without additional wrapping in case of unidirectional transports.
+     * ProtocolVersion1 uses type, channel and data fields.
+     * ProtocolVersion2 uses channel and one of the possible concrete push messages.
+     * </pre>
+     *
      * Protobuf type {@code centrifugal.centrifuge.protocol.Push}
      */
     public static final class Builder extends
@@ -1769,6 +5296,10 @@ public final class Protocol {
 
 
       /**
+       * <pre>
+       * Type is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
        * @return The enum numeric value on the wire for type.
        */
@@ -1777,6 +5308,10 @@ public final class Protocol {
         return instance.getTypeValue();
       }
       /**
+       * <pre>
+       * Type is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
        * @param value The type to set.
        * @return This builder for chaining.
@@ -1787,6 +5322,10 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Type is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
        * @return The type.
        */
@@ -1795,6 +5334,10 @@ public final class Protocol {
         return instance.getType();
       }
       /**
+       * <pre>
+       * Type is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
        * @param value The enum numeric value on the wire for type to set.
        * @return This builder for chaining.
@@ -1805,6 +5348,10 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Type is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>.centrifugal.centrifuge.protocol.Push.PushType type = 1;</code>
        * @return This builder for chaining.
        */
@@ -1864,6 +5411,10 @@ public final class Protocol {
       }
 
       /**
+       * <pre>
+       * Data is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>bytes data = 3;</code>
        * @return The data.
        */
@@ -1872,6 +5423,10 @@ public final class Protocol {
         return instance.getData();
       }
       /**
+       * <pre>
+       * Data is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>bytes data = 3;</code>
        * @param value The data to set.
        * @return This builder for chaining.
@@ -1882,12 +5437,469 @@ public final class Protocol {
         return this;
       }
       /**
+       * <pre>
+       * Data is used in ProtocolVersion1 only.
+       * </pre>
+       *
        * <code>bytes data = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearData() {
         copyOnWrite();
         instance.clearData();
+        return this;
+      }
+
+      /**
+       * <pre>
+       * ProtocolVersion2 server can push one of the following fields to the client. We are
+       * not using oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+       */
+      @java.lang.Override
+      public boolean hasPub() {
+        return instance.hasPub();
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can push one of the following fields to the client. We are
+       * not using oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication getPub() {
+        return instance.getPub();
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can push one of the following fields to the client. We are
+       * not using oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+       */
+      public Builder setPub(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
+        copyOnWrite();
+        instance.setPub(value);
+        return this;
+        }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can push one of the following fields to the client. We are
+       * not using oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+       */
+      public Builder setPub(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication.Builder builderForValue) {
+        copyOnWrite();
+        instance.setPub(builderForValue.build());
+        return this;
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can push one of the following fields to the client. We are
+       * not using oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+       */
+      public Builder mergePub(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication value) {
+        copyOnWrite();
+        instance.mergePub(value);
+        return this;
+      }
+      /**
+       * <pre>
+       * ProtocolVersion2 server can push one of the following fields to the client. We are
+       * not using oneof here due to JSON interoperability concerns.
+       * </pre>
+       *
+       * <code>.centrifugal.centrifuge.protocol.Publication pub = 4;</code>
+       */
+      public Builder clearPub() {  copyOnWrite();
+        instance.clearPub();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+       */
+      @java.lang.Override
+      public boolean hasJoin() {
+        return instance.hasJoin();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join getJoin() {
+        return instance.getJoin();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+       */
+      public Builder setJoin(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join value) {
+        copyOnWrite();
+        instance.setJoin(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+       */
+      public Builder setJoin(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join.Builder builderForValue) {
+        copyOnWrite();
+        instance.setJoin(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+       */
+      public Builder mergeJoin(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Join value) {
+        copyOnWrite();
+        instance.mergeJoin(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Join join = 5;</code>
+       */
+      public Builder clearJoin() {  copyOnWrite();
+        instance.clearJoin();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+       */
+      @java.lang.Override
+      public boolean hasLeave() {
+        return instance.hasLeave();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave getLeave() {
+        return instance.getLeave();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+       */
+      public Builder setLeave(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave value) {
+        copyOnWrite();
+        instance.setLeave(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+       */
+      public Builder setLeave(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave.Builder builderForValue) {
+        copyOnWrite();
+        instance.setLeave(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+       */
+      public Builder mergeLeave(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Leave value) {
+        copyOnWrite();
+        instance.mergeLeave(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Leave leave = 6;</code>
+       */
+      public Builder clearLeave() {  copyOnWrite();
+        instance.clearLeave();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+       */
+      @java.lang.Override
+      public boolean hasUnsubscribe() {
+        return instance.hasUnsubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe getUnsubscribe() {
+        return instance.getUnsubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+       */
+      public Builder setUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe value) {
+        copyOnWrite();
+        instance.setUnsubscribe(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+       */
+      public Builder setUnsubscribe(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Builder builderForValue) {
+        copyOnWrite();
+        instance.setUnsubscribe(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+       */
+      public Builder mergeUnsubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe value) {
+        copyOnWrite();
+        instance.mergeUnsubscribe(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe unsubscribe = 7;</code>
+       */
+      public Builder clearUnsubscribe() {  copyOnWrite();
+        instance.clearUnsubscribe();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+       */
+      @java.lang.Override
+      public boolean hasMessage() {
+        return instance.hasMessage();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message getMessage() {
+        return instance.getMessage();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+       */
+      public Builder setMessage(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message value) {
+        copyOnWrite();
+        instance.setMessage(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+       */
+      public Builder setMessage(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message.Builder builderForValue) {
+        copyOnWrite();
+        instance.setMessage(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+       */
+      public Builder mergeMessage(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Message value) {
+        copyOnWrite();
+        instance.mergeMessage(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Message message = 8;</code>
+       */
+      public Builder clearMessage() {  copyOnWrite();
+        instance.clearMessage();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+       */
+      @java.lang.Override
+      public boolean hasSubscribe() {
+        return instance.hasSubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe getSubscribe() {
+        return instance.getSubscribe();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+       */
+      public Builder setSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe value) {
+        copyOnWrite();
+        instance.setSubscribe(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+       */
+      public Builder setSubscribe(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe.Builder builderForValue) {
+        copyOnWrite();
+        instance.setSubscribe(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+       */
+      public Builder mergeSubscribe(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Subscribe value) {
+        copyOnWrite();
+        instance.mergeSubscribe(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Subscribe subscribe = 9;</code>
+       */
+      public Builder clearSubscribe() {  copyOnWrite();
+        instance.clearSubscribe();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+       */
+      @java.lang.Override
+      public boolean hasConnect() {
+        return instance.hasConnect();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect getConnect() {
+        return instance.getConnect();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+       */
+      public Builder setConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect value) {
+        copyOnWrite();
+        instance.setConnect(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+       */
+      public Builder setConnect(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect.Builder builderForValue) {
+        copyOnWrite();
+        instance.setConnect(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+       */
+      public Builder mergeConnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect value) {
+        copyOnWrite();
+        instance.mergeConnect(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Connect connect = 10;</code>
+       */
+      public Builder clearConnect() {  copyOnWrite();
+        instance.clearConnect();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+       */
+      @java.lang.Override
+      public boolean hasDisconnect() {
+        return instance.hasDisconnect();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect getDisconnect() {
+        return instance.getDisconnect();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+       */
+      public Builder setDisconnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect value) {
+        copyOnWrite();
+        instance.setDisconnect(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+       */
+      public Builder setDisconnect(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect.Builder builderForValue) {
+        copyOnWrite();
+        instance.setDisconnect(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+       */
+      public Builder mergeDisconnect(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Disconnect value) {
+        copyOnWrite();
+        instance.mergeDisconnect(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Disconnect disconnect = 11;</code>
+       */
+      public Builder clearDisconnect() {  copyOnWrite();
+        instance.clearDisconnect();
+        return this;
+      }
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+       */
+      @java.lang.Override
+      public boolean hasRefresh() {
+        return instance.hasRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh getRefresh() {
+        return instance.getRefresh();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+       */
+      public Builder setRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh value) {
+        copyOnWrite();
+        instance.setRefresh(value);
+        return this;
+        }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+       */
+      public Builder setRefresh(
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh.Builder builderForValue) {
+        copyOnWrite();
+        instance.setRefresh(builderForValue.build());
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+       */
+      public Builder mergeRefresh(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Refresh value) {
+        copyOnWrite();
+        instance.mergeRefresh(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Refresh refresh = 12;</code>
+       */
+      public Builder clearRefresh() {  copyOnWrite();
+        instance.clearRefresh();
         return this;
       }
 
@@ -1910,10 +5922,19 @@ public final class Protocol {
               "type_",
               "channel_",
               "data_",
+              "pub_",
+              "join_",
+              "leave_",
+              "unsubscribe_",
+              "message_",
+              "subscribe_",
+              "connect_",
+              "disconnect_",
+              "refresh_",
             };
             java.lang.String info =
-                "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\f\u0002\u0208" +
-                "\u0003\n";
+                "\u0000\f\u0000\u0000\u0001\f\f\u0000\u0000\u0000\u0001\f\u0002\u0208\u0003\n\u0004" +
+                "\t\u0005\t\u0006\t\u0007\t\b\t\t\t\n\t\u000b\t\f\t";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -2047,7 +6068,7 @@ public final class Protocol {
      */
     private void setUser(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       user_ = value;
     }
@@ -2094,7 +6115,7 @@ public final class Protocol {
      */
     private void setClient(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       client_ = value;
     }
@@ -2131,7 +6152,7 @@ public final class Protocol {
      * @param value The connInfo to set.
      */
     private void setConnInfo(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       connInfo_ = value;
     }
@@ -2158,7 +6179,7 @@ public final class Protocol {
      * @param value The chanInfo to set.
      */
     private void setChanInfo(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       chanInfo_ = value;
     }
@@ -2527,6 +6548,40 @@ public final class Protocol {
      * @return The offset.
      */
     long getOffset();
+
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+    int getMetaCount();
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+    boolean containsMeta(
+        java.lang.String key);
+    /**
+     * Use {@link #getMetaMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.String, java.lang.String>
+    getMeta();
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+    java.util.Map<java.lang.String, java.lang.String>
+    getMetaMap();
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+
+    java.lang.String getMetaOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue);
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+
+    java.lang.String getMetaOrThrow(
+        java.lang.String key);
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.Publication}
@@ -2562,7 +6617,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -2648,6 +6703,99 @@ public final class Protocol {
     private void clearOffset() {
       
       offset_ = 0L;
+    }
+
+    public static final int META_FIELD_NUMBER = 7;
+    private static final class MetaDefaultEntryHolder {
+      static final com.google.protobuf.MapEntryLite<
+          java.lang.String, java.lang.String> defaultEntry =
+              com.google.protobuf.MapEntryLite
+              .<java.lang.String, java.lang.String>newDefaultInstance(
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "",
+                  com.google.protobuf.WireFormat.FieldType.STRING,
+                  "");
+    }
+    private com.google.protobuf.MapFieldLite<
+        java.lang.String, java.lang.String> meta_ =
+            com.google.protobuf.MapFieldLite.emptyMapField();
+    private com.google.protobuf.MapFieldLite<java.lang.String, java.lang.String>
+    internalGetMeta() {
+      return meta_;
+    }
+    private com.google.protobuf.MapFieldLite<java.lang.String, java.lang.String>
+    internalGetMutableMeta() {
+      if (!meta_.isMutable()) {
+        meta_ = meta_.mutableCopy();
+      }
+      return meta_;
+    }
+    @java.lang.Override
+
+    public int getMetaCount() {
+      return internalGetMeta().size();
+    }
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+    @java.lang.Override
+
+    public boolean containsMeta(
+        java.lang.String key) {
+      java.lang.Class<?> keyClass = key.getClass();
+      return internalGetMeta().containsKey(key);
+    }
+    /**
+     * Use {@link #getMetaMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.String, java.lang.String> getMeta() {
+      return getMetaMap();
+    }
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+    @java.lang.Override
+
+    public java.util.Map<java.lang.String, java.lang.String> getMetaMap() {
+      return java.util.Collections.unmodifiableMap(
+          internalGetMeta());
+    }
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetaOrDefault(
+        java.lang.String key,
+        java.lang.String defaultValue) {
+      java.lang.Class<?> keyClass = key.getClass();
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMeta();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+    @java.lang.Override
+
+    public java.lang.String getMetaOrThrow(
+        java.lang.String key) {
+      java.lang.Class<?> keyClass = key.getClass();
+      java.util.Map<java.lang.String, java.lang.String> map =
+          internalGetMeta();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+    /**
+     * <code>map&lt;string, string&gt; meta = 7;</code>
+     */
+    private java.util.Map<java.lang.String, java.lang.String>
+    getMutableMetaMap() {
+      return internalGetMutableMeta();
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication parseFrom(
@@ -2860,6 +7008,104 @@ public final class Protocol {
         return this;
       }
 
+      @java.lang.Override
+
+      public int getMetaCount() {
+        return instance.getMetaMap().size();
+      }
+      /**
+       * <code>map&lt;string, string&gt; meta = 7;</code>
+       */
+      @java.lang.Override
+
+      public boolean containsMeta(
+          java.lang.String key) {
+        java.lang.Class<?> keyClass = key.getClass();
+        return instance.getMetaMap().containsKey(key);
+      }
+
+      public Builder clearMeta() {
+        copyOnWrite();
+        instance.getMutableMetaMap().clear();
+        return this;
+      }
+      /**
+       * <code>map&lt;string, string&gt; meta = 7;</code>
+       */
+
+      public Builder removeMeta(
+          java.lang.String key) {
+        java.lang.Class<?> keyClass = key.getClass();
+        copyOnWrite();
+        instance.getMutableMetaMap().remove(key);
+        return this;
+      }
+      /**
+       * Use {@link #getMetaMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.String, java.lang.String> getMeta() {
+        return getMetaMap();
+      }
+      /**
+       * <code>map&lt;string, string&gt; meta = 7;</code>
+       */
+      @java.lang.Override
+      public java.util.Map<java.lang.String, java.lang.String> getMetaMap() {
+        return java.util.Collections.unmodifiableMap(
+            instance.getMetaMap());
+      }
+      /**
+       * <code>map&lt;string, string&gt; meta = 7;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetaOrDefault(
+          java.lang.String key,
+          java.lang.String defaultValue) {
+        java.lang.Class<?> keyClass = key.getClass();
+        java.util.Map<java.lang.String, java.lang.String> map =
+            instance.getMetaMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <code>map&lt;string, string&gt; meta = 7;</code>
+       */
+      @java.lang.Override
+
+      public java.lang.String getMetaOrThrow(
+          java.lang.String key) {
+        java.lang.Class<?> keyClass = key.getClass();
+        java.util.Map<java.lang.String, java.lang.String> map =
+            instance.getMetaMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+      /**
+       * <code>map&lt;string, string&gt; meta = 7;</code>
+       */
+      public Builder putMeta(
+          java.lang.String key,
+          java.lang.String value) {
+        java.lang.Class<?> keyClass = key.getClass();
+        java.lang.Class<?> valueClass = value.getClass();
+        copyOnWrite();
+        instance.getMutableMetaMap().put(key, value);
+        return this;
+      }
+      /**
+       * <code>map&lt;string, string&gt; meta = 7;</code>
+       */
+      public Builder putAllMeta(
+          java.util.Map<java.lang.String, java.lang.String> values) {
+        copyOnWrite();
+        instance.getMutableMetaMap().putAll(values);
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.Publication)
     }
     @java.lang.Override
@@ -2879,10 +7125,12 @@ public final class Protocol {
               "data_",
               "info_",
               "offset_",
+              "meta_",
+              MetaDefaultEntryHolder.defaultEntry,
             };
             java.lang.String info =
-                "\u0000\u0003\u0000\u0000\u0004\u0006\u0003\u0000\u0000\u0000\u0004\n\u0005\t\u0006" +
-                "\u0003";
+                "\u0000\u0004\u0000\u0000\u0004\u0007\u0004\u0001\u0000\u0000\u0004\n\u0005\t\u0006" +
+                "\u0003\u00072";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -3822,7 +8070,7 @@ public final class Protocol {
      */
     private void setEpoch(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       epoch_ = value;
     }
@@ -3919,7 +8167,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -4322,7 +8570,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -4649,7 +8897,7 @@ public final class Protocol {
      */
     private void setClient(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       client_ = value;
     }
@@ -4696,7 +8944,7 @@ public final class Protocol {
      */
     private void setVersion(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       version_ = value;
     }
@@ -4733,7 +8981,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -4782,7 +9030,7 @@ public final class Protocol {
 
     public boolean containsSubs(
         java.lang.String key) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       return internalGetSubs().containsKey(key);
     }
     /**
@@ -4810,7 +9058,7 @@ public final class Protocol {
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrDefault(
         java.lang.String key,
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult defaultValue) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> map =
           internalGetSubs();
       return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -4822,7 +9070,7 @@ public final class Protocol {
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
         java.lang.String key) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> map =
           internalGetSubs();
       if (!map.containsKey(key)) {
@@ -5123,7 +9371,7 @@ public final class Protocol {
 
       public boolean containsSubs(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         return instance.getSubsMap().containsKey(key);
       }
 
@@ -5138,7 +9386,7 @@ public final class Protocol {
 
       public Builder removeSubs(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         copyOnWrite();
         instance.getMutableSubsMap().remove(key);
         return this;
@@ -5167,7 +9415,7 @@ public final class Protocol {
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrDefault(
           java.lang.String key,
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult defaultValue) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> map =
             instance.getSubsMap();
         return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -5179,7 +9427,7 @@ public final class Protocol {
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> map =
             instance.getSubsMap();
         if (!map.containsKey(key)) {
@@ -5193,8 +9441,8 @@ public final class Protocol {
       public Builder putSubs(
           java.lang.String key,
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult value) {
-        key.getClass();
-        value.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
+        java.lang.Class<?> valueClass = value.getClass();
         copyOnWrite();
         instance.getMutableSubsMap().put(key, value);
         return this;
@@ -5436,7 +9684,7 @@ public final class Protocol {
      */
     private void setReason(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       reason_ = value;
     }
@@ -6185,7 +10433,7 @@ public final class Protocol {
      */
     private void setToken(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       token_ = value;
     }
@@ -6222,7 +10470,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -6271,7 +10519,7 @@ public final class Protocol {
 
     public boolean containsSubs(
         java.lang.String key) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       return internalGetSubs().containsKey(key);
     }
     /**
@@ -6299,7 +10547,7 @@ public final class Protocol {
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrDefault(
         java.lang.String key,
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest defaultValue) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> map =
           internalGetSubs();
       return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -6311,7 +10559,7 @@ public final class Protocol {
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrThrow(
         java.lang.String key) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> map =
           internalGetSubs();
       if (!map.containsKey(key)) {
@@ -6352,7 +10600,7 @@ public final class Protocol {
      */
     private void setName(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       name_ = value;
     }
@@ -6399,7 +10647,7 @@ public final class Protocol {
      */
     private void setVersion(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       version_ = value;
     }
@@ -6605,7 +10853,7 @@ public final class Protocol {
 
       public boolean containsSubs(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         return instance.getSubsMap().containsKey(key);
       }
 
@@ -6620,7 +10868,7 @@ public final class Protocol {
 
       public Builder removeSubs(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         copyOnWrite();
         instance.getMutableSubsMap().remove(key);
         return this;
@@ -6649,7 +10897,7 @@ public final class Protocol {
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrDefault(
           java.lang.String key,
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest defaultValue) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> map =
             instance.getSubsMap();
         return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -6661,7 +10909,7 @@ public final class Protocol {
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest getSubsOrThrow(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest> map =
             instance.getSubsMap();
         if (!map.containsKey(key)) {
@@ -6675,8 +10923,8 @@ public final class Protocol {
       public Builder putSubs(
           java.lang.String key,
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest value) {
-        key.getClass();
-        value.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
+        java.lang.Class<?> valueClass = value.getClass();
         copyOnWrite();
         instance.getMutableSubsMap().put(key, value);
         return this;
@@ -6987,7 +11235,7 @@ public final class Protocol {
      */
     private void setClient(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       client_ = value;
     }
@@ -7034,7 +11282,7 @@ public final class Protocol {
      */
     private void setVersion(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       version_ = value;
     }
@@ -7123,7 +11371,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -7172,7 +11420,7 @@ public final class Protocol {
 
     public boolean containsSubs(
         java.lang.String key) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       return internalGetSubs().containsKey(key);
     }
     /**
@@ -7200,7 +11448,7 @@ public final class Protocol {
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrDefault(
         java.lang.String key,
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult defaultValue) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> map =
           internalGetSubs();
       return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -7212,7 +11460,7 @@ public final class Protocol {
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
         java.lang.String key) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> map =
           internalGetSubs();
       if (!map.containsKey(key)) {
@@ -7517,7 +11765,7 @@ public final class Protocol {
 
       public boolean containsSubs(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         return instance.getSubsMap().containsKey(key);
       }
 
@@ -7532,7 +11780,7 @@ public final class Protocol {
 
       public Builder removeSubs(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         copyOnWrite();
         instance.getMutableSubsMap().remove(key);
         return this;
@@ -7561,7 +11809,7 @@ public final class Protocol {
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrDefault(
           java.lang.String key,
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult defaultValue) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> map =
             instance.getSubsMap();
         return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -7573,7 +11821,7 @@ public final class Protocol {
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult> map =
             instance.getSubsMap();
         if (!map.containsKey(key)) {
@@ -7587,8 +11835,8 @@ public final class Protocol {
       public Builder putSubs(
           java.lang.String key,
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult value) {
-        key.getClass();
-        value.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
+        java.lang.Class<?> valueClass = value.getClass();
         copyOnWrite();
         instance.getMutableSubsMap().put(key, value);
         return this;
@@ -7736,7 +11984,7 @@ public final class Protocol {
      */
     private void setToken(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       token_ = value;
     }
@@ -8053,7 +12301,7 @@ public final class Protocol {
      */
     private void setClient(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       client_ = value;
     }
@@ -8100,7 +12348,7 @@ public final class Protocol {
      */
     private void setVersion(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       version_ = value;
     }
@@ -8560,6 +12808,12 @@ public final class Protocol {
      * @return The offset.
      */
     long getOffset();
+
+    /**
+     * <code>bytes data = 8;</code>
+     * @return The data.
+     */
+    com.google.protobuf.ByteString getData();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.SubscribeRequest}
@@ -8573,6 +12827,7 @@ public final class Protocol {
       channel_ = "";
       token_ = "";
       epoch_ = "";
+      data_ = com.google.protobuf.ByteString.EMPTY;
     }
     public static final int CHANNEL_FIELD_NUMBER = 1;
     private java.lang.String channel_;
@@ -8599,7 +12854,7 @@ public final class Protocol {
      */
     private void setChannel(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       channel_ = value;
     }
@@ -8646,7 +12901,7 @@ public final class Protocol {
      */
     private void setToken(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       token_ = value;
     }
@@ -8731,7 +12986,7 @@ public final class Protocol {
      */
     private void setEpoch(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       epoch_ = value;
     }
@@ -8785,6 +13040,33 @@ public final class Protocol {
     private void clearOffset() {
       
       offset_ = 0L;
+    }
+
+    public static final int DATA_FIELD_NUMBER = 8;
+    private com.google.protobuf.ByteString data_;
+    /**
+     * <code>bytes data = 8;</code>
+     * @return The data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getData() {
+      return data_;
+    }
+    /**
+     * <code>bytes data = 8;</code>
+     * @param value The data to set.
+     */
+    private void setData(com.google.protobuf.ByteString value) {
+      java.lang.Class<?> valueClass = value.getClass();
+  
+      data_ = value;
+    }
+    /**
+     * <code>bytes data = 8;</code>
+     */
+    private void clearData() {
+      
+      data_ = getDefaultInstance().getData();
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest parseFrom(
@@ -9105,6 +13387,34 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>bytes data = 8;</code>
+       * @return The data.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getData() {
+        return instance.getData();
+      }
+      /**
+       * <code>bytes data = 8;</code>
+       * @param value The data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setData(com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setData(value);
+        return this;
+      }
+      /**
+       * <code>bytes data = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearData() {
+        copyOnWrite();
+        instance.clearData();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.SubscribeRequest)
     }
     @java.lang.Override
@@ -9126,10 +13436,11 @@ public final class Protocol {
               "recover_",
               "epoch_",
               "offset_",
+              "data_",
             };
             java.lang.String info =
-                "\u0000\u0005\u0000\u0000\u0001\u0007\u0005\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-                "\u0003\u0007\u0006\u0208\u0007\u0003";
+                "\u0000\u0006\u0000\u0000\u0001\b\u0006\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+                "\u0003\u0007\u0006\u0208\u0007\u0003\b\n";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -9392,7 +13703,7 @@ public final class Protocol {
      */
     private void setEpoch(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       epoch_ = value;
     }
@@ -9609,7 +13920,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -10232,7 +14543,7 @@ public final class Protocol {
      */
     private void setChannel(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       channel_ = value;
     }
@@ -10279,7 +14590,7 @@ public final class Protocol {
      */
     private void setToken(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       token_ = value;
     }
@@ -10927,7 +15238,7 @@ public final class Protocol {
      */
     private void setChannel(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       channel_ = value;
     }
@@ -11406,7 +15717,7 @@ public final class Protocol {
      */
     private void setChannel(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       channel_ = value;
     }
@@ -11443,7 +15754,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -11935,7 +16246,7 @@ public final class Protocol {
      */
     private void setChannel(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       channel_ = value;
     }
@@ -12260,7 +16571,7 @@ public final class Protocol {
 
     public boolean containsPresence(
         java.lang.String key) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       return internalGetPresence().containsKey(key);
     }
     /**
@@ -12288,7 +16599,7 @@ public final class Protocol {
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrDefault(
         java.lang.String key,
         io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo defaultValue) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> map =
           internalGetPresence();
       return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -12300,7 +16611,7 @@ public final class Protocol {
 
     public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrThrow(
         java.lang.String key) {
-      key.getClass();
+      java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> map =
           internalGetPresence();
       if (!map.containsKey(key)) {
@@ -12423,7 +16734,7 @@ public final class Protocol {
 
       public boolean containsPresence(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         return instance.getPresenceMap().containsKey(key);
       }
 
@@ -12438,7 +16749,7 @@ public final class Protocol {
 
       public Builder removePresence(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         copyOnWrite();
         instance.getMutablePresenceMap().remove(key);
         return this;
@@ -12467,7 +16778,7 @@ public final class Protocol {
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrDefault(
           java.lang.String key,
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo defaultValue) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> map =
             instance.getPresenceMap();
         return map.containsKey(key) ? map.get(key) : defaultValue;
@@ -12479,7 +16790,7 @@ public final class Protocol {
 
       public io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo getPresenceOrThrow(
           java.lang.String key) {
-        key.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo> map =
             instance.getPresenceMap();
         if (!map.containsKey(key)) {
@@ -12493,8 +16804,8 @@ public final class Protocol {
       public Builder putPresence(
           java.lang.String key,
           io.github.centrifugal.centrifuge.internal.protocol.Protocol.ClientInfo value) {
-        key.getClass();
-        value.getClass();
+        java.lang.Class<?> keyClass = key.getClass();
+        java.lang.Class<?> valueClass = value.getClass();
         copyOnWrite();
         instance.getMutablePresenceMap().put(key, value);
         return this;
@@ -12636,7 +16947,7 @@ public final class Protocol {
      */
     private void setChannel(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       channel_ = value;
     }
@@ -13265,7 +17576,7 @@ public final class Protocol {
      */
     private void setEpoch(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       epoch_ = value;
     }
@@ -13614,7 +17925,7 @@ public final class Protocol {
      */
     private void setChannel(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       channel_ = value;
     }
@@ -14250,7 +18561,7 @@ public final class Protocol {
      */
     private void setEpoch(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       epoch_ = value;
     }
@@ -15059,7 +19370,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -15096,7 +19407,7 @@ public final class Protocol {
      */
     private void setMethod(
         java.lang.String value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       method_ = value;
     }
@@ -15402,7 +19713,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
@@ -15647,7 +19958,7 @@ public final class Protocol {
      * @param value The data to set.
      */
     private void setData(com.google.protobuf.ByteString value) {
-      value.getClass();
+      java.lang.Class<?> valueClass = value.getClass();
   
       data_ = value;
     }
