@@ -51,7 +51,7 @@ public class Main {
 
             @Override
             public void onDisconnect(Client client, DisconnectEvent event) {
-                System.out.printf("disconnected %s, reconnect %s%n", event.getReason(), event.getReconnect());
+                System.out.printf("disconnected %d %s, reconnect %s%n", event.getCode(), event.getReason(), event.getReconnect());
             }
 
             @Override

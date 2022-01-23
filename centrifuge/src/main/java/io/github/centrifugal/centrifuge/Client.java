@@ -75,6 +75,8 @@ public class Client {
     private ScheduledFuture pingTask;
     private ScheduledFuture refreshTask;
     private String disconnectReason = "";
+    private int disconnectCode = 0;
+    private boolean clientDisconnect = false;
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
@@ -215,27 +217,40 @@ public class Client {
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 super.onClosed(webSocket, code, reason);
                 Client.this.executor.submit(() -> {
-                    /* TODO: refactor this. */
-                    if (!reason.equals("")) {
-                        try {
-                            JsonObject jsonObject = new JsonParser().parse(reason).getAsJsonObject();
-                            String disconnectReason = jsonObject.get("reason").getAsString();
-                            Boolean shouldReconnect = jsonObject.get("reconnect").getAsBoolean();
-                            Client.this.handleConnectionClose(disconnectReason, shouldReconnect);
+                    if (Client.this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+                        /* TODO: v1 branch will be removed at some point. */
+                        if (Client.this.clientDisconnect) {
+                            Client.this.handleConnectionClose(0, Client.this.disconnectReason, Client.this.needReconnect);
+                            Client.this.clientDisconnect = false;
                             return;
-                        } catch (JsonParseException e) {
-                            Client.this.handleConnectionClose("connection closed", true);
                         }
+                        if (!reason.equals("")) {
+                            try {
+                                JsonObject jsonObject = new JsonParser().parse(reason).getAsJsonObject();
+                                String disconnectReason = jsonObject.get("reason").getAsString();
+                                Boolean shouldReconnect = jsonObject.get("reconnect").getAsBoolean();
+                                Client.this.handleConnectionClose(0, disconnectReason, shouldReconnect);
+                                return;
+                            } catch (JsonParseException e) {
+                                Client.this.handleConnectionClose(0, "connection closed", true);
+                                return;
+                            }
+                        }
+                        Client.this.handleConnectionClose(0,"connection closed", true);
+                    } else {
+                        if (Client.this.clientDisconnect) {
+                            Client.this.handleConnectionClose(Client.this.disconnectCode, Client.this.disconnectReason, Client.this.needReconnect);
+                            Client.this.clientDisconnect = false;
+                        }
+                        boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
+                        int disconnectCode = code;
+                        String disconnectReason = reason;
+                        if (disconnectCode < 3000) {
+                            disconnectCode = 4;
+                            disconnectReason = "connection closed";
+                        }
+                        Client.this.handleConnectionClose(disconnectCode, disconnectReason, reconnect);
                     }
-                    if (!Client.this.disconnectReason.equals("")) {
-                        JsonObject jsonObject = new JsonParser().parse(Client.this.disconnectReason).getAsJsonObject();
-                        String disconnectReason = jsonObject.get("reason").getAsString();
-                        Boolean shouldReconnect = jsonObject.get("reconnect").getAsBoolean();
-                        Client.this.disconnectReason = "";
-                        Client.this.handleConnectionClose(disconnectReason, shouldReconnect);
-                        return;
-                    }
-                    Client.this.handleConnectionClose("connection closed", true);
                 });
             }
 
@@ -278,8 +293,7 @@ public class Client {
     }
 
     private void cleanDisconnect() {
-        String disconnectReason = "{\"reason\": \"clean disconnect\", \"reconnect\": false}";
-        Client.this._disconnect(disconnectReason, false);
+        Client.this._disconnect(0, "clean disconnect", false);
     }
 
     /**
@@ -307,14 +321,18 @@ public class Client {
         return false;
     }
 
-    private void _disconnect(String disconnectReason, Boolean needReconnect) {
+    private void _disconnect(int code, String reason, Boolean needReconnect) {
         this.disconnecting = true;
+        this.clientDisconnect = true;
+        if (this.opts.getProtocolVersion() != ProtocolVersion.V1) {
+            this.disconnectCode = code;
+        }
+        this.disconnectReason = reason;
         this.needReconnect = needReconnect;
-        this.disconnectReason = disconnectReason;
         this.ws.close(NORMAL_CLOSURE_STATUS, "cya");
     }
 
-    private void handleConnectionClose(String reason, Boolean shouldReconnect) {
+    private void handleConnectionClose(int code, String reason, Boolean shouldReconnect) {
         this.needReconnect = shouldReconnect;
 
         ConnectionState previousState = this.state;
@@ -346,6 +364,7 @@ public class Client {
             DisconnectEvent event = new DisconnectEvent();
             event.setReason(reason);
             event.setReconnect(shouldReconnect);
+            event.setCode(code);
             for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
                 CompletableFuture f = entry.getValue();
                 f.completeExceptionally(new IOException());
@@ -366,7 +385,7 @@ public class Client {
 
     private void handleConnectionError(Throwable t) {
         this.listener.onError(this, new ErrorEvent(t));
-        this.handleConnectionClose("connection error", true);
+        this.handleConnectionClose(1, "connection error", true);
     }
 
     private void scheduleReconnect() {
@@ -427,8 +446,7 @@ public class Client {
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.executor.submit(() -> {
                 Client.this.futures.remove(cmd.getId());
-                String disconnectReason = "{\"reason\": \"timeout\", \"reconnect\": true}";
-                Client.this._disconnect(disconnectReason, true);
+                Client.this._disconnect(10, "subscribe timeout", true);
             });
             return null;
         });
@@ -462,8 +480,7 @@ public class Client {
                         if (!Client.this.client.equals(privateSubEvent.getClient())) {
                             return;
                         }
-                        String disconnectReason = "{\"reason\": \"private subscribe error\", \"reconnect\": true}";
-                        Client.this._disconnect(disconnectReason, true);
+                        Client.this._disconnect(8, "subscribe error", true);
                     });
                 }
 
@@ -646,8 +663,7 @@ public class Client {
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.executor.submit(() -> {
                 Client.this.futures.remove(cmd.getId());
-                String disconnectReason = "{\"reason\": \"no ping\", \"reconnect\": true}";
-                Client.this._disconnect(disconnectReason, true);
+                Client.this._disconnect(11, "no ping", true);
             });
             return null;
         });
@@ -846,8 +862,7 @@ public class Client {
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.futures.remove(cmd.getId());
-            String disconnectReason = "{\"reason\": \"connect error\", \"reconnect\": true}";
-            Client.this._disconnect(disconnectReason, true);
+            Client.this._disconnect(6, "connect error", true);
             return null;
         });
 

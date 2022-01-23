@@ -9,6 +9,11 @@ public class DisconnectEvent {
         this.reconnect = reconnect;
     }
 
+    void setCode(int code) {
+        this.code = code;
+    }
+
+    private int code;
     private String reason;
     private Boolean reconnect;
 
@@ -18,5 +23,9 @@ public class DisconnectEvent {
 
     public Boolean getReconnect() {
         return reconnect;
+    }
+
+    public int getCode() {
+        return code;
     }
 }
