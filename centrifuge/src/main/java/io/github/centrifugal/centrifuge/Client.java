@@ -404,11 +404,20 @@ public class Client {
                     .build();
         }
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.SUBSCRIBE)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.SUBSCRIBE)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setSubscribe(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
@@ -592,7 +601,12 @@ public class Client {
         }
         try {
             if (sub != null) {
-                Protocol.SubscribeResult result = Protocol.SubscribeResult.parseFrom(reply.getResult().toByteArray());
+                Protocol.SubscribeResult result;
+                if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+                    result = Protocol.SubscribeResult.parseFrom(reply.getResult().toByteArray());
+                } else {
+                    result = reply.getSubscribe();
+                }
                 sub.moveToSubscribeSuccess(result, recover);
             }
         } catch (InvalidProtocolBufferException e) {
@@ -610,11 +624,20 @@ public class Client {
 
         Protocol.PingRequest req = Protocol.PingRequest.newBuilder().build();
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.PING)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.PING)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setPing(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
@@ -645,7 +668,12 @@ public class Client {
             return;
         }
         try {
-            Protocol.ConnectResult result = Protocol.ConnectResult.parseFrom(reply.getResult().toByteArray());
+            Protocol.ConnectResult result;
+            if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+                result = Protocol.ConnectResult.parseFrom(reply.getResult().toByteArray());
+            } else {
+                result = reply.getConnect();
+            }
             ConnectEvent event = new ConnectEvent();
             event.setClient(result.getClient());
             event.setData(result.getData().toByteArray());
@@ -796,11 +824,20 @@ public class Client {
         }
         Protocol.ConnectRequest req = build.build();
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.CONNECT)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.CONNECT)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setConnect(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
@@ -822,98 +859,144 @@ public class Client {
             CompletableFuture<Protocol.Reply> cf = this.futures.get(reply.getId());
             if (cf != null) cf.complete(reply);
         } else {
-            this.handleAsyncReply(reply);
+            if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+                this.handleAsyncReplyV1(reply);
+            } else {
+                this.handleAsyncReplyV2(reply);
+            }
         }
     }
 
-    private void handleAsyncReply(Protocol.Reply reply) {
+    private void handlePub(String channel, Protocol.Publication pub) {
+        ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
+        Subscription sub = this.getSub(channel);
+        if (sub != null) {
+            PublishEvent event = new PublishEvent();
+            event.setData(pub.getData().toByteArray());
+            event.setInfo(info);
+            event.setOffset(pub.getOffset());
+            sub.getListener().onPublish(sub, event);
+            if (pub.getOffset() > 0) {
+                sub.setLastOffset(pub.getOffset());
+            }
+        } else {
+            ServerSubscription serverSub = this.getServerSub(channel);
+            if (serverSub != null) {
+                ServerPublishEvent event = new ServerPublishEvent();
+                event.setChannel(channel);
+                event.setData(pub.getData().toByteArray());
+                event.setInfo(info);
+                event.setOffset(pub.getOffset());
+                this.listener.onPublish(this, event);
+                if (pub.getOffset() > 0) {
+                    serverSub.setLastOffset(pub.getOffset());
+                }
+            }
+        }
+    }
+
+    private void handleSubscribe(String channel, Protocol.Subscribe sub) {
+        ServerSubscription serverSub = new ServerSubscription(sub.getRecoverable(), sub.getOffset(), sub.getEpoch());
+        this.serverSubs.put(channel, serverSub);
+        serverSub.setRecoverable(sub.getRecoverable());
+        serverSub.setLastEpoch(sub.getEpoch());
+        this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, false, false));
+        serverSub.setLastOffset(sub.getOffset());
+    }
+
+    private void handleUnsubscribe(String channel) {
+        Subscription sub = this.getSub(channel);
+        if (sub != null) {
+            sub.unsubscribeNoResubscribe();
+        } else {
+            ServerSubscription serverSub = this.getServerSub(channel);
+            if (serverSub != null) {
+                this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(channel));
+                this.serverSubs.remove(channel);
+            }
+        }
+    }
+
+    private void handleJoin(String channel, Protocol.Join join) {
+        ClientInfo info = ClientInfo.fromProtocolClientInfo(join.getInfo());
+        Subscription sub = this.getSub(channel);
+        if (sub != null) {
+            JoinEvent event = new JoinEvent();
+            event.setInfo(info);
+            sub.getListener().onJoin(sub, event);
+        } else {
+            ServerSubscription serverSub = this.getServerSub(channel);
+            if (serverSub != null) {
+                this.listener.onJoin(this, new ServerJoinEvent(channel, info));
+            }
+        }
+    }
+
+    private void handleLeave(String channel, Protocol.Leave leave) {
+        LeaveEvent event = new LeaveEvent();
+        ClientInfo info = ClientInfo.fromProtocolClientInfo(leave.getInfo());
+
+        Subscription sub = this.getSub(channel);
+        if (sub != null) {
+            event.setInfo(info);
+            sub.getListener().onLeave(sub, event);
+        } else {
+            ServerSubscription serverSub = this.getServerSub(channel);
+            if (serverSub != null) {
+                this.listener.onLeave(this, new ServerLeaveEvent(channel, info));
+            }
+        }
+    }
+
+    private void handleMessage(Protocol.Message msg) {
+        MessageEvent event = new MessageEvent();
+        event.setData(msg.getData().toByteArray());
+        this.listener.onMessage(this, event);
+    }
+
+    private void handleAsyncReplyV1(Protocol.Reply reply) {
         try {
             Protocol.Push push = Protocol.Push.parseFrom(reply.getResult());
             String channel = push.getChannel();
             if (push.getType() == Protocol.Push.PushType.PUBLICATION) {
                 Protocol.Publication pub = Protocol.Publication.parseFrom(push.getData());
-                ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
-                Subscription sub = this.getSub(channel);
-                if (sub != null) {
-                    PublishEvent event = new PublishEvent();
-                    event.setData(pub.getData().toByteArray());
-                    event.setInfo(info);
-                    event.setOffset(pub.getOffset());
-                    sub.getListener().onPublish(sub, event);
-                    if (pub.getOffset() > 0) {
-                        sub.setLastOffset(pub.getOffset());
-                    }
-                } else {
-                    ServerSubscription serverSub = this.getServerSub(channel);
-                    if (serverSub != null) {
-                        ServerPublishEvent event = new ServerPublishEvent();
-                        event.setChannel(channel);
-                        event.setData(pub.getData().toByteArray());
-                        event.setInfo(info);
-                        event.setOffset(pub.getOffset());
-                        this.listener.onPublish(this, event);
-                        if (pub.getOffset() > 0) {
-                            serverSub.setLastOffset(pub.getOffset());
-                        }
-                    }
-                }
+                this.handlePub(channel, pub);
             } else if (push.getType() == Protocol.Push.PushType.SUBSCRIBE) {
                 Protocol.Subscribe sub = Protocol.Subscribe.parseFrom(push.getData());
-                ServerSubscription serverSub = new ServerSubscription(sub.getRecoverable(), sub.getOffset(), sub.getEpoch());
-                this.serverSubs.put(channel, serverSub);
-                serverSub.setRecoverable(sub.getRecoverable());
-                serverSub.setLastEpoch(sub.getEpoch());
-                this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, false, false));
-                serverSub.setLastOffset(sub.getOffset());
+                this.handleSubscribe(channel, sub);
             } else if (push.getType() == Protocol.Push.PushType.JOIN) {
                 Protocol.Join join = Protocol.Join.parseFrom(push.getData());
-                ClientInfo info = ClientInfo.fromProtocolClientInfo(join.getInfo());
-                Subscription sub = this.getSub(channel);
-                if (sub != null) {
-                    JoinEvent event = new JoinEvent();
-                    event.setInfo(info);
-                    sub.getListener().onJoin(sub, event);
-                } else {
-                    ServerSubscription serverSub = this.getServerSub(channel);
-                    if (serverSub != null) {
-                        this.listener.onJoin(this, new ServerJoinEvent(channel, info));
-                    }
-                }
+                this.handleJoin(channel, join);
             } else if (push.getType() == Protocol.Push.PushType.LEAVE) {
                 Protocol.Leave leave = Protocol.Leave.parseFrom(push.getData());
-                LeaveEvent event = new LeaveEvent();
-                ClientInfo info = ClientInfo.fromProtocolClientInfo(leave.getInfo());
-
-                Subscription sub = this.getSub(channel);
-                if (sub != null) {
-                    event.setInfo(info);
-                    sub.getListener().onLeave(sub, event);
-                } else {
-                    ServerSubscription serverSub = this.getServerSub(channel);
-                    if (serverSub != null) {
-                        this.listener.onLeave(this, new ServerLeaveEvent(channel, info));
-                    }
-                }
+                this.handleLeave(channel, leave);
             } else if (push.getType() == Protocol.Push.PushType.UNSUBSCRIBE) {
                 Protocol.Unsubscribe.parseFrom(push.getData());
-                Subscription sub = this.getSub(channel);
-                if (sub != null) {
-                    sub.unsubscribeNoResubscribe();
-                } else {
-                    ServerSubscription serverSub = this.getServerSub(channel);
-                    if (serverSub != null) {
-                        this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(channel));
-                        this.serverSubs.remove(channel);
-                    }
-                }
+                this.handleUnsubscribe(channel);
             } else if (push.getType() == Protocol.Push.PushType.MESSAGE) {
                 Protocol.Message msg = Protocol.Message.parseFrom(push.getData());
-                MessageEvent event = new MessageEvent();
-                event.setData(msg.getData().toByteArray());
-                this.listener.onMessage(this, event);
+                this.handleMessage(msg);
             }
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void handleAsyncReplyV2(Protocol.Reply reply) {
+        Protocol.Push push = reply.getPush();
+        String channel = push.getChannel();
+        if (push.hasPub()) {
+            this.handlePub(channel, push.getPub());
+        } else if (push.hasSubscribe()) {
+            this.handleSubscribe(channel, push.getSubscribe());
+        } else if (push.hasJoin()) {
+            this.handleJoin(channel, push.getJoin());
+        } else if (push.hasLeave()) {
+            this.handleLeave(channel, push.getLeave());
+        } else if (push.hasUnsubscribe()) {
+            this.handleUnsubscribe(channel);
+        } else if (push.hasMessage()) {
+            this.handleMessage(push.getMessage());
         }
     }
 
@@ -933,11 +1016,20 @@ public class Client {
                 .setData(com.google.protobuf.ByteString.copyFrom(data))
                 .build();
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.SEND)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.SEND)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setSend(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
@@ -1024,11 +1116,20 @@ public class Client {
 
         Protocol.RPCRequest req = builder.build();
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.RPC)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.RPC)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setRpc(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1037,7 +1138,12 @@ public class Client {
                 cb.onDone(getReplyError(reply), null);
             } else {
                 try {
-                    Protocol.RPCResult rpcResult = Protocol.RPCResult.parseFrom(reply.getResult().toByteArray());
+                    Protocol.RPCResult rpcResult;
+                    if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+                        rpcResult = Protocol.RPCResult.parseFrom(reply.getResult().toByteArray());
+                    } else {
+                        rpcResult = reply.getRpc();
+                    }
                     RPCResult result = new RPCResult();
                     result.setData(rpcResult.getData().toByteArray());
                     cb.onDone(null, result);
@@ -1074,11 +1180,20 @@ public class Client {
                 .setData(com.google.protobuf.ByteString.copyFrom(data))
                 .build();
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.PUBLISH)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.PUBLISH)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setPublish(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1121,11 +1236,20 @@ public class Client {
         }
         Protocol.HistoryRequest req = builder.build();
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.HISTORY)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.HISTORY)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setHistory(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1134,7 +1258,12 @@ public class Client {
                 cb.onDone(getReplyError(reply), null);
             } else {
                 try {
-                    Protocol.HistoryResult replyResult = Protocol.HistoryResult.parseFrom(reply.getResult().toByteArray());
+                    Protocol.HistoryResult replyResult;
+                    if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+                        replyResult = Protocol.HistoryResult.parseFrom(reply.getResult().toByteArray());
+                    } else {
+                        replyResult = reply.getHistory();
+                    }
                     HistoryResult result = new HistoryResult();
                     List<Protocol.Publication> protoPubs = replyResult.getPublicationsList();
                     List<Publication> pubs = new ArrayList<>();
@@ -1173,11 +1302,20 @@ public class Client {
                 .setChannel(channel)
                 .build();
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.PRESENCE)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.PRESENCE)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setPresence(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1186,7 +1324,12 @@ public class Client {
                 cb.onDone(getReplyError(reply), null);
             } else {
                 try {
-                    Protocol.PresenceResult replyResult = Protocol.PresenceResult.parseFrom(reply.getResult().toByteArray());
+                    Protocol.PresenceResult replyResult;
+                    if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+                        replyResult = Protocol.PresenceResult.parseFrom(reply.getResult().toByteArray());
+                    } else {
+                        replyResult = reply.getPresence();
+                    }
                     PresenceResult result = new PresenceResult();
                     Map<String, Protocol.ClientInfo> protoPresence = replyResult.getPresenceMap();
                     Map<String, ClientInfo> presence = new HashMap<>();
@@ -1220,11 +1363,20 @@ public class Client {
                 .setChannel(channel)
                 .build();
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.PRESENCE_STATS)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.PRESENCE_STATS)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setPresenceStats(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1233,7 +1385,12 @@ public class Client {
                 cb.onDone(getReplyError(reply), null);
             } else {
                 try {
-                    Protocol.PresenceStatsResult replyResult = Protocol.PresenceStatsResult.parseFrom(reply.getResult().toByteArray());
+                    Protocol.PresenceStatsResult replyResult;
+                    if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+                        replyResult = Protocol.PresenceStatsResult.parseFrom(reply.getResult().toByteArray());
+                    } else {
+                        replyResult = reply.getPresenceStats();
+                    }
                     PresenceStatsResult result = new PresenceStatsResult();
                     result.setNumClients(replyResult.getNumClients());
                     result.setNumUsers(replyResult.getNumUsers());
@@ -1258,11 +1415,20 @@ public class Client {
                 .setToken(token)
                 .build();
 
-        Protocol.Command cmd = Protocol.Command.newBuilder()
-                .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.REFRESH)
-                .setParams(req.toByteString())
-                .build();
+        Protocol.Command cmd;
+
+        if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setMethod(Protocol.Command.MethodType.REFRESH)
+                    .setParams(req.toByteString())
+                    .build();
+        } else {
+            cmd = Protocol.Command.newBuilder()
+                    .setId(this.getNextId())
+                    .setRefresh(req)
+                    .build();
+        }
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1271,7 +1437,12 @@ public class Client {
                 cb.onDone(getReplyError(reply), null);
             } else {
                 try {
-                    Protocol.RefreshResult replyResult = Protocol.RefreshResult.parseFrom(reply.getResult().toByteArray());
+                    Protocol.RefreshResult replyResult;
+                    if (this.opts.getProtocolVersion() == ProtocolVersion.V1) {
+                        replyResult = Protocol.RefreshResult.parseFrom(reply.getResult().toByteArray());
+                    } else {
+                        replyResult = reply.getRefresh();
+                    }
                     cb.onDone(null, replyResult);
                 } catch (InvalidProtocolBufferException e) {
                     e.printStackTrace();

@@ -74,4 +74,14 @@ public class Options {
     public String getProxyPassword() {
         return proxyPassword;
     }
+
+    private ProtocolVersion protocolVersion = ProtocolVersion.V1;
+
+    public void setProtocolVersion(ProtocolVersion protocolVersion) {
+        this.protocolVersion = protocolVersion;
+    }
+
+    ProtocolVersion getProtocolVersion() {
+        return protocolVersion;
+    }
 }

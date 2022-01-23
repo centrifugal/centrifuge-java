@@ -18,7 +18,6 @@ import io.github.centrifugal.centrifuge.ServerLeaveEvent;
 import io.github.centrifugal.centrifuge.ServerPublishEvent;
 import io.github.centrifugal.centrifuge.ServerSubscribeEvent;
 import io.github.centrifugal.centrifuge.ServerUnsubscribeEvent;
-import io.github.centrifugal.centrifuge.StreamPosition;
 import io.github.centrifugal.centrifuge.Subscription;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
 import io.github.centrifugal.centrifuge.ConnectEvent;
@@ -103,9 +102,11 @@ public class Main {
             }
         };
 
+        Options opts = new Options();
+
         Client client = new Client(
-                "ws://localhost:8000/connection/websocket?format=protobuf",
-                new Options(),
+                "ws://localhost:8000/connection/websocket?cf_protocol=protobuf",
+                opts,
                 listener
         );
         client.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
