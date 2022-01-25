@@ -6550,37 +6550,37 @@ public final class Protocol {
     long getOffset();
 
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
-    int getMetaCount();
+    int getTagsCount();
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
-    boolean containsMeta(
+    boolean containsTags(
         java.lang.String key);
     /**
-     * Use {@link #getMetaMap()} instead.
+     * Use {@link #getTagsMap()} instead.
      */
     @java.lang.Deprecated
     java.util.Map<java.lang.String, java.lang.String>
-    getMeta();
+    getTags();
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
     java.util.Map<java.lang.String, java.lang.String>
-    getMetaMap();
+    getTagsMap();
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
 
-    java.lang.String getMetaOrDefault(
+    java.lang.String getTagsOrDefault(
         java.lang.String key,
         java.lang.String defaultValue);
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
 
-    java.lang.String getMetaOrThrow(
+    java.lang.String getTagsOrThrow(
         java.lang.String key);
   }
   /**
@@ -6705,8 +6705,8 @@ public final class Protocol {
       offset_ = 0L;
     }
 
-    public static final int META_FIELD_NUMBER = 7;
-    private static final class MetaDefaultEntryHolder {
+    public static final int TAGS_FIELD_NUMBER = 7;
+    private static final class TagsDefaultEntryHolder {
       static final com.google.protobuf.MapEntryLite<
           java.lang.String, java.lang.String> defaultEntry =
               com.google.protobuf.MapEntryLite
@@ -6717,85 +6717,85 @@ public final class Protocol {
                   "");
     }
     private com.google.protobuf.MapFieldLite<
-        java.lang.String, java.lang.String> meta_ =
+        java.lang.String, java.lang.String> tags_ =
             com.google.protobuf.MapFieldLite.emptyMapField();
     private com.google.protobuf.MapFieldLite<java.lang.String, java.lang.String>
-    internalGetMeta() {
-      return meta_;
+    internalGetTags() {
+      return tags_;
     }
     private com.google.protobuf.MapFieldLite<java.lang.String, java.lang.String>
-    internalGetMutableMeta() {
-      if (!meta_.isMutable()) {
-        meta_ = meta_.mutableCopy();
+    internalGetMutableTags() {
+      if (!tags_.isMutable()) {
+        tags_ = tags_.mutableCopy();
       }
-      return meta_;
+      return tags_;
     }
     @java.lang.Override
 
-    public int getMetaCount() {
-      return internalGetMeta().size();
+    public int getTagsCount() {
+      return internalGetTags().size();
     }
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
     @java.lang.Override
 
-    public boolean containsMeta(
+    public boolean containsTags(
         java.lang.String key) {
       java.lang.Class<?> keyClass = key.getClass();
-      return internalGetMeta().containsKey(key);
+      return internalGetTags().containsKey(key);
     }
     /**
-     * Use {@link #getMetaMap()} instead.
+     * Use {@link #getTagsMap()} instead.
      */
     @java.lang.Override
     @java.lang.Deprecated
-    public java.util.Map<java.lang.String, java.lang.String> getMeta() {
-      return getMetaMap();
+    public java.util.Map<java.lang.String, java.lang.String> getTags() {
+      return getTagsMap();
     }
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
     @java.lang.Override
 
-    public java.util.Map<java.lang.String, java.lang.String> getMetaMap() {
+    public java.util.Map<java.lang.String, java.lang.String> getTagsMap() {
       return java.util.Collections.unmodifiableMap(
-          internalGetMeta());
+          internalGetTags());
     }
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
     @java.lang.Override
 
-    public java.lang.String getMetaOrDefault(
+    public java.lang.String getTagsOrDefault(
         java.lang.String key,
         java.lang.String defaultValue) {
       java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, java.lang.String> map =
-          internalGetMeta();
+          internalGetTags();
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
     @java.lang.Override
 
-    public java.lang.String getMetaOrThrow(
+    public java.lang.String getTagsOrThrow(
         java.lang.String key) {
       java.lang.Class<?> keyClass = key.getClass();
       java.util.Map<java.lang.String, java.lang.String> map =
-          internalGetMeta();
+          internalGetTags();
       if (!map.containsKey(key)) {
         throw new java.lang.IllegalArgumentException();
       }
       return map.get(key);
     }
     /**
-     * <code>map&lt;string, string&gt; meta = 7;</code>
+     * <code>map&lt;string, string&gt; tags = 7;</code>
      */
     private java.util.Map<java.lang.String, java.lang.String>
-    getMutableMetaMap() {
-      return internalGetMutableMeta();
+    getMutableTagsMap() {
+      return internalGetMutableTags();
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Publication parseFrom(
@@ -7010,99 +7010,99 @@ public final class Protocol {
 
       @java.lang.Override
 
-      public int getMetaCount() {
-        return instance.getMetaMap().size();
+      public int getTagsCount() {
+        return instance.getTagsMap().size();
       }
       /**
-       * <code>map&lt;string, string&gt; meta = 7;</code>
+       * <code>map&lt;string, string&gt; tags = 7;</code>
        */
       @java.lang.Override
 
-      public boolean containsMeta(
+      public boolean containsTags(
           java.lang.String key) {
         java.lang.Class<?> keyClass = key.getClass();
-        return instance.getMetaMap().containsKey(key);
+        return instance.getTagsMap().containsKey(key);
       }
 
-      public Builder clearMeta() {
+      public Builder clearTags() {
         copyOnWrite();
-        instance.getMutableMetaMap().clear();
+        instance.getMutableTagsMap().clear();
         return this;
       }
       /**
-       * <code>map&lt;string, string&gt; meta = 7;</code>
+       * <code>map&lt;string, string&gt; tags = 7;</code>
        */
 
-      public Builder removeMeta(
+      public Builder removeTags(
           java.lang.String key) {
         java.lang.Class<?> keyClass = key.getClass();
         copyOnWrite();
-        instance.getMutableMetaMap().remove(key);
+        instance.getMutableTagsMap().remove(key);
         return this;
       }
       /**
-       * Use {@link #getMetaMap()} instead.
+       * Use {@link #getTagsMap()} instead.
        */
       @java.lang.Override
       @java.lang.Deprecated
-      public java.util.Map<java.lang.String, java.lang.String> getMeta() {
-        return getMetaMap();
+      public java.util.Map<java.lang.String, java.lang.String> getTags() {
+        return getTagsMap();
       }
       /**
-       * <code>map&lt;string, string&gt; meta = 7;</code>
+       * <code>map&lt;string, string&gt; tags = 7;</code>
        */
       @java.lang.Override
-      public java.util.Map<java.lang.String, java.lang.String> getMetaMap() {
+      public java.util.Map<java.lang.String, java.lang.String> getTagsMap() {
         return java.util.Collections.unmodifiableMap(
-            instance.getMetaMap());
+            instance.getTagsMap());
       }
       /**
-       * <code>map&lt;string, string&gt; meta = 7;</code>
+       * <code>map&lt;string, string&gt; tags = 7;</code>
        */
       @java.lang.Override
 
-      public java.lang.String getMetaOrDefault(
+      public java.lang.String getTagsOrDefault(
           java.lang.String key,
           java.lang.String defaultValue) {
         java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, java.lang.String> map =
-            instance.getMetaMap();
+            instance.getTagsMap();
         return map.containsKey(key) ? map.get(key) : defaultValue;
       }
       /**
-       * <code>map&lt;string, string&gt; meta = 7;</code>
+       * <code>map&lt;string, string&gt; tags = 7;</code>
        */
       @java.lang.Override
 
-      public java.lang.String getMetaOrThrow(
+      public java.lang.String getTagsOrThrow(
           java.lang.String key) {
         java.lang.Class<?> keyClass = key.getClass();
         java.util.Map<java.lang.String, java.lang.String> map =
-            instance.getMetaMap();
+            instance.getTagsMap();
         if (!map.containsKey(key)) {
           throw new java.lang.IllegalArgumentException();
         }
         return map.get(key);
       }
       /**
-       * <code>map&lt;string, string&gt; meta = 7;</code>
+       * <code>map&lt;string, string&gt; tags = 7;</code>
        */
-      public Builder putMeta(
+      public Builder putTags(
           java.lang.String key,
           java.lang.String value) {
         java.lang.Class<?> keyClass = key.getClass();
         java.lang.Class<?> valueClass = value.getClass();
         copyOnWrite();
-        instance.getMutableMetaMap().put(key, value);
+        instance.getMutableTagsMap().put(key, value);
         return this;
       }
       /**
-       * <code>map&lt;string, string&gt; meta = 7;</code>
+       * <code>map&lt;string, string&gt; tags = 7;</code>
        */
-      public Builder putAllMeta(
+      public Builder putAllTags(
           java.util.Map<java.lang.String, java.lang.String> values) {
         copyOnWrite();
-        instance.getMutableMetaMap().putAll(values);
+        instance.getMutableTagsMap().putAll(values);
         return this;
       }
 
@@ -7125,8 +7125,8 @@ public final class Protocol {
               "data_",
               "info_",
               "offset_",
-              "meta_",
-              MetaDefaultEntryHolder.defaultEntry,
+              "tags_",
+              TagsDefaultEntryHolder.defaultEntry,
             };
             java.lang.String info =
                 "\u0000\u0004\u0000\u0000\u0004\u0007\u0004\u0001\u0000\u0000\u0004\n\u0005\t\u0006" +
