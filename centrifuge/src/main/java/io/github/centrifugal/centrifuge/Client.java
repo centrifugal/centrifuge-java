@@ -1,8 +1,5 @@
 package io.github.centrifugal.centrifuge;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.ByteArrayInputStream;
@@ -72,8 +69,8 @@ public class Client {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final ExecutorService reconnectExecutor = Executors.newSingleThreadExecutor();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private ScheduledFuture pingTask;
-    private ScheduledFuture refreshTask;
+    private ScheduledFuture<?> pingTask;
+    private ScheduledFuture<?> refreshTask;
     private String disconnectReason = "";
     private int disconnectCode = 0;
     private boolean clientDisconnect = false;
@@ -217,40 +214,18 @@ public class Client {
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 super.onClosed(webSocket, code, reason);
                 Client.this.executor.submit(() -> {
-                    if (Client.this.opts.getProtocolVersion() == ProtocolVersion.V1) {
-                        /* TODO: v1 branch will be removed at some point. */
-                        if (Client.this.clientDisconnect) {
-                            Client.this.handleConnectionClose(0, Client.this.disconnectReason, Client.this.needReconnect);
-                            Client.this.clientDisconnect = false;
-                            return;
-                        }
-                        if (!reason.equals("")) {
-                            try {
-                                JsonObject jsonObject = new JsonParser().parse(reason).getAsJsonObject();
-                                String disconnectReason = jsonObject.get("reason").getAsString();
-                                Boolean shouldReconnect = jsonObject.get("reconnect").getAsBoolean();
-                                Client.this.handleConnectionClose(0, disconnectReason, shouldReconnect);
-                                return;
-                            } catch (JsonParseException e) {
-                                Client.this.handleConnectionClose(0, "connection closed", true);
-                                return;
-                            }
-                        }
-                        Client.this.handleConnectionClose(0,"connection closed", true);
-                    } else {
-                        if (Client.this.clientDisconnect) {
-                            Client.this.handleConnectionClose(Client.this.disconnectCode, Client.this.disconnectReason, Client.this.needReconnect);
-                            Client.this.clientDisconnect = false;
-                        }
-                        boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
-                        int disconnectCode = code;
-                        String disconnectReason = reason;
-                        if (disconnectCode < 3000) {
-                            disconnectCode = 4;
-                            disconnectReason = "connection closed";
-                        }
-                        Client.this.handleConnectionClose(disconnectCode, disconnectReason, reconnect);
+                    if (Client.this.clientDisconnect) {
+                        Client.this.handleConnectionClose(Client.this.disconnectCode, Client.this.disconnectReason, Client.this.needReconnect);
+                        Client.this.clientDisconnect = false;
                     }
+                    boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
+                    int disconnectCode = code;
+                    String disconnectReason = reason;
+                    if (disconnectCode < 3000) {
+                        disconnectCode = 4;
+                        disconnectReason = "connection closed";
+                    }
+                    Client.this.handleConnectionClose(disconnectCode, disconnectReason, reconnect);
                 });
             }
 

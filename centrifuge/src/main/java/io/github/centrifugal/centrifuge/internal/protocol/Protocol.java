@@ -29,6 +29,12 @@ public final class Protocol {
      */
     com.google.protobuf.ByteString
         getMessageBytes();
+
+    /**
+     * <code>bool temporary = 3;</code>
+     * @return The temporary.
+     */
+    boolean getTemporary();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.Error}
@@ -112,6 +118,32 @@ public final class Protocol {
       checkByteStringIsUtf8(value);
       message_ = value.toStringUtf8();
       
+    }
+
+    public static final int TEMPORARY_FIELD_NUMBER = 3;
+    private boolean temporary_;
+    /**
+     * <code>bool temporary = 3;</code>
+     * @return The temporary.
+     */
+    @java.lang.Override
+    public boolean getTemporary() {
+      return temporary_;
+    }
+    /**
+     * <code>bool temporary = 3;</code>
+     * @param value The temporary to set.
+     */
+    private void setTemporary(boolean value) {
+      
+      temporary_ = value;
+    }
+    /**
+     * <code>bool temporary = 3;</code>
+     */
+    private void clearTemporary() {
+      
+      temporary_ = false;
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Error parseFrom(
@@ -286,6 +318,34 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>bool temporary = 3;</code>
+       * @return The temporary.
+       */
+      @java.lang.Override
+      public boolean getTemporary() {
+        return instance.getTemporary();
+      }
+      /**
+       * <code>bool temporary = 3;</code>
+       * @param value The temporary to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTemporary(boolean value) {
+        copyOnWrite();
+        instance.setTemporary(value);
+        return this;
+      }
+      /**
+       * <code>bool temporary = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTemporary() {
+        copyOnWrite();
+        instance.clearTemporary();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.Error)
     }
     @java.lang.Override
@@ -304,10 +364,11 @@ public final class Protocol {
             java.lang.Object[] objects = new java.lang.Object[] {
               "code_",
               "message_",
+              "temporary_",
             };
             java.lang.String info =
-                "\u0000\u0002\u0000\u0000\u0001\u0002\u0002\u0000\u0000\u0000\u0001\u000b\u0002\u0208" +
-                "";
+                "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u000b\u0002\u0208" +
+                "\u0003\u0007";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -358,6 +419,472 @@ public final class Protocol {
     private static volatile com.google.protobuf.Parser<Error> PARSER;
 
     public static com.google.protobuf.Parser<Error> parser() {
+      return DEFAULT_INSTANCE.getParserForType();
+    }
+  }
+
+  public interface EmulationRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:centrifugal.centrifuge.protocol.EmulationRequest)
+      com.google.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>string node = 1;</code>
+     * @return The node.
+     */
+    java.lang.String getNode();
+    /**
+     * <code>string node = 1;</code>
+     * @return The bytes for node.
+     */
+    com.google.protobuf.ByteString
+        getNodeBytes();
+
+    /**
+     * <code>string session = 2;</code>
+     * @return The session.
+     */
+    java.lang.String getSession();
+    /**
+     * <code>string session = 2;</code>
+     * @return The bytes for session.
+     */
+    com.google.protobuf.ByteString
+        getSessionBytes();
+
+    /**
+     * <code>bytes data = 3;</code>
+     * @return The data.
+     */
+    com.google.protobuf.ByteString getData();
+  }
+  /**
+   * Protobuf type {@code centrifugal.centrifuge.protocol.EmulationRequest}
+   */
+  public  static final class EmulationRequest extends
+      com.google.protobuf.GeneratedMessageLite<
+          EmulationRequest, EmulationRequest.Builder> implements
+      // @@protoc_insertion_point(message_implements:centrifugal.centrifuge.protocol.EmulationRequest)
+      EmulationRequestOrBuilder {
+    private EmulationRequest() {
+      node_ = "";
+      session_ = "";
+      data_ = com.google.protobuf.ByteString.EMPTY;
+    }
+    public static final int NODE_FIELD_NUMBER = 1;
+    private java.lang.String node_;
+    /**
+     * <code>string node = 1;</code>
+     * @return The node.
+     */
+    @java.lang.Override
+    public java.lang.String getNode() {
+      return node_;
+    }
+    /**
+     * <code>string node = 1;</code>
+     * @return The bytes for node.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNodeBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(node_);
+    }
+    /**
+     * <code>string node = 1;</code>
+     * @param value The node to set.
+     */
+    private void setNode(
+        java.lang.String value) {
+      java.lang.Class<?> valueClass = value.getClass();
+  
+      node_ = value;
+    }
+    /**
+     * <code>string node = 1;</code>
+     */
+    private void clearNode() {
+      
+      node_ = getDefaultInstance().getNode();
+    }
+    /**
+     * <code>string node = 1;</code>
+     * @param value The bytes for node to set.
+     */
+    private void setNodeBytes(
+        com.google.protobuf.ByteString value) {
+      checkByteStringIsUtf8(value);
+      node_ = value.toStringUtf8();
+      
+    }
+
+    public static final int SESSION_FIELD_NUMBER = 2;
+    private java.lang.String session_;
+    /**
+     * <code>string session = 2;</code>
+     * @return The session.
+     */
+    @java.lang.Override
+    public java.lang.String getSession() {
+      return session_;
+    }
+    /**
+     * <code>string session = 2;</code>
+     * @return The bytes for session.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSessionBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(session_);
+    }
+    /**
+     * <code>string session = 2;</code>
+     * @param value The session to set.
+     */
+    private void setSession(
+        java.lang.String value) {
+      java.lang.Class<?> valueClass = value.getClass();
+  
+      session_ = value;
+    }
+    /**
+     * <code>string session = 2;</code>
+     */
+    private void clearSession() {
+      
+      session_ = getDefaultInstance().getSession();
+    }
+    /**
+     * <code>string session = 2;</code>
+     * @param value The bytes for session to set.
+     */
+    private void setSessionBytes(
+        com.google.protobuf.ByteString value) {
+      checkByteStringIsUtf8(value);
+      session_ = value.toStringUtf8();
+      
+    }
+
+    public static final int DATA_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString data_;
+    /**
+     * <code>bytes data = 3;</code>
+     * @return The data.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getData() {
+      return data_;
+    }
+    /**
+     * <code>bytes data = 3;</code>
+     * @param value The data to set.
+     */
+    private void setData(com.google.protobuf.ByteString value) {
+      java.lang.Class<?> valueClass = value.getClass();
+  
+      data_ = value;
+    }
+    /**
+     * <code>bytes data = 3;</code>
+     */
+    private void clearData() {
+      
+      data_ = getDefaultInstance().getData();
+    }
+
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, data, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, input);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, input);
+    }
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageLite.parseFrom(
+          DEFAULT_INSTANCE, input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() {
+      return (Builder) DEFAULT_INSTANCE.createBuilder();
+    }
+    public static Builder newBuilder(io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest prototype) {
+      return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+    }
+
+    /**
+     * Protobuf type {@code centrifugal.centrifuge.protocol.EmulationRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageLite.Builder<
+          io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest, Builder> implements
+        // @@protoc_insertion_point(builder_implements:centrifugal.centrifuge.protocol.EmulationRequest)
+        io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequestOrBuilder {
+      // Construct using io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest.newBuilder()
+      private Builder() {
+        super(DEFAULT_INSTANCE);
+      }
+
+
+      /**
+       * <code>string node = 1;</code>
+       * @return The node.
+       */
+      @java.lang.Override
+      public java.lang.String getNode() {
+        return instance.getNode();
+      }
+      /**
+       * <code>string node = 1;</code>
+       * @return The bytes for node.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString
+          getNodeBytes() {
+        return instance.getNodeBytes();
+      }
+      /**
+       * <code>string node = 1;</code>
+       * @param value The node to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNode(
+          java.lang.String value) {
+        copyOnWrite();
+        instance.setNode(value);
+        return this;
+      }
+      /**
+       * <code>string node = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearNode() {
+        copyOnWrite();
+        instance.clearNode();
+        return this;
+      }
+      /**
+       * <code>string node = 1;</code>
+       * @param value The bytes for node to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNodeBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setNodeBytes(value);
+        return this;
+      }
+
+      /**
+       * <code>string session = 2;</code>
+       * @return The session.
+       */
+      @java.lang.Override
+      public java.lang.String getSession() {
+        return instance.getSession();
+      }
+      /**
+       * <code>string session = 2;</code>
+       * @return The bytes for session.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString
+          getSessionBytes() {
+        return instance.getSessionBytes();
+      }
+      /**
+       * <code>string session = 2;</code>
+       * @param value The session to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSession(
+          java.lang.String value) {
+        copyOnWrite();
+        instance.setSession(value);
+        return this;
+      }
+      /**
+       * <code>string session = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSession() {
+        copyOnWrite();
+        instance.clearSession();
+        return this;
+      }
+      /**
+       * <code>string session = 2;</code>
+       * @param value The bytes for session to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSessionBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setSessionBytes(value);
+        return this;
+      }
+
+      /**
+       * <code>bytes data = 3;</code>
+       * @return The data.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getData() {
+        return instance.getData();
+      }
+      /**
+       * <code>bytes data = 3;</code>
+       * @param value The data to set.
+       * @return This builder for chaining.
+       */
+      public Builder setData(com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setData(value);
+        return this;
+      }
+      /**
+       * <code>bytes data = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearData() {
+        copyOnWrite();
+        instance.clearData();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.EmulationRequest)
+    }
+    @java.lang.Override
+    @java.lang.SuppressWarnings({"unchecked", "fallthrough"})
+    protected final java.lang.Object dynamicMethod(
+        com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+        java.lang.Object arg0, java.lang.Object arg1) {
+      switch (method) {
+        case NEW_MUTABLE_INSTANCE: {
+          return new io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest();
+        }
+        case NEW_BUILDER: {
+          return new Builder();
+        }
+        case BUILD_MESSAGE_INFO: {
+            java.lang.Object[] objects = new java.lang.Object[] {
+              "node_",
+              "session_",
+              "data_",
+            };
+            java.lang.String info =
+                "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+                "\u0003\n";
+            return newMessageInfo(DEFAULT_INSTANCE, info, objects);
+        }
+        // fall through
+        case GET_DEFAULT_INSTANCE: {
+          return DEFAULT_INSTANCE;
+        }
+        case GET_PARSER: {
+          com.google.protobuf.Parser<io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest> parser = PARSER;
+          if (parser == null) {
+            synchronized (io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest.class) {
+              parser = PARSER;
+              if (parser == null) {
+                parser =
+                    new DefaultInstanceBasedParser<io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest>(
+                        DEFAULT_INSTANCE);
+                PARSER = parser;
+              }
+            }
+          }
+          return parser;
+      }
+      case GET_MEMOIZED_IS_INITIALIZED: {
+        return (byte) 1;
+      }
+      case SET_MEMOIZED_IS_INITIALIZED: {
+        return null;
+      }
+      }
+      throw new UnsupportedOperationException();
+    }
+
+
+    // @@protoc_insertion_point(class_scope:centrifugal.centrifuge.protocol.EmulationRequest)
+    private static final io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest DEFAULT_INSTANCE;
+    static {
+      EmulationRequest defaultInstance = new EmulationRequest();
+      // New instances are implicitly immutable so no need to make
+      // immutable.
+      DEFAULT_INSTANCE = defaultInstance;
+      com.google.protobuf.GeneratedMessageLite.registerDefaultInstance(
+        EmulationRequest.class, defaultInstance);
+    }
+
+    public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.EmulationRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static volatile com.google.protobuf.Parser<EmulationRequest> PARSER;
+
+    public static com.google.protobuf.Parser<EmulationRequest> parser() {
       return DEFAULT_INSTANCE.getParserForType();
     }
   }
@@ -7762,12 +8289,19 @@ public final class Protocol {
   public interface UnsubscribeOrBuilder extends
       // @@protoc_insertion_point(interface_extends:centrifugal.centrifuge.protocol.Unsubscribe)
       com.google.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+     * @return The enum numeric value on the wire for type.
+     */
+    int getTypeValue();
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+     * @return The type.
+     */
+    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type getType();
   }
   /**
-   * <pre>
-   * Field 1 removed (bool resubscribe).
-   * </pre>
-   *
    * Protobuf type {@code centrifugal.centrifuge.protocol.Unsubscribe}
    */
   public  static final class Unsubscribe extends
@@ -7777,6 +8311,150 @@ public final class Protocol {
       UnsubscribeOrBuilder {
     private Unsubscribe() {
     }
+    /**
+     * <pre>
+     * Field 1 removed (bool resubscribe).
+     * </pre>
+     *
+     * Protobuf enum {@code centrifugal.centrifuge.protocol.Unsubscribe.Type}
+     */
+    public enum Type
+        implements com.google.protobuf.Internal.EnumLite {
+      /**
+       * <code>PERMANENT = 0;</code>
+       */
+      PERMANENT(0),
+      /**
+       * <code>INSUFFICIENT = 1;</code>
+       */
+      INSUFFICIENT(1),
+      /**
+       * <code>UNRECOVERABLE = 2;</code>
+       */
+      UNRECOVERABLE(2),
+      UNRECOGNIZED(-1),
+      ;
+
+      /**
+       * <code>PERMANENT = 0;</code>
+       */
+      public static final int PERMANENT_VALUE = 0;
+      /**
+       * <code>INSUFFICIENT = 1;</code>
+       */
+      public static final int INSUFFICIENT_VALUE = 1;
+      /**
+       * <code>UNRECOVERABLE = 2;</code>
+       */
+      public static final int UNRECOVERABLE_VALUE = 2;
+
+
+      @java.lang.Override
+      public final int getNumber() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalArgumentException(
+              "Can't get the number of an unknown enum value.");
+        }
+        return value;
+      }
+
+      /**
+       * @param value The number of the enum to look for.
+       * @return The enum associated with the given number.
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
+      public static Type valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static Type forNumber(int value) {
+        switch (value) {
+          case 0: return PERMANENT;
+          case 1: return INSUFFICIENT;
+          case 2: return UNRECOVERABLE;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<Type>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          Type> internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+              @java.lang.Override
+              public Type findValueByNumber(int number) {
+                return Type.forNumber(number);
+              }
+            };
+
+      public static com.google.protobuf.Internal.EnumVerifier 
+          internalGetVerifier() {
+        return TypeVerifier.INSTANCE;
+      }
+
+      private static final class TypeVerifier implements 
+           com.google.protobuf.Internal.EnumVerifier { 
+              static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new TypeVerifier();
+              @java.lang.Override
+              public boolean isInRange(int number) {
+                return Type.forNumber(number) != null;
+              }
+            };
+
+      private final int value;
+
+      private Type(int value) {
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:centrifugal.centrifuge.protocol.Unsubscribe.Type)
+    }
+
+    public static final int TYPE_FIELD_NUMBER = 2;
+    private int type_;
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+     * @return The enum numeric value on the wire for type.
+     */
+    @java.lang.Override
+    public int getTypeValue() {
+      return type_;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+     * @return The type.
+     */
+    @java.lang.Override
+    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type getType() {
+      io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type.forNumber(type_);
+      return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type.UNRECOGNIZED : result;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+     * @param value The enum numeric value on the wire for type to set.
+     */
+    private void setTypeValue(int value) {
+        type_ = value;
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+     * @param value The type to set.
+     */
+    private void setType(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type value) {
+      type_ = value.getNumber();
+      
+    }
+    /**
+     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+     */
+    private void clearType() {
+      
+      type_ = 0;
+    }
+
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -7859,10 +8537,6 @@ public final class Protocol {
     }
 
     /**
-     * <pre>
-     * Field 1 removed (bool resubscribe).
-     * </pre>
-     *
      * Protobuf type {@code centrifugal.centrifuge.protocol.Unsubscribe}
      */
     public static final class Builder extends
@@ -7875,6 +8549,52 @@ public final class Protocol {
         super(DEFAULT_INSTANCE);
       }
 
+
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+       * @return The enum numeric value on the wire for type.
+       */
+      @java.lang.Override
+      public int getTypeValue() {
+        return instance.getTypeValue();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+       * @param value The type to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTypeValue(int value) {
+        copyOnWrite();
+        instance.setTypeValue(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+       * @return The type.
+       */
+      @java.lang.Override
+      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type getType() {
+        return instance.getType();
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+       * @param value The enum numeric value on the wire for type to set.
+       * @return This builder for chaining.
+       */
+      public Builder setType(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type value) {
+        copyOnWrite();
+        instance.setType(value);
+        return this;
+      }
+      /**
+       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearType() {
+        copyOnWrite();
+        instance.clearType();
+        return this;
+      }
 
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.Unsubscribe)
     }
@@ -7891,8 +8611,11 @@ public final class Protocol {
           return new Builder();
         }
         case BUILD_MESSAGE_INFO: {
-            java.lang.Object[] objects = null;java.lang.String info =
-                "\u0000\u0000";
+            java.lang.Object[] objects = new java.lang.Object[] {
+              "type_",
+            };
+            java.lang.String info =
+                "\u0000\u0001\u0000\u0000\u0002\u0002\u0001\u0000\u0000\u0000\u0002\f";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -8858,6 +9581,42 @@ public final class Protocol {
      * @return The ttl.
      */
     int getTtl();
+
+    /**
+     * <code>uint32 ping = 7;</code>
+     * @return The ping.
+     */
+    int getPing();
+
+    /**
+     * <code>bool pong = 8;</code>
+     * @return The pong.
+     */
+    boolean getPong();
+
+    /**
+     * <code>string session = 9;</code>
+     * @return The session.
+     */
+    java.lang.String getSession();
+    /**
+     * <code>string session = 9;</code>
+     * @return The bytes for session.
+     */
+    com.google.protobuf.ByteString
+        getSessionBytes();
+
+    /**
+     * <code>string node = 10;</code>
+     * @return The node.
+     */
+    java.lang.String getNode();
+    /**
+     * <code>string node = 10;</code>
+     * @return The bytes for node.
+     */
+    com.google.protobuf.ByteString
+        getNodeBytes();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.Connect}
@@ -8871,6 +9630,8 @@ public final class Protocol {
       client_ = "";
       version_ = "";
       data_ = com.google.protobuf.ByteString.EMPTY;
+      session_ = "";
+      node_ = "";
     }
     public static final int CLIENT_FIELD_NUMBER = 1;
     private java.lang.String client_;
@@ -9136,6 +9897,152 @@ public final class Protocol {
     private void clearTtl() {
       
       ttl_ = 0;
+    }
+
+    public static final int PING_FIELD_NUMBER = 7;
+    private int ping_;
+    /**
+     * <code>uint32 ping = 7;</code>
+     * @return The ping.
+     */
+    @java.lang.Override
+    public int getPing() {
+      return ping_;
+    }
+    /**
+     * <code>uint32 ping = 7;</code>
+     * @param value The ping to set.
+     */
+    private void setPing(int value) {
+      
+      ping_ = value;
+    }
+    /**
+     * <code>uint32 ping = 7;</code>
+     */
+    private void clearPing() {
+      
+      ping_ = 0;
+    }
+
+    public static final int PONG_FIELD_NUMBER = 8;
+    private boolean pong_;
+    /**
+     * <code>bool pong = 8;</code>
+     * @return The pong.
+     */
+    @java.lang.Override
+    public boolean getPong() {
+      return pong_;
+    }
+    /**
+     * <code>bool pong = 8;</code>
+     * @param value The pong to set.
+     */
+    private void setPong(boolean value) {
+      
+      pong_ = value;
+    }
+    /**
+     * <code>bool pong = 8;</code>
+     */
+    private void clearPong() {
+      
+      pong_ = false;
+    }
+
+    public static final int SESSION_FIELD_NUMBER = 9;
+    private java.lang.String session_;
+    /**
+     * <code>string session = 9;</code>
+     * @return The session.
+     */
+    @java.lang.Override
+    public java.lang.String getSession() {
+      return session_;
+    }
+    /**
+     * <code>string session = 9;</code>
+     * @return The bytes for session.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSessionBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(session_);
+    }
+    /**
+     * <code>string session = 9;</code>
+     * @param value The session to set.
+     */
+    private void setSession(
+        java.lang.String value) {
+      java.lang.Class<?> valueClass = value.getClass();
+  
+      session_ = value;
+    }
+    /**
+     * <code>string session = 9;</code>
+     */
+    private void clearSession() {
+      
+      session_ = getDefaultInstance().getSession();
+    }
+    /**
+     * <code>string session = 9;</code>
+     * @param value The bytes for session to set.
+     */
+    private void setSessionBytes(
+        com.google.protobuf.ByteString value) {
+      checkByteStringIsUtf8(value);
+      session_ = value.toStringUtf8();
+      
+    }
+
+    public static final int NODE_FIELD_NUMBER = 10;
+    private java.lang.String node_;
+    /**
+     * <code>string node = 10;</code>
+     * @return The node.
+     */
+    @java.lang.Override
+    public java.lang.String getNode() {
+      return node_;
+    }
+    /**
+     * <code>string node = 10;</code>
+     * @return The bytes for node.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNodeBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(node_);
+    }
+    /**
+     * <code>string node = 10;</code>
+     * @param value The node to set.
+     */
+    private void setNode(
+        java.lang.String value) {
+      java.lang.Class<?> valueClass = value.getClass();
+  
+      node_ = value;
+    }
+    /**
+     * <code>string node = 10;</code>
+     */
+    private void clearNode() {
+      
+      node_ = getDefaultInstance().getNode();
+    }
+    /**
+     * <code>string node = 10;</code>
+     * @param value The bytes for node to set.
+     */
+    private void setNodeBytes(
+        com.google.protobuf.ByteString value) {
+      checkByteStringIsUtf8(value);
+      node_ = value.toStringUtf8();
+      
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Connect parseFrom(
@@ -9513,6 +10420,160 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>uint32 ping = 7;</code>
+       * @return The ping.
+       */
+      @java.lang.Override
+      public int getPing() {
+        return instance.getPing();
+      }
+      /**
+       * <code>uint32 ping = 7;</code>
+       * @param value The ping to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPing(int value) {
+        copyOnWrite();
+        instance.setPing(value);
+        return this;
+      }
+      /**
+       * <code>uint32 ping = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPing() {
+        copyOnWrite();
+        instance.clearPing();
+        return this;
+      }
+
+      /**
+       * <code>bool pong = 8;</code>
+       * @return The pong.
+       */
+      @java.lang.Override
+      public boolean getPong() {
+        return instance.getPong();
+      }
+      /**
+       * <code>bool pong = 8;</code>
+       * @param value The pong to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPong(boolean value) {
+        copyOnWrite();
+        instance.setPong(value);
+        return this;
+      }
+      /**
+       * <code>bool pong = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPong() {
+        copyOnWrite();
+        instance.clearPong();
+        return this;
+      }
+
+      /**
+       * <code>string session = 9;</code>
+       * @return The session.
+       */
+      @java.lang.Override
+      public java.lang.String getSession() {
+        return instance.getSession();
+      }
+      /**
+       * <code>string session = 9;</code>
+       * @return The bytes for session.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString
+          getSessionBytes() {
+        return instance.getSessionBytes();
+      }
+      /**
+       * <code>string session = 9;</code>
+       * @param value The session to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSession(
+          java.lang.String value) {
+        copyOnWrite();
+        instance.setSession(value);
+        return this;
+      }
+      /**
+       * <code>string session = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSession() {
+        copyOnWrite();
+        instance.clearSession();
+        return this;
+      }
+      /**
+       * <code>string session = 9;</code>
+       * @param value The bytes for session to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSessionBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setSessionBytes(value);
+        return this;
+      }
+
+      /**
+       * <code>string node = 10;</code>
+       * @return The node.
+       */
+      @java.lang.Override
+      public java.lang.String getNode() {
+        return instance.getNode();
+      }
+      /**
+       * <code>string node = 10;</code>
+       * @return The bytes for node.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString
+          getNodeBytes() {
+        return instance.getNodeBytes();
+      }
+      /**
+       * <code>string node = 10;</code>
+       * @param value The node to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNode(
+          java.lang.String value) {
+        copyOnWrite();
+        instance.setNode(value);
+        return this;
+      }
+      /**
+       * <code>string node = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearNode() {
+        copyOnWrite();
+        instance.clearNode();
+        return this;
+      }
+      /**
+       * <code>string node = 10;</code>
+       * @param value The bytes for node to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNodeBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setNodeBytes(value);
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.Connect)
     }
     @java.lang.Override
@@ -9536,10 +10597,14 @@ public final class Protocol {
               SubsDefaultEntryHolder.defaultEntry,
               "expires_",
               "ttl_",
+              "ping_",
+              "pong_",
+              "session_",
+              "node_",
             };
             java.lang.String info =
-                "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0001\u0000\u0000\u0001\u0208\u0002\u0208" +
-                "\u0003\n\u00042\u0005\u0007\u0006\u000b";
+                "\u0000\n\u0000\u0000\u0001\n\n\u0001\u0000\u0000\u0001\u0208\u0002\u0208\u0003\n" +
+                "\u00042\u0005\u0007\u0006\u000b\u0007\u000b\b\u0007\t\u0208\n\u0208";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -11196,6 +12261,42 @@ public final class Protocol {
 
     io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult getSubsOrThrow(
         java.lang.String key);
+
+    /**
+     * <code>uint32 ping = 7;</code>
+     * @return The ping.
+     */
+    int getPing();
+
+    /**
+     * <code>bool pong = 8;</code>
+     * @return The pong.
+     */
+    boolean getPong();
+
+    /**
+     * <code>string session = 9;</code>
+     * @return The session.
+     */
+    java.lang.String getSession();
+    /**
+     * <code>string session = 9;</code>
+     * @return The bytes for session.
+     */
+    com.google.protobuf.ByteString
+        getSessionBytes();
+
+    /**
+     * <code>string node = 10;</code>
+     * @return The node.
+     */
+    java.lang.String getNode();
+    /**
+     * <code>string node = 10;</code>
+     * @return The bytes for node.
+     */
+    com.google.protobuf.ByteString
+        getNodeBytes();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.ConnectResult}
@@ -11209,6 +12310,8 @@ public final class Protocol {
       client_ = "";
       version_ = "";
       data_ = com.google.protobuf.ByteString.EMPTY;
+      session_ = "";
+      node_ = "";
     }
     public static final int CLIENT_FIELD_NUMBER = 1;
     private java.lang.String client_;
@@ -11474,6 +12577,152 @@ public final class Protocol {
     private java.util.Map<java.lang.String, io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult>
     getMutableSubsMap() {
       return internalGetMutableSubs();
+    }
+
+    public static final int PING_FIELD_NUMBER = 7;
+    private int ping_;
+    /**
+     * <code>uint32 ping = 7;</code>
+     * @return The ping.
+     */
+    @java.lang.Override
+    public int getPing() {
+      return ping_;
+    }
+    /**
+     * <code>uint32 ping = 7;</code>
+     * @param value The ping to set.
+     */
+    private void setPing(int value) {
+      
+      ping_ = value;
+    }
+    /**
+     * <code>uint32 ping = 7;</code>
+     */
+    private void clearPing() {
+      
+      ping_ = 0;
+    }
+
+    public static final int PONG_FIELD_NUMBER = 8;
+    private boolean pong_;
+    /**
+     * <code>bool pong = 8;</code>
+     * @return The pong.
+     */
+    @java.lang.Override
+    public boolean getPong() {
+      return pong_;
+    }
+    /**
+     * <code>bool pong = 8;</code>
+     * @param value The pong to set.
+     */
+    private void setPong(boolean value) {
+      
+      pong_ = value;
+    }
+    /**
+     * <code>bool pong = 8;</code>
+     */
+    private void clearPong() {
+      
+      pong_ = false;
+    }
+
+    public static final int SESSION_FIELD_NUMBER = 9;
+    private java.lang.String session_;
+    /**
+     * <code>string session = 9;</code>
+     * @return The session.
+     */
+    @java.lang.Override
+    public java.lang.String getSession() {
+      return session_;
+    }
+    /**
+     * <code>string session = 9;</code>
+     * @return The bytes for session.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSessionBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(session_);
+    }
+    /**
+     * <code>string session = 9;</code>
+     * @param value The session to set.
+     */
+    private void setSession(
+        java.lang.String value) {
+      java.lang.Class<?> valueClass = value.getClass();
+  
+      session_ = value;
+    }
+    /**
+     * <code>string session = 9;</code>
+     */
+    private void clearSession() {
+      
+      session_ = getDefaultInstance().getSession();
+    }
+    /**
+     * <code>string session = 9;</code>
+     * @param value The bytes for session to set.
+     */
+    private void setSessionBytes(
+        com.google.protobuf.ByteString value) {
+      checkByteStringIsUtf8(value);
+      session_ = value.toStringUtf8();
+      
+    }
+
+    public static final int NODE_FIELD_NUMBER = 10;
+    private java.lang.String node_;
+    /**
+     * <code>string node = 10;</code>
+     * @return The node.
+     */
+    @java.lang.Override
+    public java.lang.String getNode() {
+      return node_;
+    }
+    /**
+     * <code>string node = 10;</code>
+     * @return The bytes for node.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNodeBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(node_);
+    }
+    /**
+     * <code>string node = 10;</code>
+     * @param value The node to set.
+     */
+    private void setNode(
+        java.lang.String value) {
+      java.lang.Class<?> valueClass = value.getClass();
+  
+      node_ = value;
+    }
+    /**
+     * <code>string node = 10;</code>
+     */
+    private void clearNode() {
+      
+      node_ = getDefaultInstance().getNode();
+    }
+    /**
+     * <code>string node = 10;</code>
+     * @param value The bytes for node to set.
+     */
+    private void setNodeBytes(
+        com.google.protobuf.ByteString value) {
+      checkByteStringIsUtf8(value);
+      node_ = value.toStringUtf8();
+      
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.ConnectResult parseFrom(
@@ -11851,6 +13100,160 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>uint32 ping = 7;</code>
+       * @return The ping.
+       */
+      @java.lang.Override
+      public int getPing() {
+        return instance.getPing();
+      }
+      /**
+       * <code>uint32 ping = 7;</code>
+       * @param value The ping to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPing(int value) {
+        copyOnWrite();
+        instance.setPing(value);
+        return this;
+      }
+      /**
+       * <code>uint32 ping = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPing() {
+        copyOnWrite();
+        instance.clearPing();
+        return this;
+      }
+
+      /**
+       * <code>bool pong = 8;</code>
+       * @return The pong.
+       */
+      @java.lang.Override
+      public boolean getPong() {
+        return instance.getPong();
+      }
+      /**
+       * <code>bool pong = 8;</code>
+       * @param value The pong to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPong(boolean value) {
+        copyOnWrite();
+        instance.setPong(value);
+        return this;
+      }
+      /**
+       * <code>bool pong = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPong() {
+        copyOnWrite();
+        instance.clearPong();
+        return this;
+      }
+
+      /**
+       * <code>string session = 9;</code>
+       * @return The session.
+       */
+      @java.lang.Override
+      public java.lang.String getSession() {
+        return instance.getSession();
+      }
+      /**
+       * <code>string session = 9;</code>
+       * @return The bytes for session.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString
+          getSessionBytes() {
+        return instance.getSessionBytes();
+      }
+      /**
+       * <code>string session = 9;</code>
+       * @param value The session to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSession(
+          java.lang.String value) {
+        copyOnWrite();
+        instance.setSession(value);
+        return this;
+      }
+      /**
+       * <code>string session = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSession() {
+        copyOnWrite();
+        instance.clearSession();
+        return this;
+      }
+      /**
+       * <code>string session = 9;</code>
+       * @param value The bytes for session to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSessionBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setSessionBytes(value);
+        return this;
+      }
+
+      /**
+       * <code>string node = 10;</code>
+       * @return The node.
+       */
+      @java.lang.Override
+      public java.lang.String getNode() {
+        return instance.getNode();
+      }
+      /**
+       * <code>string node = 10;</code>
+       * @return The bytes for node.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString
+          getNodeBytes() {
+        return instance.getNodeBytes();
+      }
+      /**
+       * <code>string node = 10;</code>
+       * @param value The node to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNode(
+          java.lang.String value) {
+        copyOnWrite();
+        instance.setNode(value);
+        return this;
+      }
+      /**
+       * <code>string node = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearNode() {
+        copyOnWrite();
+        instance.clearNode();
+        return this;
+      }
+      /**
+       * <code>string node = 10;</code>
+       * @param value The bytes for node to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNodeBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setNodeBytes(value);
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.ConnectResult)
     }
     @java.lang.Override
@@ -11874,10 +13277,14 @@ public final class Protocol {
               "data_",
               "subs_",
               SubsDefaultEntryHolder.defaultEntry,
+              "ping_",
+              "pong_",
+              "session_",
+              "node_",
             };
             java.lang.String info =
-                "\u0000\u0006\u0000\u0000\u0001\u0006\u0006\u0001\u0000\u0000\u0001\u0208\u0002\u0208" +
-                "\u0003\u0007\u0004\u000b\u0005\n\u00062";
+                "\u0000\n\u0000\u0000\u0001\n\n\u0001\u0000\u0000\u0001\u0208\u0002\u0208\u0003\u0007" +
+                "\u0004\u000b\u0005\n\u00062\u0007\u000b\b\u0007\t\u0208\n\u0208";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
