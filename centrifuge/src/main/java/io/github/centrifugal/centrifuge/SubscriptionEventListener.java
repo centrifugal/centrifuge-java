@@ -2,7 +2,7 @@ package io.github.centrifugal.centrifuge;
 
 public abstract class SubscriptionEventListener {
 
-    public void onPublish(Subscription sub, PublishEvent event) {
+    public void onPublication(Subscription sub, PublicationEvent event) {
 
     };
 
@@ -14,15 +14,19 @@ public abstract class SubscriptionEventListener {
 
     };
 
-    public void onSubscribeSuccess(Subscription sub, SubscribeSuccessEvent event) {
-
-    };
-
-    public void onSubscribeError(Subscription sub, SubscribeErrorEvent event) {
+    public void onSubscribe(Subscription sub, SubscribeEvent event) {
 
     };
 
     public void onUnsubscribe(Subscription sub, UnsubscribeEvent event) {
+
+    };
+
+    public void onFail(Subscription sub, SubscriptionFailEvent event) {
+
+    };
+
+    public void onError(Subscription sub, SubscriptionErrorEvent event) {
 
     };
 }

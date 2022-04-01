@@ -1,7 +1,11 @@
 package io.github.centrifugal.centrifuge;
 
-public class PrivateSubEvent {
+public class SubscriptionTokenEvent {
     private String channel;
+
+    public SubscriptionTokenEvent(String channel) {
+        this.channel = channel;
+    }
 
     public String getChannel() {
         return channel;
@@ -10,14 +14,4 @@ public class PrivateSubEvent {
     void setChannel(String channel) {
         this.channel = channel;
     }
-
-    public String getClient() {
-        return client;
-    }
-
-    void setClient(String client) {
-        this.client = client;
-    }
-
-    private String client;
 }

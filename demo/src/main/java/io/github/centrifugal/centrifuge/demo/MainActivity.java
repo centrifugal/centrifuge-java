@@ -1,8 +1,8 @@
 package io.github.centrifugal.centrifuge.demo;
 
 import android.annotation.SuppressLint;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import io.github.centrifugal.centrifuge.Client;
@@ -10,9 +10,9 @@ import io.github.centrifugal.centrifuge.ConnectEvent;
 import io.github.centrifugal.centrifuge.DisconnectEvent;
 import io.github.centrifugal.centrifuge.EventListener;
 import io.github.centrifugal.centrifuge.Options;
-import io.github.centrifugal.centrifuge.PublishEvent;
-import io.github.centrifugal.centrifuge.SubscribeErrorEvent;
-import io.github.centrifugal.centrifuge.SubscribeSuccessEvent;
+import io.github.centrifugal.centrifuge.PublicationEvent;
+import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
+import io.github.centrifugal.centrifuge.SubscribeEvent;
 import io.github.centrifugal.centrifuge.Subscription;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
 import io.github.centrifugal.centrifuge.UnsubscribeEvent;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         Client client = new Client(
-                "ws://192.168.1.35:8000/connection/websocket?format=protobuf",
+                "ws://192.168.1.35:8000/connection/websocket?cf_protocol_version=v2",
                 new Options(),
                 listener
         );
@@ -51,17 +51,17 @@ public class MainActivity extends AppCompatActivity {
         SubscriptionEventListener subListener = new SubscriptionEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onSubscribeSuccess(Subscription sub, SubscribeSuccessEvent event) {
+            public void onSubscribe(Subscription sub, SubscribeEvent event) {
                 MainActivity.this.runOnUiThread(() -> tv.setText("Subscribed to " + sub.getChannel()));
             }
             @SuppressLint("SetTextI18n")
             @Override
-            public void onSubscribeError(Subscription sub, SubscribeErrorEvent event) {
+            public void onSubscribeError(Subscription sub, SubscriptionErrorEvent event) {
                 MainActivity.this.runOnUiThread(() -> tv.setText("Subscribe error " + sub.getChannel() + ": " + event.getMessage()));
             }
             @SuppressLint("SetTextI18n")
             @Override
-            public void onPublish(Subscription sub, PublishEvent event) {
+            public void onPublication(Subscription sub, PublicationEvent event) {
                 String data = new String(event.getData(), UTF_8);
                 MainActivity.this.runOnUiThread(() -> tv.setText("Message from " + sub.getChannel() + ": " + data));
             }

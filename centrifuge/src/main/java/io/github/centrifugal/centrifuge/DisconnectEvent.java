@@ -1,21 +1,15 @@
 package io.github.centrifugal.centrifuge;
 
 public class DisconnectEvent {
-    void setReason(String reason) {
+    public DisconnectEvent(int code, String reason, Boolean reconnect) {
+        this.code = code;
         this.reason = reason;
-    }
-
-    void setReconnect(Boolean reconnect) {
         this.reconnect = reconnect;
     }
 
-    void setCode(int code) {
-        this.code = code;
-    }
-
-    private int code;
-    private String reason;
-    private Boolean reconnect;
+    private final int code;
+    private final String reason;
+    private final Boolean reconnect;
 
     public String getReason() {
         return reason;

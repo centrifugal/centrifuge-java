@@ -1,6 +1,6 @@
 package io.github.centrifugal.centrifuge;
 
-public class ServerPublishEvent {
+public class PublicationEvent {
     public byte[] getData() {
         return data;
     }
@@ -21,6 +21,7 @@ public class ServerPublishEvent {
 
     private ClientInfo info;
 
+
     public long getOffset() {
         return offset;
     }
@@ -30,14 +31,4 @@ public class ServerPublishEvent {
     }
 
     private long offset;
-
-    void setChannel(String channel) {
-        this.channel = channel;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    private String channel;
 }

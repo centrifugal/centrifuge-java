@@ -1,6 +1,4 @@
 package io.github.centrifugal.centrifuge;
 
-public enum ProtocolVersion {
-    V1,
-    V2
+public class ConnectionTokenEvent {
 }

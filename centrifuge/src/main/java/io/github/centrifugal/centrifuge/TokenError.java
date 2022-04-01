@@ -1,10 +1,10 @@
 package io.github.centrifugal.centrifuge;
 
-public class ErrorEvent {
+public class TokenError extends Throwable {
     private final Throwable error;
 
-    ErrorEvent(Throwable t) {
-        this.error = t;
+    TokenError(Throwable error) {
+        this.error = error;
     }
 
     public Throwable getError() {
