@@ -55,6 +55,7 @@ public class Client {
     private ScheduledFuture<?> refreshTask;
     private ScheduledFuture<?> reconnectTask;
     private int reconnectAttempts = 0;
+    private boolean refreshRequired = false;
 
     Options getOpts() {
         return opts;
@@ -71,7 +72,7 @@ public class Client {
     ScheduledExecutorService getScheduler() {
         return scheduler;
     }
-    
+
     private static final int NORMAL_CLOSURE_STATUS = 1000;
 
     /**
@@ -155,14 +156,27 @@ public class Client {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                 super.onOpen(webSocket, response);
-                Client.this.executor.submit(Client.this::handleConnectionOpen);
+                Client.this.executor.submit(() -> {
+                    try {
+                        Client.this.handleConnectionOpen();
+                    } catch (Exception e) {
+                        // Should never happen.
+                        e.printStackTrace();
+                    }
+                });
             }
 
             @Override
             public void onMessage(WebSocket webSocket, ByteString bytes) {
                 super.onMessage(webSocket, bytes);
-                System.out.println(bytes.toString());
-                Client.this.executor.submit(() -> Client.this.handleConnectionMessage(bytes.toByteArray()));
+                Client.this.executor.submit(() -> {
+                    try {
+                        Client.this.handleConnectionMessage(bytes.toByteArray());
+                    } catch (Exception e) {
+                        // Should never happen.
+                        e.printStackTrace();
+                    }
+                });
             }
 
             @Override
@@ -174,7 +188,6 @@ public class Client {
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 super.onClosed(webSocket, code, reason);
-                System.out.println(666);
                 Client.this.executor.submit(() -> {
                     boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
                     int disconnectCode = code;
@@ -183,7 +196,6 @@ public class Client {
                         disconnectCode = 4;
                         disconnectReason = "connection closed";
                     }
-                    System.out.println(disconnectCode);
                     Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
                     if (Client.this.state == ClientState.CONNECTING) {
                         Client.this.scheduleReconnect();
@@ -211,11 +223,27 @@ public class Client {
         if (this.state != ClientState.CONNECTING) {
             return;
         }
-        try {
+        if (this.refreshRequired) {
+            ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
+            this.listener.onConnectionToken(this, connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
+                if (Client.this.state != ClientState.CONNECTING) {
+                    return;
+                }
+                if (err != null) {
+                    Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
+                    this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                    return;
+                }
+                if (token.equals("")) {
+                    Client.this.failUnauthorized();
+                    return;
+                }
+                Client.this.token = token;
+                Client.this.refreshRequired = false;
+                this.sendConnect();
+            }));
+        } else {
             this.sendConnect();
-        } catch (Exception e) {
-            // Should never happen.
-            e.printStackTrace();
         }
     }
 
@@ -265,7 +293,7 @@ public class Client {
     }
 
     private void cleanDisconnect() {
-        Client.this._disconnect(0, "clean disconnect", false);
+        Client.this._disconnect(0, "client", false);
     }
 
     private void _disconnect(int code, String reason, Boolean reconnect) {
@@ -317,7 +345,7 @@ public class Client {
         }
 
         if (!shouldReconnect && code >= 3000) {
-            this.fail(ClientFailReason.SERVER);
+            this.failServer();
         }
 
         this.ws.close(NORMAL_CLOSURE_STATUS, "cya");
@@ -400,11 +428,11 @@ public class Client {
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
         f.thenAccept(reply -> {
-            this.handleUnsubscribeReply(channel, reply);
+            // No need to handle reply for now.
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
-            // TODO: reconnect.
             this.futures.remove(cmd.getId());
+            this.processDisconnect(13, "unsubscribe error", true);
             return null;
         });
 
@@ -481,7 +509,6 @@ public class Client {
 
     private void handleSubscribeReply(String channel, Protocol.Reply reply) {
         Subscription sub = this.getSub(channel);
-        // TODO: implement.
         if (sub != null) {
             Protocol.SubscribeResult result;
             if (reply.getError().getCode() != 0) {
@@ -492,10 +519,6 @@ public class Client {
             result = reply.getSubscribe();
             sub.moveToSubscribed(result);
         }
-    }
-
-    private void handleUnsubscribeReply(String channel, Protocol.Reply reply) {
-        // TODO: handle error.
     }
 
     private void _waitServerPing() {
@@ -514,12 +537,12 @@ public class Client {
             return;
         }
         if (reply.getError().getCode() != 0) {
-            // TODO: handle error.
             this.handleConnectionError(new ReplyError(reply.getError().getCode(), reply.getError().getMessage(), reply.getError().getTemporary()));
             if (reply.getError().getCode() == 109) { // Token expired.
-
+                this.refreshRequired = true;
+                this.ws.close(NORMAL_CLOSURE_STATUS, "");
             } else if (reply.getError().getCode() == 112) { // Unrecoverable position.
-
+                this.failUnrecoverable();
             } else if (reply.getError().getTemporary()) {
                 this.ws.close(NORMAL_CLOSURE_STATUS, "");
             } else {
@@ -546,17 +569,15 @@ public class Client {
             Protocol.SubscribeResult subResult = entry.getValue();
             String channel = entry.getKey();
             ServerSubscription serverSub;
-            boolean isResubscribe = false;
             if (this.serverSubs.containsKey(channel)) {
                 serverSub = this.serverSubs.get(channel);
-                isResubscribe = true;
             } else {
                 serverSub = new ServerSubscription(subResult.getRecoverable(), subResult.getOffset(), subResult.getEpoch());
                 this.serverSubs.put(channel, serverSub);
             }
             serverSub.setRecoverable(subResult.getRecoverable());
             serverSub.setLastEpoch(subResult.getEpoch());
-            this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, isResubscribe, subResult.getRecovered()));
+            this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, subResult.getRecovered()));
             if (subResult.getPublicationsCount() > 0) {
                 for (Protocol.Publication publication : subResult.getPublicationsList()) {
                     ServerPublicationEvent publishEvent = new ServerPublicationEvent();
@@ -702,6 +723,7 @@ public class Client {
                 e.printStackTrace();
             }
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+            this.handleConnectionError(e);
             this.futures.remove(cmd.getId());
             Client.this._disconnect(9, "connect timeout", true);
             return null;
@@ -784,7 +806,7 @@ public class Client {
         this.serverSubs.put(channel, serverSub);
         serverSub.setRecoverable(sub.getRecoverable());
         serverSub.setLastEpoch(sub.getEpoch());
-        this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, false, false));
+        this.listener.onSubscribe(this, new ServerSubscribeEvent(channel,  false));
         serverSub.setLastOffset(sub.getOffset());
     }
 
@@ -1110,14 +1132,13 @@ public class Client {
                 cb.onDone(getReplyError(reply), null);
             } else {
                 Protocol.PresenceResult replyResult = reply.getPresence();
-                PresenceResult result = new PresenceResult();
                 Map<String, Protocol.ClientInfo> protoPresence = replyResult.getPresenceMap();
                 Map<String, ClientInfo> presence = new HashMap<>();
                 for (Map.Entry<String, Protocol.ClientInfo> entry : protoPresence.entrySet()) {
                     Protocol.ClientInfo protoClientInfo = entry.getValue();
                     presence.put(entry.getKey(), ClientInfo.fromProtocolClientInfo(protoClientInfo));
                 }
-                result.setPresence(presence);
+                PresenceResult result = new PresenceResult(presence);
                 cb.onDone(null, result);
             }
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {

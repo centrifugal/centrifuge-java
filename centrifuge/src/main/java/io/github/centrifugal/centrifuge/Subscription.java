@@ -187,6 +187,7 @@ public class Subscription {
     }
 
     void subscribeError(ReplyError err) {
+        this.listener.onError(this, new SubscriptionErrorEvent(new SubscriptionSubscribeError(err)));
         if (err.getCode() == 109) { // Token expired.
             this.token = "";
             this.scheduleResubscribe();
@@ -242,14 +243,19 @@ public class Subscription {
             streamPosition.setEpoch(this.getEpoch());
         }
 
-        if (this.channel.startsWith(this.client.getOpts().getPrivateChannelPrefix())) {
+        if (this.channel.startsWith(this.client.getOpts().getPrivateChannelPrefix()) && this.token.equals("")) {
             SubscriptionTokenEvent subscriptionTokenEvent = new SubscriptionTokenEvent(this.channel);
-            this.client.getListener().onSubscriptionToken(this.client, subscriptionTokenEvent, (e, token) -> Subscription.this.client.getExecutor().submit(() -> {
+            this.client.getListener().onSubscriptionToken(this.client, subscriptionTokenEvent, (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
                 if (Subscription.this.state != SubscriptionState.SUBSCRIBING) {
                     return;
                 }
-                if (e != null) {
-                    Subscription.this.client.processDisconnect(8, "subscribe error", true);
+                if (err != null) {
+                    Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionTokenError(err)));
+                    Subscription.this.scheduleResubscribe();
+                    return;
+                }
+                if (token.equals("")) {
+                    Subscription.this.failUnauthorized();
                     return;
                 }
                 Subscription.this.token = token;

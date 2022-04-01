@@ -1,6 +1,7 @@
 package io.github.centrifugal.centrifuge.example;
 
 import io.github.centrifugal.centrifuge.Client;
+import io.github.centrifugal.centrifuge.ClientState;
 import io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
 import io.github.centrifugal.centrifuge.FailEvent;
 import io.github.centrifugal.centrifuge.HistoryOptions;
@@ -30,6 +31,8 @@ import io.github.centrifugal.centrifuge.UnsubscribeEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutionException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -209,19 +212,34 @@ public class Main {
             Thread.currentThread().interrupt();
         }
 
-//        sub.unsubscribe();
-//
-//        // Say Client that we finished with Subscription. It will be removed from
-//        // internal Subscription map so you can create new Subscription to channel
-//        // later calling newSubscription method again.
-//        client.removeSubscription(sub);
+        sub.unsubscribe();
+
+        // Say Client that we finished with Subscription. It will be removed from
+        // internal Subscription map so you can create new Subscription to channel
+        // later calling newSubscription method again.
+        client.removeSubscription(sub);
 
         try {
-            Thread.sleep(200000);
+            Thread.sleep(2000);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
         // Disconnect from server.
         client.disconnect();
+
+        try {
+            System.out.println(client.getState() == ClientState.DISCONNECTED);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            boolean ok = client.close(5000);
+            if (!ok) {
+                System.out.println("client was not gracefully closed");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

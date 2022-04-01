@@ -5,23 +5,16 @@ public class ServerSubscribeEvent {
         return recovered;
     }
 
-    private Boolean recovered;
-
-    public Boolean getIsResubscribe() {
-        return isResubscribe;
-    }
-
-    private Boolean isResubscribe;
+    private final Boolean recovered;
 
     public String getChannel() {
         return channel;
     }
 
-    private String channel;
+    private final String channel;
 
-    ServerSubscribeEvent(String channel, Boolean isResubscribe, Boolean recovered) {
+    ServerSubscribeEvent(String channel, Boolean recovered) {
         this.channel = channel;
-        this.isResubscribe = isResubscribe;
         this.recovered = recovered;
     }
 }
