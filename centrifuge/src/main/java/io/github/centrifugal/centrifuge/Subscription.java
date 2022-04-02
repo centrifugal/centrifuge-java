@@ -335,7 +335,7 @@ public class Subscription {
         this.fail(SubscriptionFailReason.REFRESH_FAILED, true);
     }
 
-    private void failServer() {
+    void failServer() {
         this.fail(SubscriptionFailReason.SERVER, false);
     }
 
@@ -343,8 +343,15 @@ public class Subscription {
         this.fail(SubscriptionFailReason.UNAUTHORIZED, this.state == SubscriptionState.SUBSCRIBED);
     }
 
-    private void failUnrecoverable() {
+    void failUnrecoverable() {
+        this.clearPositionState();
         this.fail(SubscriptionFailReason.UNRECOVERABLE, false);
+    }
+
+    private void clearPositionState() {
+        this.recover = false;
+        this.offset = 0;
+        this.epoch = "";
     }
 
     public void publish(byte[] data, ResultCallback<PublishResult> cb) {

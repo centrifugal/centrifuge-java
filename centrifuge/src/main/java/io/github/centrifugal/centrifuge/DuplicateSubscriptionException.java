@@ -6,7 +6,7 @@ package io.github.centrifugal.centrifuge;
  *
  */
 public class DuplicateSubscriptionException extends Exception {
-    public DuplicateSubscriptionException() {
+    DuplicateSubscriptionException() {
         super();
     }
 }

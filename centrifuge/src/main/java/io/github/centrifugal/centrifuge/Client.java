@@ -77,7 +77,7 @@ public class Client {
 
     /**
      * Creates a new instance of Client. Client allows to allocate new Subscriptions to channels,
-     * automatically manages reconnects.
+     * automatically manages reconnects and re-subscriptions on temporary failures.
      *
      * @param url: connection endpoint.
      * @param opts: client options.
@@ -105,6 +105,9 @@ public class Client {
         return ++_id;
     }
 
+    /**
+    * Start connecting to a server.
+    */
     public void connect() {
         this.executor.submit(() -> {
             if (Client.this.state == ClientState.CONNECTED || Client.this.state == ClientState.CONNECTING) {
@@ -113,6 +116,94 @@ public class Client {
             Client.this.reconnectAttempts = 0;
             Client.this._connect();
         });
+    }
+
+    /**
+     * Disconnect from server and do not reconnect.
+     */
+    public void disconnect() {
+        this.executor.submit(this::cleanDisconnect);
+    }
+
+    /**
+     * Close disconnects client from server and cleans up client resources including
+     * shutdown of internal executors. Client is not usable after calling this method.
+     * If you only need to temporary disconnect from server use .disconnect() method.
+     *
+     * @param awaitMilliseconds is time in milliseconds to wait for executor
+     *                          termination (0 means no waiting).
+     *
+     * @return boolean that indicates whether executor terminated in awaitMilliseconds. For
+     * zero awaitMilliseconds close always returns false.
+     */
+    public boolean close(long awaitMilliseconds) throws InterruptedException {
+        this.disconnect();
+        this.executor.shutdown();
+        this.scheduler.shutdownNow();
+        if (awaitMilliseconds > 0) {
+            // Keep this the last, executor will be closed in connection close handler.
+            return this.executor.awaitTermination(awaitMilliseconds, TimeUnit.MILLISECONDS);
+        }
+        return false;
+    }
+
+    private void cleanDisconnect() {
+        Client.this._disconnect(0, "client", false);
+    }
+
+    private void _disconnect(int code, String reason, Boolean reconnect) {
+        this.processDisconnect(code, reason, reconnect);
+    }
+
+    void processDisconnect(int code, String reason, Boolean shouldReconnect) {
+        if (this.state == ClientState.DISCONNECTED || this.state == ClientState.FAILED) {
+            return;
+        }
+
+        ClientState previousState = this.state;
+
+        if (this.pingTask != null) {
+            this.pingTask.cancel(true);
+            this.pingTask = null;
+        }
+        if (this.refreshTask != null) {
+            this.refreshTask.cancel(true);
+            this.refreshTask = null;
+        }
+        if (this.reconnectTask != null) {
+            this.reconnectTask.cancel(true);
+            this.reconnectTask = null;
+        }
+        if (shouldReconnect) {
+            this.state = ClientState.CONNECTING;
+        } else {
+            this.state = ClientState.DISCONNECTED;
+        }
+
+        synchronized (this.subs) {
+            for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
+                Subscription sub = entry.getValue();
+                sub.moveToSubscribing();
+            }
+        }
+
+        if (previousState == ClientState.CONNECTED) {
+            DisconnectEvent event = new DisconnectEvent(code, reason, shouldReconnect);
+            for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
+                CompletableFuture<Protocol.Reply> f = entry.getValue();
+                f.completeExceptionally(new IOException());
+            }
+            for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
+                this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(entry.getKey()));
+            }
+            this.listener.onDisconnect(this, event);
+        }
+
+        if (!shouldReconnect && code >= 3000) {
+            this.failServer();
+        }
+
+        this.ws.close(NORMAL_CLOSURE_STATUS, "");
     }
 
     private void _connect() {
@@ -145,9 +236,9 @@ public class Client {
                     String credentials = Credentials.basic(opts.getProxyLogin(), opts.getProxyPassword());
 
                     return response.request()
-                        .newBuilder()
-                        .header("Proxy-Authorization", credentials)
-                        .build();
+                            .newBuilder()
+                            .header("Proxy-Authorization", credentials)
+                            .build();
                 });
             }
         }
@@ -261,94 +352,6 @@ public class Client {
             // Should never happen. Corrupted server protocol data?
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Disconnect from server and do not reconnect.
-     */
-    public void disconnect() {
-        this.executor.submit(this::cleanDisconnect);
-    }
-
-    /**
-     * Close disconnects client from server and cleans up client resources including
-     * shutdown of internal executors. Client is not usable after calling this method.
-     * If you only need to temporary disconnect from server use .disconnect() method.
-     *
-     * @param awaitMilliseconds is time in milliseconds to wait for executor
-     *                          termination (0 means no waiting).
-     *
-     * @return boolean that indicates whether executor terminated in awaitMilliseconds. For
-     * zero awaitMilliseconds close always returns false.
-     */
-    public boolean close(long awaitMilliseconds) throws InterruptedException {
-        this.disconnect();
-        this.executor.shutdown();
-        this.scheduler.shutdownNow();
-        if (awaitMilliseconds > 0) {
-            // Keep this the last, executor will be closed in connection close handler.
-            return this.executor.awaitTermination(awaitMilliseconds, TimeUnit.MILLISECONDS);
-        }
-        return false;
-    }
-
-    private void cleanDisconnect() {
-        Client.this._disconnect(0, "client", false);
-    }
-
-    private void _disconnect(int code, String reason, Boolean reconnect) {
-        this.processDisconnect(code, reason, reconnect);
-    }
-
-    void processDisconnect(int code, String reason, Boolean shouldReconnect) {
-        ClientState previousState = this.state;
-
-        if (this.state == ClientState.DISCONNECTED || this.state == ClientState.FAILED) {
-            return;
-        }
-
-        if (this.pingTask != null) {
-            this.pingTask.cancel(true);
-            this.pingTask = null;
-        }
-        if (this.refreshTask != null) {
-            this.refreshTask.cancel(true);
-            this.refreshTask = null;
-        }
-        if (this.reconnectTask != null) {
-            this.reconnectTask.cancel(true);
-            this.reconnectTask = null;
-        }
-        if (shouldReconnect) {
-            this.state = ClientState.CONNECTING;
-        } else {
-            this.state = ClientState.DISCONNECTED;
-        }
-
-        synchronized (this.subs) {
-            for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
-                Subscription sub = entry.getValue();
-                sub.moveToSubscribing();
-            }
-        }
-
-        if (previousState == ClientState.CONNECTED) {
-            DisconnectEvent event = new DisconnectEvent(code, reason, shouldReconnect);
-            for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
-                CompletableFuture<Protocol.Reply> f = entry.getValue();
-                f.completeExceptionally(new IOException());
-            }
-            for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
-                this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(entry.getKey()));
-            }
-            this.listener.onDisconnect(this, event);
-        }
-
-        if (!shouldReconnect && code >= 3000) {
-            this.failServer();
-        }
-
-        this.ws.close(NORMAL_CLOSURE_STATUS, "cya");
     }
 
     private void handleConnectionError(Throwable t) {
@@ -580,13 +583,14 @@ public class Client {
             this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, subResult.getRecovered()));
             if (subResult.getPublicationsCount() > 0) {
                 for (Protocol.Publication publication : subResult.getPublicationsList()) {
-                    ServerPublicationEvent publishEvent = new ServerPublicationEvent();
-                    publishEvent.setChannel(channel);
-                    publishEvent.setData(publication.getData().toByteArray());
+                    ServerPublicationEvent publicationEvent = new ServerPublicationEvent();
+                    publicationEvent.setChannel(channel);
+                    publicationEvent.setData(publication.getData().toByteArray());
+                    publicationEvent.setTags(publication.getTagsMap());
                     ClientInfo info = ClientInfo.fromProtocolClientInfo(publication.getInfo());
-                    publishEvent.setInfo(info);
-                    publishEvent.setOffset(publication.getOffset());
-                    this.listener.onPublication(this, publishEvent);
+                    publicationEvent.setInfo(info);
+                    publicationEvent.setOffset(publication.getOffset());
+                    this.listener.onPublication(this, publicationEvent);
                     if (publication.getOffset() > 0) {
                         serverSub.setLastOffset(publication.getOffset());
                     }
@@ -781,6 +785,7 @@ public class Client {
             event.setData(pub.getData().toByteArray());
             event.setInfo(info);
             event.setOffset(pub.getOffset());
+            event.setTags(pub.getTagsMap());
             sub.getListener().onPublication(sub, event);
             if (pub.getOffset() > 0) {
                 sub.setOffset(pub.getOffset());
@@ -793,6 +798,7 @@ public class Client {
                 event.setData(pub.getData().toByteArray());
                 event.setInfo(info);
                 event.setOffset(pub.getOffset());
+                event.setTags(pub.getTagsMap());
                 this.listener.onPublication(this, event);
                 if (pub.getOffset() > 0) {
                     serverSub.setLastOffset(pub.getOffset());
@@ -810,10 +816,17 @@ public class Client {
         serverSub.setLastOffset(sub.getOffset());
     }
 
-    private void handleUnsubscribe(String channel) {
+    private void handleUnsubscribe(String channel, Protocol.Unsubscribe unsubscribe) {
         Subscription sub = this.getSub(channel);
         if (sub != null) {
-            sub.unsubscribeNoResubscribe();
+            if (unsubscribe.getType() == Protocol.Unsubscribe.Type.INSUFFICIENT) {
+                sub.moveToSubscribing();
+                sub.resubscribeIfNecessary();
+            } else if (unsubscribe.getType() == Protocol.Unsubscribe.Type.UNRECOVERABLE) {
+                sub.failUnrecoverable();
+            } else {
+                sub.failServer();
+            }
         } else {
             ServerSubscription serverSub = this.getServerSub(channel);
             if (serverSub != null) {
@@ -871,7 +884,7 @@ public class Client {
         } else if (push.hasLeave()) {
             this.handleLeave(channel, push.getLeave());
         } else if (push.hasUnsubscribe()) {
-            this.handleUnsubscribe(channel);
+            this.handleUnsubscribe(channel, push.getUnsubscribe());
         } else if (push.hasMessage()) {
             this.handleMessage(push.getMessage());
         }
