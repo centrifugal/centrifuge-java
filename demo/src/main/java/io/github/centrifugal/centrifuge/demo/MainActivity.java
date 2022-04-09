@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onError(Subscription sub, SubscriptionErrorEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribe error " + sub.getChannel() + ": " + event.getException().toString()));
+                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribe error " + sub.getChannel() + ": " + event.getError().toString()));
             }
             @SuppressLint("SetTextI18n")
             @Override

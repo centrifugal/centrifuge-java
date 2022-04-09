@@ -1,13 +1,13 @@
 package io.github.centrifugal.centrifuge;
 
 public class SubscriptionErrorEvent {
-    private final Throwable exception;
+    private final Throwable error;
 
     SubscriptionErrorEvent(Throwable t) {
-        this.exception = t;
+        this.error = t;
     }
 
-    public Throwable getException() {
-        return exception;
+    public Throwable getError() {
+        return error;
     }
 }

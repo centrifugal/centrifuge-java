@@ -140,7 +140,7 @@ public class Main {
             }
             @Override
             public void onError(Subscription sub, SubscriptionErrorEvent event) {
-                System.out.println("subscription error " + sub.getChannel() + " " + event.getException().toString());
+                System.out.println("subscription error " + sub.getChannel() + " " + event.getError().toString());
             }
             @Override
             public void onPublication(Subscription sub, PublicationEvent event) {
