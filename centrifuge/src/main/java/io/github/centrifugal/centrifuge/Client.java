@@ -79,12 +79,12 @@ public class Client {
      * Creates a new instance of Client. Client allows to allocate new Subscriptions to channels,
      * automatically manages reconnects and re-subscriptions on temporary failures.
      *
-     * @param url: connection endpoint.
+     * @param endpoint: connection endpoint.
      * @param opts: client options.
      * @param listener: client event handler.
      */
-    public Client(final String url, final Options opts, final EventListener listener) {
-        this.url = url;
+    public Client(final String endpoint, final Options opts, final EventListener listener) {
+        this.url = endpoint;
         this.opts = opts;
         this.listener = listener;
         this.backoff = new Backoff();
@@ -217,10 +217,10 @@ public class Client {
         }
 
         Request request = new Request.Builder()
-                .url(this.url)
-                .headers(headers.build())
-                .addHeader("Sec-WebSocket-Protocol", "centrifuge-protobuf")
-                .build();
+            .url(this.url)
+            .headers(headers.build())
+            .addHeader("Sec-WebSocket-Protocol", "centrifuge-protobuf")
+            .build();
 
         if (this.ws != null) {
             this.ws.cancel();
