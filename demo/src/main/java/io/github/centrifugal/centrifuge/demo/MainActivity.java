@@ -7,17 +7,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import io.github.centrifugal.centrifuge.Client;
-import io.github.centrifugal.centrifuge.ConnectEvent;
-import io.github.centrifugal.centrifuge.DisconnectEvent;
+import io.github.centrifugal.centrifuge.ConnectedEvent;
+import io.github.centrifugal.centrifuge.DisconnectedEvent;
 import io.github.centrifugal.centrifuge.ErrorEvent;
 import io.github.centrifugal.centrifuge.EventListener;
 import io.github.centrifugal.centrifuge.Options;
 import io.github.centrifugal.centrifuge.PublicationEvent;
+import io.github.centrifugal.centrifuge.ServerPublicationEvent;
 import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
-import io.github.centrifugal.centrifuge.SubscribeEvent;
+import io.github.centrifugal.centrifuge.SubscribedEvent;
 import io.github.centrifugal.centrifuge.Subscription;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
-import io.github.centrifugal.centrifuge.UnsubscribeEvent;
+import io.github.centrifugal.centrifuge.UnsubscribedEvent;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -37,12 +38,12 @@ public class MainActivity extends AppCompatActivity {
         EventListener listener = new EventListener() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onConnect(Client client, ConnectEvent event) {
+            public void onConnected(Client client, ConnectedEvent event) {
                 MainActivity.this.runOnUiThread(() -> tv.setText("Connected with client ID " + event.getClient()));
             }
             @SuppressLint("SetTextI18n")
             @Override
-            public void onDisconnect(Client client, DisconnectEvent event) {
+            public void onDisconnected(Client client, DisconnectedEvent event) {
                 MainActivity.this.runOnUiThread(() -> tv.setText("Disconnected: " + event.getReason()));
             }
             @SuppressLint("SetTextI18n")
@@ -50,20 +51,32 @@ public class MainActivity extends AppCompatActivity {
             public void onError(Client client, ErrorEvent event) {
                 MainActivity.this.runOnUiThread(() -> tv.setText("Client error  " + event.getError().toString()));
             }
+
+            @Override
+            public void onPublication(Client client, ServerPublicationEvent event) {
+                String data = new String(event.getData(), UTF_8);
+                MainActivity.this.runOnUiThread(() -> tv.setText("Message from " + event.getChannel() + ": " + data));
+                System.out.println(client.getState().toString());
+            }
         };
 
         Options options = new Options();
 //        options.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
 
-        String endpoint = "ws://192.168.1.101:8000/connection/websocket?cf_protocol_version=v2";
+        String endpoint = "ws://192.168.1.102:8000/connection/websocket?cf_protocol_version=v2";
         client = new Client(endpoint, options, listener);
         client.connect();
 
         SubscriptionEventListener subListener = new SubscriptionEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onSubscribe(Subscription sub, SubscribeEvent event) {
+            public void onSubscribed(Subscription sub, SubscribedEvent event) {
                 MainActivity.this.runOnUiThread(() -> tv.setText("Subscribed to " + sub.getChannel() + ", recovered: " + event.getRecovered().toString()));
+            }
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onUnsubscribed(Subscription sub, UnsubscribedEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText("Unsubscribed from " + sub.getChannel()));
             }
             @SuppressLint("SetTextI18n")
             @Override
@@ -75,11 +88,6 @@ public class MainActivity extends AppCompatActivity {
             public void onPublication(Subscription sub, PublicationEvent event) {
                 String data = new String(event.getData(), UTF_8);
                 MainActivity.this.runOnUiThread(() -> tv.setText("Message from " + sub.getChannel() + ": " + data));
-            }
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onUnsubscribe(Subscription sub, UnsubscribeEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Unsubscribed from " + sub.getChannel()));
             }
         };
 

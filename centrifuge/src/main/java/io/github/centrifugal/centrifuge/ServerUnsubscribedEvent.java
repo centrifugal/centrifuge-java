@@ -1,13 +1,13 @@
 package io.github.centrifugal.centrifuge;
 
-public class ServerUnsubscribeEvent {
+public class ServerUnsubscribedEvent {
     public String getChannel() {
         return channel;
     }
 
     private String channel;
 
-    ServerUnsubscribeEvent(String channel) {
+    ServerUnsubscribedEvent(String channel) {
         this.channel = channel;
     }
 }

@@ -2,8 +2,8 @@ package io.github.centrifugal.centrifuge.example;
 
 import io.github.centrifugal.centrifuge.Client;
 import io.github.centrifugal.centrifuge.ClientState;
+import io.github.centrifugal.centrifuge.ConnectingEvent;
 import io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
-import io.github.centrifugal.centrifuge.FailEvent;
 import io.github.centrifugal.centrifuge.HistoryOptions;
 import io.github.centrifugal.centrifuge.ConnectionTokenEvent;
 import io.github.centrifugal.centrifuge.JoinEvent;
@@ -13,26 +13,24 @@ import io.github.centrifugal.centrifuge.EventListener;
 import io.github.centrifugal.centrifuge.ServerJoinEvent;
 import io.github.centrifugal.centrifuge.ServerLeaveEvent;
 import io.github.centrifugal.centrifuge.ServerPublicationEvent;
-import io.github.centrifugal.centrifuge.ServerSubscribeEvent;
-import io.github.centrifugal.centrifuge.ServerUnsubscribeEvent;
+import io.github.centrifugal.centrifuge.ServerSubscribedEvent;
+import io.github.centrifugal.centrifuge.ServerUnsubscribedEvent;
 import io.github.centrifugal.centrifuge.Subscription;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
-import io.github.centrifugal.centrifuge.ConnectEvent;
-import io.github.centrifugal.centrifuge.DisconnectEvent;
+import io.github.centrifugal.centrifuge.ConnectedEvent;
+import io.github.centrifugal.centrifuge.DisconnectedEvent;
 import io.github.centrifugal.centrifuge.ErrorEvent;
 import io.github.centrifugal.centrifuge.MessageEvent;
-import io.github.centrifugal.centrifuge.SubscriptionFailEvent;
+import io.github.centrifugal.centrifuge.SubscribingEvent;
 import io.github.centrifugal.centrifuge.SubscriptionTokenEvent;
 import io.github.centrifugal.centrifuge.PublicationEvent;
 import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
-import io.github.centrifugal.centrifuge.SubscribeEvent;
+import io.github.centrifugal.centrifuge.SubscribedEvent;
 import io.github.centrifugal.centrifuge.TokenCallback;
-import io.github.centrifugal.centrifuge.UnsubscribeEvent;
+import io.github.centrifugal.centrifuge.UnsubscribedEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.ExecutionException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -45,18 +43,18 @@ public class Main {
 
         EventListener listener = new EventListener() {
             @Override
-            public void onConnect(Client client, ConnectEvent event) {
+            public void onConnecting(Client client, ConnectingEvent event) {
+                System.out.printf("connecting: %s%n", event.getReason());
+            }
+
+            @Override
+            public void onConnected(Client client, ConnectedEvent event) {
                 System.out.println("connected");
             }
 
             @Override
-            public void onDisconnect(Client client, DisconnectEvent event) {
-                System.out.printf("disconnected %d %s, reconnect %s%n", event.getCode(), event.getReason(), event.getReconnect());
-            }
-
-            @Override
-            public void onFail(Client client, FailEvent event) {
-                System.out.printf("failed: %s%n", event.getReason());
+            public void onDisconnected(Client client, DisconnectedEvent event) {
+                System.out.printf("disconnected %d %s", event.getCode(), event.getReason());
             }
 
             @Override
@@ -81,12 +79,12 @@ public class Main {
             }
 
             @Override
-            public void onSubscribe(Client client, ServerSubscribeEvent event) {
+            public void onSubscribed(Client client, ServerSubscribedEvent event) {
                 System.out.println("server side subscribe: " + event.getChannel() + ", recovered " + event.getRecovered());
             }
 
             @Override
-            public void onUnsubscribe(Client client, ServerUnsubscribeEvent event) {
+            public void onUnsubscribed(Client client, ServerUnsubscribedEvent event) {
                 System.out.println("server side unsubscribe: " + event.getChannel());
             }
 
@@ -119,7 +117,11 @@ public class Main {
 
         SubscriptionEventListener subListener = new SubscriptionEventListener() {
             @Override
-            public void onSubscribe(Subscription sub, SubscribeEvent event) {
+            public void onSubscribing(Subscription sub, SubscribingEvent event) {
+                System.out.printf("subscribing: %s%n", event.getReason());
+            }
+            @Override
+            public void onSubscribed(Subscription sub, SubscribedEvent event) {
                 System.out.println("subscribed to " + sub.getChannel() + ", recovered " + event.getRecovered());
                 String data="{\"input\": \"I just subscribed to channel\"}";
                 sub.publish(data.getBytes(), (err, res) -> {
@@ -131,12 +133,8 @@ public class Main {
                 });
             }
             @Override
-            public void onUnsubscribe(Subscription sub, UnsubscribeEvent event) {
+            public void onUnsubscribed(Subscription sub, UnsubscribedEvent event) {
                 System.out.println("unsubscribed " + sub.getChannel());
-            }
-            @Override
-            public void onFail(Subscription sub, SubscriptionFailEvent event) {
-                System.out.printf("subscription failed: %s%n", event.getReason());
             }
             @Override
             public void onError(Subscription sub, SubscriptionErrorEvent event) {

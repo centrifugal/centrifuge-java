@@ -9,10 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -33,7 +31,7 @@ import okio.ByteString;
 
 public class Client {
     private WebSocket ws;
-    private final String url;
+    private final String endpoint;
     private final Options opts;
     private String token;
     private com.google.protobuf.ByteString data;
@@ -42,7 +40,7 @@ public class Client {
     private final Map<Integer, Protocol.Command> connectCommands = new ConcurrentHashMap<>();
     private final Map<Integer, Protocol.Command> connectAsyncCommands = new ConcurrentHashMap<>();
 
-    private ClientState state = ClientState.DISCONNECTED;
+    private volatile ClientState state = ClientState.DISCONNECTED;
     private final Map<String, Subscription> subs = new ConcurrentHashMap<>();
     private final Map<String, ServerSubscription> serverSubs = new ConcurrentHashMap<>();
     private final Backoff backoff;
@@ -74,6 +72,25 @@ public class Client {
     }
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
+    private static final int MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS = 1009;
+
+    static final int DISCONNECTED_DISCONNECT_CALLED = 0;
+    static final int DISCONNECTED_UNAUTHORIZED = 1;
+    static final int DISCONNECTED_BAD_PROTOCOL = 2;
+    static final int DISCONNECTED_MESSAGE_SIZE_LIMIT = 3;
+
+    static final int CONNECTING_CONNECT_CALLED = 0;
+    static final int CONNECTING_TRANSPORT_CLOSED = 1;
+    static final int CONNECTING_NO_PING = 2;
+    static final int CONNECTING_SUBSCRIBE_TIMEOUT = 3;
+    static final int CONNECTING_UNSUBSCRIBE_ERROR = 4;
+
+    static final int SUBSCRIBING_SUBSCRIBE_CALLED = 0;
+    static final int SUBSCRIBING_TRANSPORT_CLOSED = 1;
+
+    static final int UNSUBSCRIBED_UNSUBSCRIBE_CALLED = 0;
+    static final int UNSUBSCRIBED_UNAUTHORIZED= 1;
+    static final int UNSUBSCRIBED_CLIENT_CLOSED = 2;
 
     /**
      * Creates a new instance of Client. Client allows to allocate new Subscriptions to channels,
@@ -84,7 +101,7 @@ public class Client {
      * @param listener: client event handler.
      */
     public Client(final String endpoint, final Options opts, final EventListener listener) {
-        this.url = endpoint;
+        this.endpoint = endpoint;
         this.opts = opts;
         this.listener = listener;
         this.backoff = new Backoff();
@@ -94,9 +111,12 @@ public class Client {
         }
     }
 
-    public ClientState getState() throws InterruptedException, ExecutionException {
-        Future<ClientState> result = this.executor.submit(() -> Client.this.state);
-        return result.get();
+    void setState(ClientState state) {
+        this.state = state;
+    }
+
+    public ClientState getState() {
+        return this.state;
     }
 
     private int _id = 0;
@@ -110,10 +130,13 @@ public class Client {
     */
     public void connect() {
         this.executor.submit(() -> {
-            if (Client.this.state == ClientState.CONNECTED || Client.this.state == ClientState.CONNECTING) {
+            if (Client.this.getState() == ClientState.CONNECTED || Client.this.getState() == ClientState.CONNECTING) {
                 return;
             }
             Client.this.reconnectAttempts = 0;
+            Client.this.setState(ClientState.CONNECTING);
+            ConnectingEvent event = new ConnectingEvent(CONNECTING_CONNECT_CALLED, "connect called");
+            Client.this.listener.onConnecting(Client.this, event);
             Client.this._connect();
         });
     }
@@ -122,7 +145,7 @@ public class Client {
      * Disconnect from server and do not reconnect.
      */
     public void disconnect() {
-        this.executor.submit(this::cleanDisconnect);
+        this.executor.submit(() -> Client.this.processDisconnect(DISCONNECTED_DISCONNECT_CALLED, "disconnect called", false));
     }
 
     /**
@@ -147,20 +170,12 @@ public class Client {
         return false;
     }
 
-    private void cleanDisconnect() {
-        Client.this._disconnect(0, "client", false);
-    }
-
-    private void _disconnect(int code, String reason, Boolean reconnect) {
-        this.processDisconnect(code, reason, reconnect);
-    }
-
     void processDisconnect(int code, String reason, Boolean shouldReconnect) {
-        if (this.state == ClientState.DISCONNECTED || this.state == ClientState.FAILED) {
+        if (this.getState() == ClientState.DISCONNECTED) {
             return;
         }
 
-        ClientState previousState = this.state;
+        ClientState previousState = this.getState();
 
         if (this.pingTask != null) {
             this.pingTask.cancel(true);
@@ -175,40 +190,34 @@ public class Client {
             this.reconnectTask = null;
         }
         if (shouldReconnect) {
-            this.state = ClientState.CONNECTING;
+            this.setState(ClientState.CONNECTING);
         } else {
-            this.state = ClientState.DISCONNECTED;
+            this.setState(ClientState.DISCONNECTED);
         }
 
         synchronized (this.subs) {
             for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
                 Subscription sub = entry.getValue();
-                sub.moveToSubscribing();
+                sub.moveToSubscribing(SUBSCRIBING_TRANSPORT_CLOSED, "transport closed");
             }
         }
 
         if (previousState == ClientState.CONNECTED) {
-            DisconnectEvent event = new DisconnectEvent(code, reason, shouldReconnect);
+            DisconnectedEvent event = new DisconnectedEvent(code, reason);
             for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
                 CompletableFuture<Protocol.Reply> f = entry.getValue();
                 f.completeExceptionally(new IOException());
             }
             for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
-                this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(entry.getKey()));
+                this.listener.onUnsubscribed(this, new ServerUnsubscribedEvent(entry.getKey()));
             }
-            this.listener.onDisconnect(this, event);
-        }
-
-        if (!shouldReconnect && code >= 3000) {
-            this.failServer();
+            this.listener.onDisconnected(this, event);
         }
 
         this.ws.close(NORMAL_CLOSURE_STATUS, "");
     }
 
     private void _connect() {
-        this.state = ClientState.CONNECTING;
-
         Headers.Builder headers = new Headers.Builder();
         if (this.opts.getHeaders() != null) {
             for (Map.Entry<String, String> entry : this.opts.getHeaders().entrySet()) {
@@ -217,7 +226,7 @@ public class Client {
         }
 
         Request request = new Request.Builder()
-            .url(this.url)
+            .url(this.endpoint)
             .headers(headers.build())
             .addHeader("Sec-WebSocket-Protocol", "centrifuge-protobuf")
             .build();
@@ -253,6 +262,7 @@ public class Client {
                     } catch (Exception e) {
                         // Should never happen.
                         e.printStackTrace();
+                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol", false);
                     }
                 });
             }
@@ -266,6 +276,7 @@ public class Client {
                     } catch (Exception e) {
                         // Should never happen.
                         e.printStackTrace();
+                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol", false);
                     }
                 });
             }
@@ -284,11 +295,16 @@ public class Client {
                     int disconnectCode = code;
                     String disconnectReason = reason;
                     if (disconnectCode < 3000) {
-                        disconnectCode = 4;
-                        disconnectReason = "connection closed";
+                        if (disconnectCode == MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS) {
+                            disconnectCode = DISCONNECTED_MESSAGE_SIZE_LIMIT;
+
+                        } else {
+                            disconnectCode = CONNECTING_TRANSPORT_CLOSED;
+                            disconnectReason = "transport closed";
+                        }
                     }
                     Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
-                    if (Client.this.state == ClientState.CONNECTING) {
+                    if (Client.this.getState() == ClientState.CONNECTING) {
                         Client.this.scheduleReconnect();
                     }
                 });
@@ -299,7 +315,7 @@ public class Client {
                 super.onFailure(webSocket, t, response);
                 try {
                     Client.this.executor.submit(() -> {
-                        if (Client.this.state != ClientState.CONNECTING) {
+                        if (Client.this.getState() != ClientState.CONNECTING) {
                             return;
                         }
                         Client.this.handleConnectionError(t);
@@ -311,13 +327,13 @@ public class Client {
     }
 
     private void handleConnectionOpen() {
-        if (this.state != ClientState.CONNECTING) {
+        if (this.getState() != ClientState.CONNECTING) {
             return;
         }
         if (this.refreshRequired) {
             ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
             this.listener.onConnectionToken(this, connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
-                if (Client.this.state != ClientState.CONNECTING) {
+                if (Client.this.getState() != ClientState.CONNECTING) {
                     return;
                 }
                 if (err != null) {
@@ -339,7 +355,7 @@ public class Client {
     }
 
     private void handleConnectionMessage(byte[] bytes) {
-        if (this.state != ClientState.CONNECTING && this.state != ClientState.CONNECTED) {
+        if (this.getState() != ClientState.CONNECTING && this.getState() != ClientState.CONNECTED) {
             return;
         }
         InputStream stream = new ByteArrayInputStream(bytes);
@@ -351,6 +367,7 @@ public class Client {
         } catch (IOException e) {
             // Should never happen. Corrupted server protocol data?
             e.printStackTrace();
+            this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol", false);
         }
     }
 
@@ -360,7 +377,7 @@ public class Client {
 
     private void startReconnecting() {
         Client.this.executor.submit(() -> {
-            if (Client.this.state != ClientState.CONNECTING) {
+            if (Client.this.getState() != ClientState.CONNECTING) {
                 return;
             }
             Client.this._connect();
@@ -368,7 +385,7 @@ public class Client {
     }
 
     private void scheduleReconnect() {
-        if (this.state != ClientState.CONNECTING) {
+        if (this.getState() != ClientState.CONNECTING) {
             return;
         }
         this.reconnectTask = this.scheduler.schedule(
@@ -393,7 +410,7 @@ public class Client {
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.executor.submit(() -> {
                 Client.this.futures.remove(cmd.getId());
-                Client.this._disconnect(10, "subscribe timeout", true);
+                Client.this.processDisconnect(CONNECTING_SUBSCRIBE_TIMEOUT, "subscribe timeout", true);
             });
             return null;
         });
@@ -402,7 +419,7 @@ public class Client {
     }
 
     void sendSubscribe(Subscription sub, Protocol.SubscribeRequest req) {
-        if (this.state != ClientState.CONNECTED) {
+        if (this.getState() != ClientState.CONNECTED) {
             // Subscription registered and will start subscribing as soon as
             // client will be connected.
             return;
@@ -415,7 +432,7 @@ public class Client {
     }
 
     private void sendUnsubscribeSynchronized(String channel) {
-        if (this.state != ClientState.CONNECTED) {
+        if (this.getState() != ClientState.CONNECTED) {
             return;
         }
         Protocol.UnsubscribeRequest req = Protocol.UnsubscribeRequest.newBuilder()
@@ -435,7 +452,7 @@ public class Client {
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.futures.remove(cmd.getId());
-            this.processDisconnect(13, "unsubscribe error", true);
+            this.processDisconnect(CONNECTING_UNSUBSCRIBE_ERROR, "unsubscribe error", true);
             return null;
         });
 
@@ -525,10 +542,10 @@ public class Client {
     }
 
     private void _waitServerPing() {
-        if (this.state != ClientState.CONNECTED) {
+        if (this.getState() != ClientState.CONNECTED) {
             return;
         }
-        Client.this._disconnect(11, "no ping", true);
+        Client.this.processDisconnect(CONNECTING_NO_PING, "no ping", true);
     }
 
     private void waitServerPing() {
@@ -536,7 +553,7 @@ public class Client {
     }
 
     private void handleConnectReply(Protocol.Reply reply) {
-        if (this.state != ClientState.CONNECTING) {
+        if (this.getState() != ClientState.CONNECTING) {
             return;
         }
         if (reply.getError().getCode() != 0) {
@@ -544,21 +561,19 @@ public class Client {
             if (reply.getError().getCode() == 109) { // Token expired.
                 this.refreshRequired = true;
                 this.ws.close(NORMAL_CLOSURE_STATUS, "");
-            } else if (reply.getError().getCode() == 112) { // Unrecoverable position.
-                this.failUnrecoverable();
             } else if (reply.getError().getTemporary()) {
                 this.ws.close(NORMAL_CLOSURE_STATUS, "");
             } else {
-                this.connectFailed();
+                this.processDisconnect(reply.getError().getCode(), reply.getError().getMessage(), false);
             }
             return;
         }
         Protocol.ConnectResult result = reply.getConnect();
-        ConnectEvent event = new ConnectEvent();
+        ConnectedEvent event = new ConnectedEvent();
         event.setClient(result.getClient());
         event.setData(result.getData().toByteArray());
-        this.state = ClientState.CONNECTED;
-        this.listener.onConnect(this, event);
+        this.setState(ClientState.CONNECTED);
+        this.listener.onConnected(this, event);
         this.pingInterval = result.getPing() * 1000;
         this.sendPong = result.getPong();
 
@@ -580,7 +595,7 @@ public class Client {
             }
             serverSub.setRecoverable(subResult.getRecoverable());
             serverSub.setLastEpoch(subResult.getEpoch());
-            this.listener.onSubscribe(this, new ServerSubscribeEvent(channel, subResult.getRecovered()));
+            this.listener.onSubscribed(this, new ServerSubscribedEvent(channel, subResult.getWasRecovering(), subResult.getRecovered()));
             if (subResult.getPublicationsCount() > 0) {
                 for (Protocol.Publication publication : subResult.getPublicationsList()) {
                     ServerPublicationEvent publicationEvent = new ServerPublicationEvent();
@@ -590,10 +605,10 @@ public class Client {
                     ClientInfo info = ClientInfo.fromProtocolClientInfo(publication.getInfo());
                     publicationEvent.setInfo(info);
                     publicationEvent.setOffset(publication.getOffset());
-                    this.listener.onPublication(this, publicationEvent);
                     if (publication.getOffset() > 0) {
                         serverSub.setLastOffset(publication.getOffset());
                     }
+                    this.listener.onPublication(this, publicationEvent);
                 }
             } else {
                 serverSub.setLastOffset(subResult.getOffset());
@@ -639,7 +654,7 @@ public class Client {
 
     private void sendRefresh() {
         this.executor.submit(() -> Client.this.listener.onConnectionToken(Client.this, new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
-            if (Client.this.state != ClientState.CONNECTED) {
+            if (Client.this.getState() != ClientState.CONNECTED) {
                 return;
             }
             if (err != null) {
@@ -657,7 +672,7 @@ public class Client {
             }
             Client.this.token = token;
             refreshSynchronized(token, (error, result) -> {
-                if (Client.this.state != ClientState.CONNECTED) {
+                if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
                 }
                 if (error != null) {
@@ -672,7 +687,7 @@ public class Client {
                                     TimeUnit.MILLISECONDS
                             );
                         } else {
-                            Client.this.refreshFailed();
+                            Client.this.processDisconnect(e.getCode(), e.getMessage(), false);
                         }
                         return;
                     } else {
@@ -729,39 +744,15 @@ public class Client {
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.handleConnectionError(e);
             this.futures.remove(cmd.getId());
-            Client.this._disconnect(9, "connect timeout", true);
+            this.ws.close(NORMAL_CLOSURE_STATUS, "");
             return null;
         });
 
         this.ws.send(ByteString.of(this.serializeCommand(cmd)));
     }
 
-    private void fail(ClientFailReason reason) {
-        if (this.state == ClientState.FAILED) {
-            return;
-        }
-        this.state = ClientState.FAILED;
-        this.listener.onFail(this, new FailEvent(reason));
-    }
-
-    private void connectFailed() {
-        this.fail(ClientFailReason.CONNECT_FAILED);
-    }
-
-    private void refreshFailed() {
-        this.fail(ClientFailReason.REFRESH_FAILED);
-    }
-
-    private void failServer() {
-        this.fail(ClientFailReason.SERVER);
-    }
-
     private void failUnauthorized() {
-        this.fail(ClientFailReason.UNAUTHORIZED);
-    }
-
-    private void failUnrecoverable() {
-        this.fail(ClientFailReason.UNRECOVERABLE);
+        this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
     }
 
     private void processReply(Protocol.Reply reply) {
@@ -786,10 +777,10 @@ public class Client {
             event.setInfo(info);
             event.setOffset(pub.getOffset());
             event.setTags(pub.getTagsMap());
-            sub.getListener().onPublication(sub, event);
             if (pub.getOffset() > 0) {
                 sub.setOffset(pub.getOffset());
             }
+            sub.getListener().onPublication(sub, event);
         } else {
             ServerSubscription serverSub = this.getServerSub(channel);
             if (serverSub != null) {
@@ -812,28 +803,28 @@ public class Client {
         this.serverSubs.put(channel, serverSub);
         serverSub.setRecoverable(sub.getRecoverable());
         serverSub.setLastEpoch(sub.getEpoch());
-        this.listener.onSubscribe(this, new ServerSubscribeEvent(channel,  false));
         serverSub.setLastOffset(sub.getOffset());
+        this.listener.onSubscribed(this, new ServerSubscribedEvent(channel,  false,false));
     }
 
     private void handleUnsubscribe(String channel, Protocol.Unsubscribe unsubscribe) {
         Subscription sub = this.getSub(channel);
-        if (sub != null) {
-            if (unsubscribe.getType() == Protocol.Unsubscribe.Type.INSUFFICIENT) {
-                sub.moveToSubscribing();
-                sub.resubscribeIfNecessary();
-            } else if (unsubscribe.getType() == Protocol.Unsubscribe.Type.UNRECOVERABLE) {
-                sub.failUnrecoverable();
-            } else {
-                sub.failServer();
-            }
-        } else {
-            ServerSubscription serverSub = this.getServerSub(channel);
-            if (serverSub != null) {
-                this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(channel));
-                this.serverSubs.remove(channel);
-            }
-        }
+//        if (sub != null) {
+//            if (unsubscribe.getType() == Protocol.Unsubscribe.Type.INSUFFICIENT) {
+//                sub.moveToSubscribing();
+//                sub.resubscribeIfNecessary();
+//            } else if (unsubscribe.getType() == Protocol.Unsubscribe.Type.UNRECOVERABLE) {
+//                sub.failUnrecoverable();
+//            } else {
+//                sub.failServer();
+//            }
+//        } else {
+//            ServerSubscription serverSub = this.getServerSub(channel);
+//            if (serverSub != null) {
+//                this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(channel));
+//                this.serverSubs.remove(channel);
+//            }
+//        }
     }
 
     private void handleJoin(String channel, Protocol.Join join) {
@@ -936,7 +927,7 @@ public class Client {
             return null;
         });
 
-        if (this.state != ClientState.CONNECTED) {
+        if (this.getState() != ClientState.CONNECTED) {
             this.connectAsyncCommands.put(cmd.getId(), cmd);
         } else {
             boolean sent = this.ws.send(ByteString.of(this.serializeCommand(cmd)));
@@ -950,7 +941,7 @@ public class Client {
 
     private void enqueueCommandFuture(Protocol.Command cmd, CompletableFuture<Protocol.Reply> f) {
         this.futures.put(cmd.getId(), f);
-        if (this.state != ClientState.CONNECTED) {
+        if (this.getState() != ClientState.CONNECTED) {
             this.connectCommands.put(cmd.getId(), cmd);
         } else {
             boolean sent = this.ws.send(ByteString.of(this.serializeCommand(cmd)));

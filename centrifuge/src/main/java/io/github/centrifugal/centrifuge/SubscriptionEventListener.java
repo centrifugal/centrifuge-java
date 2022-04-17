@@ -14,15 +14,15 @@ public abstract class SubscriptionEventListener {
 
     };
 
-    public void onSubscribe(Subscription sub, SubscribeEvent event) {
+    public void onSubscribed(Subscription sub, SubscribedEvent event) {
 
     };
 
-    public void onUnsubscribe(Subscription sub, UnsubscribeEvent event) {
+    public void onUnsubscribed(Subscription sub, UnsubscribedEvent event) {
 
     };
 
-    public void onFail(Subscription sub, SubscriptionFailEvent event) {
+    public void onSubscribing(Subscription sub, SubscribingEvent event) {
 
     };
 

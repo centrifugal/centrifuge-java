@@ -3,8 +3,6 @@ package io.github.centrifugal.centrifuge;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +19,7 @@ public class Subscription {
     private long offset;
     private String epoch;
     final private SubscriptionEventListener listener;
-    private SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
+    private volatile SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
     final private Map<String, CompletableFuture<Throwable>> futures = new ConcurrentHashMap<>();
     private final Backoff backoff;
     private ScheduledFuture<?> refreshTask;
@@ -46,9 +44,12 @@ public class Subscription {
         this(client, channel, listener, new SubscriptionOptions());
     }
 
-    public SubscriptionState getState() throws InterruptedException, ExecutionException {
-        Future<SubscriptionState> result = this.client.getExecutor().submit(() -> Subscription.this.state);
-        return result.get();
+    void setState(SubscriptionState state) {
+        this.state = state;
+    }
+
+    public SubscriptionState getState() {
+        return this.state;
     }
 
     public String getChannel() {
@@ -77,7 +78,7 @@ public class Subscription {
 
     // Access must be synchronized.
     void resubscribeIfNecessary() {
-        if (this.state != SubscriptionState.SUBSCRIBING) {
+        if (this.getState() != SubscriptionState.SUBSCRIBING) {
             return;
         }
         this.sendSubscribe();
@@ -85,7 +86,7 @@ public class Subscription {
 
     void sendRefresh() {
         this.client.getExecutor().submit(() -> Subscription.this.client.getListener().onSubscriptionToken(Subscription.this.client, new SubscriptionTokenEvent(this.getChannel()), (err, token) -> {
-            if (Subscription.this.state != SubscriptionState.SUBSCRIBED) {
+            if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
                 return;
             }
             if (err != null) {
@@ -103,7 +104,7 @@ public class Subscription {
             }
             Subscription.this.token = token;
             Subscription.this.client.subRefreshSynchronized(Subscription.this.channel, token, (error, result) -> {
-                if (Subscription.this.state != SubscriptionState.SUBSCRIBED) {
+                if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
                     return;
                 }
                 if (error != null) {
@@ -118,7 +119,7 @@ public class Subscription {
                                     TimeUnit.MILLISECONDS
                             );
                         } else {
-                            Subscription.this.refreshFailed();
+                            Subscription.this._unsubscribe(true, e.getCode(), e.getMessage());
                         }
                         return;
                     } else {
@@ -141,23 +142,27 @@ public class Subscription {
         }));
     }
 
-    void moveToSubscribing() {
-        SubscriptionState previousSubState = this.state;
-        this.state = SubscriptionState.SUBSCRIBING;
-        if (previousSubState == SubscriptionState.SUBSCRIBED) {
-            this.listener.onUnsubscribe(this, new UnsubscribeEvent());
+    void moveToSubscribing(int code, String reason) {
+        if (this.getState() == SubscriptionState.SUBSCRIBING) {
+            return;
         }
+        this.setState(SubscriptionState.SUBSCRIBING);
+        this.listener.onSubscribing(this, new SubscribingEvent(code, reason));
     }
 
     void moveToSubscribed(Protocol.SubscribeResult result) {
-        this.state = SubscriptionState.SUBSCRIBED;
+        this.setState(SubscriptionState.SUBSCRIBED);
         if (result.getRecoverable()) {
             this.recover = true;
         }
         this.setEpoch(result.getEpoch());
 
-        SubscribeEvent event = new SubscribeEvent(result.getRecovered());
-        this.listener.onSubscribe(this, event);
+        byte[] data = null;
+        if (result.getData() != null) {
+            data = result.getData().toByteArray();
+        }
+        SubscribedEvent event = new SubscribedEvent(result.getWasRecovering(), result.getRecovered(), data);
+        this.listener.onSubscribed(this, event);
 
         if (result.getPublicationsCount() > 0) {
             for (Protocol.Publication publication : result.getPublicationsList()) {
@@ -191,21 +196,20 @@ public class Subscription {
         if (err.getCode() == 109) { // Token expired.
             this.token = "";
             this.scheduleResubscribe();
-        } else if (err.getCode() == 112) { // Unrecoverable position.
-            this.failUnrecoverable();
-        } else if (err.isTemporary()) {
+        } if (err.isTemporary()) {
             this.scheduleResubscribe();
         } else {
-            this.subscribeFailed();
+            this._unsubscribe(false, err.getCode(), err.getMessage());
         }
     }
 
     public void subscribe() {
         this.client.getExecutor().submit(() -> {
-            if (Subscription.this.state == SubscriptionState.SUBSCRIBED || Subscription.this.state == SubscriptionState.SUBSCRIBING) {
+            if (Subscription.this.getState() == SubscriptionState.SUBSCRIBED || Subscription.this.getState() == SubscriptionState.SUBSCRIBING) {
                 return;
             }
-            Subscription.this.state = SubscriptionState.SUBSCRIBING;
+            Subscription.this.setState(SubscriptionState.SUBSCRIBING);
+            Subscription.this.listener.onSubscribing(Subscription.this, new SubscribingEvent(Client.SUBSCRIBING_SUBSCRIBE_CALLED, "subscribe called"));
             Subscription.this.sendSubscribe();
         });
     }
@@ -246,7 +250,7 @@ public class Subscription {
         if (this.channel.startsWith(this.client.getOpts().getPrivateChannelPrefix()) && this.token.equals("")) {
             SubscriptionTokenEvent subscriptionTokenEvent = new SubscriptionTokenEvent(this.channel);
             this.client.getListener().onSubscriptionToken(this.client, subscriptionTokenEvent, (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
-                if (Subscription.this.state != SubscriptionState.SUBSCRIBING) {
+                if (Subscription.this.getState() != SubscriptionState.SUBSCRIBING) {
                     return;
                 }
                 if (err != null) {
@@ -267,20 +271,17 @@ public class Subscription {
     }
 
     public void unsubscribe() {
-        this._unsubscribe(true);
+        this.client.getExecutor().submit(() -> {
+            Subscription.this._unsubscribe(true, Client.UNSUBSCRIBED_UNSUBSCRIBE_CALLED, "unsubscribe called");
+        });
     }
 
-    void unsubscribeNoResubscribe() {
-        this._unsubscribe(false);
-    }
-
-    private void _unsubscribe(boolean shouldSendUnsubscribe) {
-        SubscriptionState previousState = this.state;
-        this.state = SubscriptionState.UNSUBSCRIBED;
-        if (previousState == SubscriptionState.SUBSCRIBED) {
-            this.listener.onUnsubscribe(this, new UnsubscribeEvent());
+    private void _unsubscribe(boolean sendUnsubscribe, int code, String reason) {
+        if (this.getState() == SubscriptionState.UNSUBSCRIBED) {
+            return;
         }
-        if (shouldSendUnsubscribe) {
+        this.setState(SubscriptionState.UNSUBSCRIBED);
+        if (sendUnsubscribe) {
             this.client.sendUnsubscribe(this.getChannel());
         }
         if (this.resubscribeTask != null) {
@@ -293,13 +294,14 @@ public class Subscription {
         }
         for(Map.Entry<String, CompletableFuture<Throwable>> entry: this.futures.entrySet()) {
             CompletableFuture<Throwable> f = entry.getValue();
-            f.complete(new SubscriptionStateError(this.state));
+            f.complete(new SubscriptionStateError(this.getState()));
         }
         this.futures.clear();
+        this.listener.onUnsubscribed(this, new UnsubscribedEvent(code, reason));
     }
 
     private void scheduleResubscribe() {
-        if (this.state != SubscriptionState.SUBSCRIBING) {
+        if (this.getState() != SubscriptionState.SUBSCRIBING) {
             return;
         }
         this.resubscribeTask = this.client.getScheduler().schedule(
@@ -318,40 +320,8 @@ public class Subscription {
         return this.recover;
     }
 
-    private void fail(SubscriptionFailReason reason, boolean sendUnsubscribe) {
-        if (this.state == SubscriptionState.FAILED) {
-            return;
-        }
-        this._unsubscribe(sendUnsubscribe);
-        this.state = SubscriptionState.FAILED;
-        this.listener.onFail(this, new SubscriptionFailEvent(reason));
-    }
-
-    private void subscribeFailed() {
-        this.fail(SubscriptionFailReason.SUBSCRIBE_FAILED, false);
-    }
-
-    private void refreshFailed() {
-        this.fail(SubscriptionFailReason.REFRESH_FAILED, true);
-    }
-
-    void failServer() {
-        this.fail(SubscriptionFailReason.SERVER, false);
-    }
-
     private void failUnauthorized() {
-        this.fail(SubscriptionFailReason.UNAUTHORIZED, this.state == SubscriptionState.SUBSCRIBED);
-    }
-
-    void failUnrecoverable() {
-        this.clearPositionState();
-        this.fail(SubscriptionFailReason.UNRECOVERABLE, false);
-    }
-
-    private void clearPositionState() {
-        this.recover = false;
-        this.offset = 0;
-        this.epoch = "";
+        this._unsubscribe(false, Client.UNSUBSCRIBED_UNAUTHORIZED, "unauthorized");
     }
 
     public void publish(byte[] data, ResultCallback<PublishResult> cb) {
@@ -374,7 +344,7 @@ public class Subscription {
             cb.onDone(e, null);
             return null;
         });
-        if (this.state == SubscriptionState.SUBSCRIBED) {
+        if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
         }
     }
@@ -399,7 +369,7 @@ public class Subscription {
             cb.onDone(e, null);
             return null;
         });
-        if (this.state == SubscriptionState.SUBSCRIBED) {
+        if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
         }
     }
@@ -424,7 +394,7 @@ public class Subscription {
             cb.onDone(e, null);
             return null;
         });
-        if (this.state == SubscriptionState.SUBSCRIBED) {
+        if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
         }
     }
@@ -449,7 +419,7 @@ public class Subscription {
             cb.onDone(e, null);
             return null;
         });
-        if (this.state == SubscriptionState.SUBSCRIBED) {
+        if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
         }
     }

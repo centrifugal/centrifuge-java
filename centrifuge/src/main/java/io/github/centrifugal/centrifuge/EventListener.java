@@ -2,18 +2,18 @@ package io.github.centrifugal.centrifuge;
 
 public abstract class EventListener {
 
-    public void onConnect(Client client, ConnectEvent event) {
+    public void onConnecting(Client client, ConnectingEvent event) {
 
     }
 
-    public void onDisconnect(Client client, DisconnectEvent event) {
+    public void onConnected(Client client, ConnectedEvent event) {
 
     }
 
-    public void onFail(Client client, FailEvent event) {
+    public void onDisconnected(Client client, DisconnectedEvent event) {
 
     }
-
+    
     public void onError(Client client, ErrorEvent event) {
 
     }
@@ -22,11 +22,11 @@ public abstract class EventListener {
 
     }
 
-    public void onSubscribe(Client client, ServerSubscribeEvent event) {
+    public void onSubscribed(Client client, ServerSubscribedEvent event) {
 
     }
 
-    public void onUnsubscribe(Client client, ServerUnsubscribeEvent event) {
+    public void onUnsubscribed(Client client, ServerUnsubscribedEvent event) {
 
     }
 

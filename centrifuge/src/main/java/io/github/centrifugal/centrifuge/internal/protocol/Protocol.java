@@ -8291,15 +8291,14 @@ public final class Protocol {
       com.google.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-     * @return The enum numeric value on the wire for type.
+     * <pre>
+     * Field 1 removed (bool resubscribe).
+     * </pre>
+     *
+     * <code>uint32 code = 2;</code>
+     * @return The code.
      */
-    int getTypeValue();
-    /**
-     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-     * @return The type.
-     */
-    io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type getType();
+    int getCode();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.Unsubscribe}
@@ -8311,148 +8310,42 @@ public final class Protocol {
       UnsubscribeOrBuilder {
     private Unsubscribe() {
     }
+    public static final int CODE_FIELD_NUMBER = 2;
+    private int code_;
     /**
      * <pre>
      * Field 1 removed (bool resubscribe).
      * </pre>
      *
-     * Protobuf enum {@code centrifugal.centrifuge.protocol.Unsubscribe.Type}
-     */
-    public enum Type
-        implements com.google.protobuf.Internal.EnumLite {
-      /**
-       * <code>PERMANENT = 0;</code>
-       */
-      PERMANENT(0),
-      /**
-       * <code>INSUFFICIENT = 1;</code>
-       */
-      INSUFFICIENT(1),
-      /**
-       * <code>UNRECOVERABLE = 2;</code>
-       */
-      UNRECOVERABLE(2),
-      UNRECOGNIZED(-1),
-      ;
-
-      /**
-       * <code>PERMANENT = 0;</code>
-       */
-      public static final int PERMANENT_VALUE = 0;
-      /**
-       * <code>INSUFFICIENT = 1;</code>
-       */
-      public static final int INSUFFICIENT_VALUE = 1;
-      /**
-       * <code>UNRECOVERABLE = 2;</code>
-       */
-      public static final int UNRECOVERABLE_VALUE = 2;
-
-
-      @java.lang.Override
-      public final int getNumber() {
-        if (this == UNRECOGNIZED) {
-          throw new java.lang.IllegalArgumentException(
-              "Can't get the number of an unknown enum value.");
-        }
-        return value;
-      }
-
-      /**
-       * @param value The number of the enum to look for.
-       * @return The enum associated with the given number.
-       * @deprecated Use {@link #forNumber(int)} instead.
-       */
-      @java.lang.Deprecated
-      public static Type valueOf(int value) {
-        return forNumber(value);
-      }
-
-      public static Type forNumber(int value) {
-        switch (value) {
-          case 0: return PERMANENT;
-          case 1: return INSUFFICIENT;
-          case 2: return UNRECOVERABLE;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<Type>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static final com.google.protobuf.Internal.EnumLiteMap<
-          Type> internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<Type>() {
-              @java.lang.Override
-              public Type findValueByNumber(int number) {
-                return Type.forNumber(number);
-              }
-            };
-
-      public static com.google.protobuf.Internal.EnumVerifier 
-          internalGetVerifier() {
-        return TypeVerifier.INSTANCE;
-      }
-
-      private static final class TypeVerifier implements 
-           com.google.protobuf.Internal.EnumVerifier { 
-              static final com.google.protobuf.Internal.EnumVerifier           INSTANCE = new TypeVerifier();
-              @java.lang.Override
-              public boolean isInRange(int number) {
-                return Type.forNumber(number) != null;
-              }
-            };
-
-      private final int value;
-
-      private Type(int value) {
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:centrifugal.centrifuge.protocol.Unsubscribe.Type)
-    }
-
-    public static final int TYPE_FIELD_NUMBER = 2;
-    private int type_;
-    /**
-     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-     * @return The enum numeric value on the wire for type.
+     * <code>uint32 code = 2;</code>
+     * @return The code.
      */
     @java.lang.Override
-    public int getTypeValue() {
-      return type_;
+    public int getCode() {
+      return code_;
     }
     /**
-     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-     * @return The type.
+     * <pre>
+     * Field 1 removed (bool resubscribe).
+     * </pre>
+     *
+     * <code>uint32 code = 2;</code>
+     * @param value The code to set.
      */
-    @java.lang.Override
-    public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type getType() {
-      io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type result = io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type.forNumber(type_);
-      return result == null ? io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type.UNRECOGNIZED : result;
-    }
-    /**
-     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-     * @param value The enum numeric value on the wire for type to set.
-     */
-    private void setTypeValue(int value) {
-        type_ = value;
-    }
-    /**
-     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-     * @param value The type to set.
-     */
-    private void setType(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type value) {
-      type_ = value.getNumber();
+    private void setCode(int value) {
       
+      code_ = value;
     }
     /**
-     * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
+     * <pre>
+     * Field 1 removed (bool resubscribe).
+     * </pre>
+     *
+     * <code>uint32 code = 2;</code>
      */
-    private void clearType() {
+    private void clearCode() {
       
-      type_ = 0;
+      code_ = 0;
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe parseFrom(
@@ -8551,48 +8444,42 @@ public final class Protocol {
 
 
       /**
-       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-       * @return The enum numeric value on the wire for type.
+       * <pre>
+       * Field 1 removed (bool resubscribe).
+       * </pre>
+       *
+       * <code>uint32 code = 2;</code>
+       * @return The code.
        */
       @java.lang.Override
-      public int getTypeValue() {
-        return instance.getTypeValue();
+      public int getCode() {
+        return instance.getCode();
       }
       /**
-       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-       * @param value The type to set.
+       * <pre>
+       * Field 1 removed (bool resubscribe).
+       * </pre>
+       *
+       * <code>uint32 code = 2;</code>
+       * @param value The code to set.
        * @return This builder for chaining.
        */
-      public Builder setTypeValue(int value) {
+      public Builder setCode(int value) {
         copyOnWrite();
-        instance.setTypeValue(value);
+        instance.setCode(value);
         return this;
       }
       /**
-       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-       * @return The type.
-       */
-      @java.lang.Override
-      public io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type getType() {
-        return instance.getType();
-      }
-      /**
-       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-       * @param value The enum numeric value on the wire for type to set.
+       * <pre>
+       * Field 1 removed (bool resubscribe).
+       * </pre>
+       *
+       * <code>uint32 code = 2;</code>
        * @return This builder for chaining.
        */
-      public Builder setType(io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe.Type value) {
+      public Builder clearCode() {
         copyOnWrite();
-        instance.setType(value);
-        return this;
-      }
-      /**
-       * <code>.centrifugal.centrifuge.protocol.Unsubscribe.Type type = 2;</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearType() {
-        copyOnWrite();
-        instance.clearType();
+        instance.clearCode();
         return this;
       }
 
@@ -8612,10 +8499,10 @@ public final class Protocol {
         }
         case BUILD_MESSAGE_INFO: {
             java.lang.Object[] objects = new java.lang.Object[] {
-              "type_",
+              "code_",
             };
             java.lang.String info =
-                "\u0000\u0001\u0000\u0000\u0002\u0002\u0001\u0000\u0000\u0000\u0002\f";
+                "\u0000\u0001\u0000\u0000\u0002\u0002\u0001\u0000\u0000\u0000\u0002\u000b";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -14981,6 +14868,12 @@ public final class Protocol {
      * @return The data.
      */
     com.google.protobuf.ByteString getData();
+
+    /**
+     * <code>bool was_recovering = 12;</code>
+     * @return The wasRecovering.
+     */
+    boolean getWasRecovering();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.SubscribeResult}
@@ -15337,6 +15230,32 @@ public final class Protocol {
     private void clearData() {
       
       data_ = getDefaultInstance().getData();
+    }
+
+    public static final int WAS_RECOVERING_FIELD_NUMBER = 12;
+    private boolean wasRecovering_;
+    /**
+     * <code>bool was_recovering = 12;</code>
+     * @return The wasRecovering.
+     */
+    @java.lang.Override
+    public boolean getWasRecovering() {
+      return wasRecovering_;
+    }
+    /**
+     * <code>bool was_recovering = 12;</code>
+     * @param value The wasRecovering to set.
+     */
+    private void setWasRecovering(boolean value) {
+      
+      wasRecovering_ = value;
+    }
+    /**
+     * <code>bool was_recovering = 12;</code>
+     */
+    private void clearWasRecovering() {
+      
+      wasRecovering_ = false;
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult parseFrom(
@@ -15801,6 +15720,34 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>bool was_recovering = 12;</code>
+       * @return The wasRecovering.
+       */
+      @java.lang.Override
+      public boolean getWasRecovering() {
+        return instance.getWasRecovering();
+      }
+      /**
+       * <code>bool was_recovering = 12;</code>
+       * @param value The wasRecovering to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWasRecovering(boolean value) {
+        copyOnWrite();
+        instance.setWasRecovering(value);
+        return this;
+      }
+      /**
+       * <code>bool was_recovering = 12;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearWasRecovering() {
+        copyOnWrite();
+        instance.clearWasRecovering();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.SubscribeResult)
     }
     @java.lang.Override
@@ -15827,10 +15774,11 @@ public final class Protocol {
               "offset_",
               "positioned_",
               "data_",
+              "wasRecovering_",
             };
             java.lang.String info =
-                "\u0000\t\u0000\u0000\u0001\u000b\t\u0000\u0001\u0000\u0001\u0007\u0002\u000b\u0003" +
-                "\u0007\u0006\u0208\u0007\u001b\b\u0007\t\u0003\n\u0007\u000b\n";
+                "\u0000\n\u0000\u0000\u0001\f\n\u0000\u0001\u0000\u0001\u0007\u0002\u000b\u0003\u0007" +
+                "\u0006\u0208\u0007\u001b\b\u0007\t\u0003\n\u0007\u000b\n\f\u0007";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
