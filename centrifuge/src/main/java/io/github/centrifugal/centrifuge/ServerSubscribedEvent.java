@@ -1,13 +1,13 @@
 package io.github.centrifugal.centrifuge;
 
 public class ServerSubscribedEvent {
-    ServerSubscribedEvent(String channel, boolean wasRecovering, boolean recovered) {
+    ServerSubscribedEvent(String channel, Boolean wasRecovering, Boolean recovered) {
         this.channel = channel;
         this.wasRecovering = wasRecovering;
         this.recovered = recovered;
     }
 
-    public boolean getRecovered() {
+    public Boolean getRecovered() {
         return recovered;
     }
 
@@ -19,9 +19,9 @@ public class ServerSubscribedEvent {
 
     private final String channel;
 
-    public boolean wasRecovering() {
+    public Boolean wasRecovering() {
         return wasRecovering;
     }
 
-    private final boolean wasRecovering;
+    private final Boolean wasRecovering;
 }

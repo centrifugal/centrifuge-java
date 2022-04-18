@@ -26,6 +26,10 @@ public abstract class EventListener {
 
     }
 
+    public void onSubscribing(Client client, ServerSubscribingEvent event) {
+
+    }
+
     public void onUnsubscribed(Client client, ServerUnsubscribedEvent event) {
 
     }

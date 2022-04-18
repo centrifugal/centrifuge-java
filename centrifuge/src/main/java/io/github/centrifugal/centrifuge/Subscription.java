@@ -144,10 +144,18 @@ public class Subscription {
 
     void moveToSubscribing(int code, String reason) {
         if (this.getState() == SubscriptionState.SUBSCRIBING) {
+            this.clearSubscribingState();
             return;
         }
         this.setState(SubscriptionState.SUBSCRIBING);
         this.listener.onSubscribing(this, new SubscribingEvent(code, reason));
+    }
+
+    void moveToUnsubscribed(boolean sendUnsubscribe, int code, String reason) {
+        if (this.getState() == SubscriptionState.UNSUBSCRIBED) {
+            return;
+        }
+        this._unsubscribe(sendUnsubscribe, code, reason);
     }
 
     void moveToSubscribed(Protocol.SubscribeResult result) {
@@ -266,7 +274,7 @@ public class Subscription {
                 Subscription.this.client.sendSubscribe(Subscription.this, Subscription.this.createSubscribeRequest());
             }));
         } else {
-            this.client.sendSubscribe(this, this.createSubscribeRequest());
+            Subscription.this.client.sendSubscribe(this, this.createSubscribeRequest());
         }
     }
 
@@ -276,21 +284,32 @@ public class Subscription {
         });
     }
 
-    private void _unsubscribe(boolean sendUnsubscribe, int code, String reason) {
-        if (this.getState() == SubscriptionState.UNSUBSCRIBED) {
-            return;
+    private void clearSubscribedState() {
+        if (this.refreshTask != null) {
+            this.refreshTask.cancel(true);
+            this.refreshTask = null;
         }
-        this.setState(SubscriptionState.UNSUBSCRIBED);
-        if (sendUnsubscribe) {
-            this.client.sendUnsubscribe(this.getChannel());
-        }
+    }
+
+    private void clearSubscribingState() {
         if (this.resubscribeTask != null) {
             this.resubscribeTask.cancel(true);
             this.resubscribeTask = null;
         }
-        if (this.refreshTask != null) {
-            this.refreshTask.cancel(true);
-            this.refreshTask = null;
+    }
+
+    private void _unsubscribe(boolean sendUnsubscribe, int code, String reason) {
+        if (this.getState() == SubscriptionState.UNSUBSCRIBED) {
+            return;
+        }
+        if (this.getState() == SubscriptionState.SUBSCRIBED) {
+            this.clearSubscribedState();
+        } else if (this.getState() == SubscriptionState.SUBSCRIBING) {
+            this.clearSubscribingState();
+        }
+        this.setState(SubscriptionState.UNSUBSCRIBED);
+        if (sendUnsubscribe) {
+            this.client.sendUnsubscribe(this.getChannel());
         }
         for(Map.Entry<String, CompletableFuture<Throwable>> entry: this.futures.entrySet()) {
             CompletableFuture<Throwable> f = entry.getValue();

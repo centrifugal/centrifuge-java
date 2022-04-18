@@ -1,13 +1,13 @@
 package io.github.centrifugal.centrifuge;
 
 public class SubscribedEvent {
-    SubscribedEvent(boolean wasRecovering, boolean recovered, byte[] data) {
+    SubscribedEvent(Boolean wasRecovering, Boolean recovered, byte[] data) {
         this.wasRecovering = wasRecovering;
         this.recovered = recovered;
         this.data = data;
     }
 
-    public boolean getRecovered() {
+    public Boolean getRecovered() {
         return recovered;
     }
 
@@ -19,7 +19,7 @@ public class SubscribedEvent {
 
     private final byte[] data;
 
-    public boolean wasRecovering() {
+    public Boolean wasRecovering() {
         return wasRecovering;
     }
 

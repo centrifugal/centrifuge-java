@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -171,7 +172,7 @@ public class Client {
     }
 
     void processDisconnect(int code, String reason, Boolean shouldReconnect) {
-        if (this.getState() == ClientState.DISCONNECTED) {
+        if (this.getState() == ClientState.DISCONNECTED || this.getState() == ClientState.CLOSED) {
             return;
         }
 
@@ -198,19 +199,29 @@ public class Client {
         synchronized (this.subs) {
             for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
                 Subscription sub = entry.getValue();
+                if (sub.getState() == SubscriptionState.UNSUBSCRIBED) {
+                    continue;
+                }
                 sub.moveToSubscribing(SUBSCRIBING_TRANSPORT_CLOSED, "transport closed");
             }
         }
 
+        for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
+            CompletableFuture<Protocol.Reply> f = entry.getValue();
+            f.completeExceptionally(new IOException());
+        }
+
         if (previousState == ClientState.CONNECTED) {
-            DisconnectedEvent event = new DisconnectedEvent(code, reason);
-            for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
-                CompletableFuture<Protocol.Reply> f = entry.getValue();
-                f.completeExceptionally(new IOException());
-            }
             for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
-                this.listener.onUnsubscribed(this, new ServerUnsubscribedEvent(entry.getKey()));
+                this.listener.onSubscribing(this, new ServerSubscribingEvent(entry.getKey()));
             }
+        }
+
+        if (shouldReconnect) {
+            ConnectingEvent event = new ConnectingEvent(code, reason);
+            this.listener.onConnecting(this, event);
+        } else {
+            DisconnectedEvent event = new DisconnectedEvent(code, reason);
             this.listener.onDisconnected(this, event);
         }
 
@@ -303,7 +314,9 @@ public class Client {
                             disconnectReason = "transport closed";
                         }
                     }
-                    Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
+                    if (Client.this.getState() == ClientState.CONNECTED) {
+                        Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
+                    }
                     if (Client.this.getState() == ClientState.CONNECTING) {
                         Client.this.scheduleReconnect();
                     }
@@ -405,16 +418,21 @@ public class Client {
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
         f.thenAccept(reply -> {
+            if (Client.this.getState() != ClientState.CONNECTED) {
+                return;
+            }
             this.handleSubscribeReply(channel, reply);
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.executor.submit(() -> {
+                if (Client.this.getState() != ClientState.CONNECTED) {
+                    return;
+                }
                 Client.this.futures.remove(cmd.getId());
                 Client.this.processDisconnect(CONNECTING_SUBSCRIBE_TIMEOUT, "subscribe timeout", true);
             });
             return null;
         });
-
         this.ws.send(ByteString.of(this.serializeCommand(cmd)));
     }
 
@@ -614,6 +632,16 @@ public class Client {
                 serverSub.setLastOffset(subResult.getOffset());
             }
         }
+
+        Iterator<Map.Entry<String, ServerSubscription>> it = this.serverSubs.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, ServerSubscription> entry = it.next();
+            if (!result.getSubsMap().containsKey(entry.getKey())) {
+                this.listener.onUnsubscribed(this, new ServerUnsubscribedEvent(entry.getKey()));
+                it.remove();
+            }
+        }
+
         this.reconnectAttempts = 0;
 
         for (Map.Entry<Integer, Protocol.Command> entry : this.connectCommands.entrySet()) {
@@ -790,10 +818,10 @@ public class Client {
                 event.setInfo(info);
                 event.setOffset(pub.getOffset());
                 event.setTags(pub.getTagsMap());
-                this.listener.onPublication(this, event);
                 if (pub.getOffset() > 0) {
                     serverSub.setLastOffset(pub.getOffset());
                 }
+                this.listener.onPublication(this, event);
             }
         }
     }
@@ -809,22 +837,20 @@ public class Client {
 
     private void handleUnsubscribe(String channel, Protocol.Unsubscribe unsubscribe) {
         Subscription sub = this.getSub(channel);
-//        if (sub != null) {
-//            if (unsubscribe.getType() == Protocol.Unsubscribe.Type.INSUFFICIENT) {
-//                sub.moveToSubscribing();
-//                sub.resubscribeIfNecessary();
-//            } else if (unsubscribe.getType() == Protocol.Unsubscribe.Type.UNRECOVERABLE) {
-//                sub.failUnrecoverable();
-//            } else {
-//                sub.failServer();
-//            }
-//        } else {
-//            ServerSubscription serverSub = this.getServerSub(channel);
-//            if (serverSub != null) {
-//                this.listener.onUnsubscribe(this, new ServerUnsubscribeEvent(channel));
-//                this.serverSubs.remove(channel);
-//            }
-//        }
+        if (sub != null) {
+            if (unsubscribe.getCode() < 2500) {
+                sub.moveToSubscribing(unsubscribe.getCode(), "server");
+                sub.resubscribeIfNecessary();
+            } else {
+                sub.moveToUnsubscribed(false, unsubscribe.getCode(), "server");
+            }
+        } else {
+            ServerSubscription serverSub = this.getServerSub(channel);
+            if (serverSub != null) {
+                this.serverSubs.remove(channel);
+                this.listener.onUnsubscribed(this, new ServerUnsubscribedEvent(channel));
+            }
+        }
     }
 
     private void handleJoin(String channel, Protocol.Join join) {

@@ -14,6 +14,7 @@ import io.github.centrifugal.centrifuge.ServerJoinEvent;
 import io.github.centrifugal.centrifuge.ServerLeaveEvent;
 import io.github.centrifugal.centrifuge.ServerPublicationEvent;
 import io.github.centrifugal.centrifuge.ServerSubscribedEvent;
+import io.github.centrifugal.centrifuge.ServerSubscribingEvent;
 import io.github.centrifugal.centrifuge.ServerUnsubscribedEvent;
 import io.github.centrifugal.centrifuge.Subscription;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
@@ -43,62 +44,55 @@ public class Main {
 
         EventListener listener = new EventListener() {
             @Override
-            public void onConnecting(Client client, ConnectingEvent event) {
-                System.out.printf("connecting: %s%n", event.getReason());
-            }
-
-            @Override
             public void onConnected(Client client, ConnectedEvent event) {
                 System.out.println("connected");
             }
-
+            @Override
+            public void onConnecting(Client client, ConnectingEvent event) {
+                System.out.printf("connecting: %s%n", event.getReason());
+            }
             @Override
             public void onDisconnected(Client client, DisconnectedEvent event) {
                 System.out.printf("disconnected %d %s", event.getCode(), event.getReason());
             }
-
             @Override
             public void onError(Client client, ErrorEvent event) {
                 System.out.println("There was a problem connecting!");
             }
-
             @Override
             public void onSubscriptionToken(Client client, SubscriptionTokenEvent event, TokenCallback cb) {
                 cb.Done(null, "boom");
             }
-
             @Override
             public void onConnectionToken(Client client, ConnectionTokenEvent event, TokenCallback cb) {
                 cb.Done(null, "boom");
             }
-
             @Override
             public void onMessage(Client client, MessageEvent event) {
                 String data = new String(event.getData(), UTF_8);
                 System.out.println("message received: " + data);
             }
-
             @Override
             public void onSubscribed(Client client, ServerSubscribedEvent event) {
                 System.out.println("server side subscribe: " + event.getChannel() + ", recovered " + event.getRecovered());
             }
-
+            @Override
+            public void onSubscribing(Client client, ServerSubscribingEvent event) {
+                System.out.println("server side subscribing: " + event.getChannel());
+            }
             @Override
             public void onUnsubscribed(Client client, ServerUnsubscribedEvent event) {
                 System.out.println("server side unsubscribe: " + event.getChannel());
             }
-
             @Override
             public void onPublication(Client client, ServerPublicationEvent event) {
                 String data = new String(event.getData(), UTF_8);
                 System.out.println("server side publication: " + event.getChannel() + ": " + data);
             }
-
             @Override
             public void onJoin(Client client, ServerJoinEvent event) {
                 System.out.println("server side join: " + event.getChannel() + " from client " + event.getInfo().getClient());
             }
-
             @Override
             public void onLeave(Client client, ServerLeaveEvent event) {
                 System.out.println("server side leave: " + event.getChannel() + " from client " + event.getInfo().getClient());
@@ -106,20 +100,16 @@ public class Main {
         };
 
         Options opts = new Options();
+        // opts.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
 
         Client client = new Client(
                 "ws://localhost:8000/connection/websocket?cf_protocol=protobuf",
                 opts,
                 listener
         );
-//        client.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
         client.connect();
 
         SubscriptionEventListener subListener = new SubscriptionEventListener() {
-            @Override
-            public void onSubscribing(Subscription sub, SubscribingEvent event) {
-                System.out.printf("subscribing: %s%n", event.getReason());
-            }
             @Override
             public void onSubscribed(Subscription sub, SubscribedEvent event) {
                 System.out.println("subscribed to " + sub.getChannel() + ", recovered " + event.getRecovered());
@@ -133,8 +123,12 @@ public class Main {
                 });
             }
             @Override
+            public void onSubscribing(Subscription sub, SubscribingEvent event) {
+                System.out.printf("subscribing: %s%n", event.getReason());
+            }
+            @Override
             public void onUnsubscribed(Subscription sub, UnsubscribedEvent event) {
-                System.out.println("unsubscribed " + sub.getChannel());
+                System.out.println("unsubscribed " + sub.getChannel() + ", reason: " + event.getReason());
             }
             @Override
             public void onError(Subscription sub, SubscriptionErrorEvent event) {

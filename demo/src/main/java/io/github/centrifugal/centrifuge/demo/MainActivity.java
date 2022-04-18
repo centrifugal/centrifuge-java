@@ -8,12 +8,15 @@ import android.widget.Toast;
 
 import io.github.centrifugal.centrifuge.Client;
 import io.github.centrifugal.centrifuge.ConnectedEvent;
+import io.github.centrifugal.centrifuge.ConnectingEvent;
 import io.github.centrifugal.centrifuge.DisconnectedEvent;
 import io.github.centrifugal.centrifuge.ErrorEvent;
 import io.github.centrifugal.centrifuge.EventListener;
 import io.github.centrifugal.centrifuge.Options;
 import io.github.centrifugal.centrifuge.PublicationEvent;
 import io.github.centrifugal.centrifuge.ServerPublicationEvent;
+import io.github.centrifugal.centrifuge.ServerSubscribedEvent;
+import io.github.centrifugal.centrifuge.SubscribingEvent;
 import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
 import io.github.centrifugal.centrifuge.SubscribedEvent;
 import io.github.centrifugal.centrifuge.Subscription;
@@ -38,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
         EventListener listener = new EventListener() {
             @SuppressLint("SetTextI18n")
             @Override
+            public void onConnecting(Client client, ConnectingEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText("Connecting: " + event.getReason()));
+            }
+            @SuppressLint("SetTextI18n")
+            @Override
             public void onConnected(Client client, ConnectedEvent event) {
                 MainActivity.this.runOnUiThread(() -> tv.setText("Connected with client ID " + event.getClient()));
             }
@@ -51,23 +59,30 @@ public class MainActivity extends AppCompatActivity {
             public void onError(Client client, ErrorEvent event) {
                 MainActivity.this.runOnUiThread(() -> tv.setText("Client error  " + event.getError().toString()));
             }
-
+            @Override
+            public void onSubscribed(Client client, ServerSubscribedEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribed to server-side channel " + event.getChannel()));
+            }
             @Override
             public void onPublication(Client client, ServerPublicationEvent event) {
                 String data = new String(event.getData(), UTF_8);
                 MainActivity.this.runOnUiThread(() -> tv.setText("Message from " + event.getChannel() + ": " + data));
-                System.out.println(client.getState().toString());
             }
         };
 
-        Options options = new Options();
-//        options.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
+        Options opts = new Options();
+//        opts.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
 
         String endpoint = "ws://192.168.1.102:8000/connection/websocket?cf_protocol_version=v2";
-        client = new Client(endpoint, options, listener);
+        client = new Client(endpoint, opts, listener);
         client.connect();
 
         SubscriptionEventListener subListener = new SubscriptionEventListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onSubscribing(Subscription sub, SubscribingEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribing to " + sub.getChannel() + ", reason: " + event.getReason()));
+            }
             @SuppressLint("SetTextI18n")
             @Override
             public void onSubscribed(Subscription sub, SubscribedEvent event) {
@@ -76,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onUnsubscribed(Subscription sub, UnsubscribedEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Unsubscribed from " + sub.getChannel()));
+                MainActivity.this.runOnUiThread(() -> tv.setText("Unsubscribed from " + sub.getChannel() + ", reason: " + event.getReason()));
             }
             @SuppressLint("SetTextI18n")
             @Override
