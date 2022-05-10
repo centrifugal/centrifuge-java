@@ -45,12 +45,4 @@ public abstract class EventListener {
     public void onLeave(Client client, ServerLeaveEvent event) {
 
     }
-
-    public void onConnectionToken(Client client, ConnectionTokenEvent event, TokenCallback cb) {
-        cb.Done(null,"");
-    }
-
-    public void onSubscriptionToken(Client client, SubscriptionTokenEvent event, TokenCallback cb) {
-        cb.Done(null,"");
-    }
 }

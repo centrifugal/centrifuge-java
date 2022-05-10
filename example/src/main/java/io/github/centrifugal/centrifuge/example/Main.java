@@ -5,7 +5,6 @@ import io.github.centrifugal.centrifuge.ClientState;
 import io.github.centrifugal.centrifuge.ConnectingEvent;
 import io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
 import io.github.centrifugal.centrifuge.HistoryOptions;
-import io.github.centrifugal.centrifuge.ConnectionTokenEvent;
 import io.github.centrifugal.centrifuge.JoinEvent;
 import io.github.centrifugal.centrifuge.LeaveEvent;
 import io.github.centrifugal.centrifuge.Options;
@@ -23,11 +22,9 @@ import io.github.centrifugal.centrifuge.DisconnectedEvent;
 import io.github.centrifugal.centrifuge.ErrorEvent;
 import io.github.centrifugal.centrifuge.MessageEvent;
 import io.github.centrifugal.centrifuge.SubscribingEvent;
-import io.github.centrifugal.centrifuge.SubscriptionTokenEvent;
 import io.github.centrifugal.centrifuge.PublicationEvent;
 import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
 import io.github.centrifugal.centrifuge.SubscribedEvent;
-import io.github.centrifugal.centrifuge.TokenCallback;
 import io.github.centrifugal.centrifuge.UnsubscribedEvent;
 
 import org.slf4j.Logger;
@@ -58,14 +55,6 @@ public class Main {
             @Override
             public void onError(Client client, ErrorEvent event) {
                 System.out.println("There was a problem connecting!");
-            }
-            @Override
-            public void onSubscriptionToken(Client client, SubscriptionTokenEvent event, TokenCallback cb) {
-                cb.Done(null, "boom");
-            }
-            @Override
-            public void onConnectionToken(Client client, ConnectionTokenEvent event, TokenCallback cb) {
-                cb.Done(null, "boom");
             }
             @Override
             public void onMessage(Client client, MessageEvent event) {
@@ -100,7 +89,21 @@ public class Main {
         };
 
         Options opts = new Options();
-        // opts.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
+//        opts.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
+//        opts.setConnectionTokenGetter(new ConnectionTokenGetter() {
+//            @Override
+//            public void getConnectionToken(ConnectionTokenEvent event, TokenCallback cb) {
+//                super.getConnectionToken(event, cb);
+//                cb.Done(null, "");
+//            }
+//        });
+//        opts.setSubscriptionTokenGetter(new SubscriptionTokenGetter() {
+//            @Override
+//            public void getSubscriptionToken(SubscriptionTokenEvent event, TokenCallback cb) {
+//                super.getSubscriptionToken(event, cb);
+//                cb.Done(null, "");
+//            }
+//        });
 
         Client client = new Client(
                 "ws://localhost:8000/connection/websocket?cf_protocol=protobuf",

@@ -85,7 +85,10 @@ public class Subscription {
     }
 
     void sendRefresh() {
-        this.client.getExecutor().submit(() -> Subscription.this.client.getListener().onSubscriptionToken(Subscription.this.client, new SubscriptionTokenEvent(this.getChannel()), (err, token) -> {
+        if (this.client.getOpts().getSubscriptionTokenGetter() == null) {
+            return;
+        }
+        this.client.getExecutor().submit(() -> Subscription.this.client.getOpts().getSubscriptionTokenGetter().getSubscriptionToken(new SubscriptionTokenEvent(this.getChannel()), (err, token) -> {
             if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
                 return;
             }
@@ -99,7 +102,7 @@ public class Subscription {
                 return;
             }
             if (token.equals("")) {
-                this.failUnauthorized();
+                this.failUnauthorized(true);
                 return;
             }
             Subscription.this.token = token;
@@ -169,7 +172,7 @@ public class Subscription {
         if (result.getData() != null) {
             data = result.getData().toByteArray();
         }
-        SubscribedEvent event = new SubscribedEvent(result.getWasRecovering(), result.getRecovered(), data);
+        SubscribedEvent event = new SubscribedEvent(result.getWasRecovering(), result.getRecovered(), result.getPositioned(), result.getRecoverable(), result.getPositioned() || result.getRecoverable() ? new StreamPosition(result.getOffset(), result.getEpoch()) : null, data);
         this.listener.onSubscribed(this, event);
 
         if (result.getPublicationsCount() > 0) {
@@ -243,6 +246,9 @@ public class Subscription {
                     .setOffset(streamPosition.getOffset());
         }
 
+        builder.setPositioned(this.opts.isPositioned());
+        builder.setRecoverable(this.opts.isRecoverable());
+
         return builder.build();
     }
 
@@ -257,7 +263,7 @@ public class Subscription {
 
         if (this.channel.startsWith(this.client.getOpts().getPrivateChannelPrefix()) && this.token.equals("")) {
             SubscriptionTokenEvent subscriptionTokenEvent = new SubscriptionTokenEvent(this.channel);
-            this.client.getListener().onSubscriptionToken(this.client, subscriptionTokenEvent, (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
+            this.client.getOpts().getSubscriptionTokenGetter().getSubscriptionToken(subscriptionTokenEvent, (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
                 if (Subscription.this.getState() != SubscriptionState.SUBSCRIBING) {
                     return;
                 }
@@ -267,7 +273,7 @@ public class Subscription {
                     return;
                 }
                 if (token.equals("")) {
-                    Subscription.this.failUnauthorized();
+                    Subscription.this.failUnauthorized(false);
                     return;
                 }
                 Subscription.this.token = token;
@@ -339,8 +345,8 @@ public class Subscription {
         return this.recover;
     }
 
-    private void failUnauthorized() {
-        this._unsubscribe(false, Client.UNSUBSCRIBED_UNAUTHORIZED, "unauthorized");
+    private void failUnauthorized(boolean sendUnsubscribe) {
+        this._unsubscribe(sendUnsubscribe, Client.UNSUBSCRIBED_UNAUTHORIZED, "unauthorized");
     }
 
     public void publish(byte[] data, ResultCallback<PublishResult> cb) {

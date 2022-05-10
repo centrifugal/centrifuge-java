@@ -140,4 +140,24 @@ public class Options {
     public String getProxyPassword() {
         return proxyPassword;
     }
+
+    public ConnectionTokenGetter getConnectionTokenGetter() {
+        return connectionTokenGetter;
+    }
+
+    public void setConnectionTokenGetter(ConnectionTokenGetter connectionTokenGetter) {
+        this.connectionTokenGetter = connectionTokenGetter;
+    }
+
+    public ConnectionTokenGetter connectionTokenGetter;
+
+    public SubscriptionTokenGetter getSubscriptionTokenGetter() {
+        return subscriptionTokenGetter;
+    }
+
+    public void setSubscriptionTokenGetter(SubscriptionTokenGetter subscriptionTokenGetter) {
+        this.subscriptionTokenGetter = subscriptionTokenGetter;
+    }
+
+    public SubscriptionTokenGetter subscriptionTokenGetter;
 }

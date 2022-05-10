@@ -45,4 +45,24 @@ public class SubscriptionOptions {
     }
 
     private int maxResubscribeDelay = 20000;
+
+    public boolean isPositioned() {
+        return positioned;
+    }
+
+    public void setPositioned(boolean positioned) {
+        this.positioned = positioned;
+    }
+
+    private boolean positioned = false;
+
+    public boolean isRecoverable() {
+        return recoverable;
+    }
+
+    public void setRecoverable(boolean recoverable) {
+        this.recoverable = recoverable;
+    }
+
+    private boolean recoverable = false;
 }

@@ -60,10 +60,6 @@ public class Client {
         return opts;
     }
 
-    EventListener getListener() {
-        return listener;
-    }
-
     ExecutorService getExecutor() {
         return executor;
     }
@@ -90,7 +86,7 @@ public class Client {
     static final int SUBSCRIBING_TRANSPORT_CLOSED = 1;
 
     static final int UNSUBSCRIBED_UNSUBSCRIBE_CALLED = 0;
-    static final int UNSUBSCRIBED_UNAUTHORIZED= 1;
+    static final int UNSUBSCRIBED_UNAUTHORIZED = 1;
     static final int UNSUBSCRIBED_CLIENT_CLOSED = 2;
 
     /**
@@ -98,7 +94,7 @@ public class Client {
      * automatically manages reconnects and re-subscriptions on temporary failures.
      *
      * @param endpoint: connection endpoint.
-     * @param opts: client options.
+     * @param opts:     client options.
      * @param listener: client event handler.
      */
     public Client(final String endpoint, final Options opts, final EventListener listener) {
@@ -127,8 +123,8 @@ public class Client {
     }
 
     /**
-    * Start connecting to a server.
-    */
+     * Start connecting to a server.
+     */
     public void connect() {
         this.executor.submit(() -> {
             if (Client.this.getState() == ClientState.CONNECTED || Client.this.getState() == ClientState.CONNECTING) {
@@ -156,7 +152,6 @@ public class Client {
      *
      * @param awaitMilliseconds is time in milliseconds to wait for executor
      *                          termination (0 means no waiting).
-     *
      * @return boolean that indicates whether executor terminated in awaitMilliseconds. For
      * zero awaitMilliseconds close always returns false.
      */
@@ -237,10 +232,10 @@ public class Client {
         }
 
         Request request = new Request.Builder()
-            .url(this.endpoint)
-            .headers(headers.build())
-            .addHeader("Sec-WebSocket-Protocol", "centrifuge-protobuf")
-            .build();
+                .url(this.endpoint)
+                .headers(headers.build())
+                .addHeader("Sec-WebSocket-Protocol", "centrifuge-protobuf")
+                .build();
 
         if (this.ws != null) {
             this.ws.cancel();
@@ -334,7 +329,8 @@ public class Client {
                         Client.this.handleConnectionError(t);
                         Client.this.scheduleReconnect();
                     });
-                } catch (RejectedExecutionException ignored) {}
+                } catch (RejectedExecutionException ignored) {
+                }
             }
         });
     }
@@ -343,9 +339,9 @@ public class Client {
         if (this.getState() != ClientState.CONNECTING) {
             return;
         }
-        if (this.refreshRequired) {
+        if (this.refreshRequired || (this.token == null && this.opts.getConnectionTokenGetter() != null)) {
             ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
-            this.listener.onConnectionToken(this, connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
+            this.opts.getConnectionTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTING) {
                     return;
                 }
@@ -411,9 +407,9 @@ public class Client {
 
     private void sendSubscribeSynchronized(String channel, Protocol.SubscribeRequest req) {
         Protocol.Command cmd = Protocol.Command.newBuilder()
-            .setId(this.getNextId())
-            .setSubscribe(req)
-            .build();
+                .setId(this.getNextId())
+                .setSubscribe(req)
+                .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
@@ -498,7 +494,7 @@ public class Client {
     /**
      * Create new subscription to channel with certain SubscriptionEventListener
      *
-     * @param channel: to create Subscription for.
+     * @param channel:  to create Subscription for.
      * @param listener: to pass event handler.
      * @return Subscription.
      * @throws DuplicateSubscriptionException if Subscription already exists in internal registry.
@@ -613,7 +609,13 @@ public class Client {
             }
             serverSub.setRecoverable(subResult.getRecoverable());
             serverSub.setLastEpoch(subResult.getEpoch());
-            this.listener.onSubscribed(this, new ServerSubscribedEvent(channel, subResult.getWasRecovering(), subResult.getRecovered()));
+
+            byte[] data = null;
+            if (subResult.getData() != null) {
+                data = subResult.getData().toByteArray();
+            }
+
+            this.listener.onSubscribed(this, new ServerSubscribedEvent(channel, subResult.getWasRecovering(), subResult.getRecovered(), subResult.getPositioned(), subResult.getRecoverable(), subResult.getPositioned() || subResult.getRecoverable() ? new StreamPosition(subResult.getOffset(), subResult.getEpoch()) : null, data));
             if (subResult.getPublicationsCount() > 0) {
                 for (Protocol.Publication publication : subResult.getPublicationsList()) {
                     ServerPublicationEvent publicationEvent = new ServerPublicationEvent();
@@ -681,7 +683,10 @@ public class Client {
     }
 
     private void sendRefresh() {
-        this.executor.submit(() -> Client.this.listener.onConnectionToken(Client.this, new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
+        if (this.opts.getConnectionTokenGetter() == null) {
+            return;
+        }
+        this.executor.submit(() -> Client.this.opts.getConnectionTokenGetter().getConnectionToken(new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
             if (Client.this.getState() != ClientState.CONNECTED) {
                 return;
             }
@@ -755,9 +760,9 @@ public class Client {
         Protocol.ConnectRequest req = build.build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
-            .setId(this.getNextId())
-            .setConnect(req)
-            .build();
+                .setId(this.getNextId())
+                .setConnect(req)
+                .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
@@ -832,17 +837,21 @@ public class Client {
         serverSub.setRecoverable(sub.getRecoverable());
         serverSub.setLastEpoch(sub.getEpoch());
         serverSub.setLastOffset(sub.getOffset());
-        this.listener.onSubscribed(this, new ServerSubscribedEvent(channel,  false,false));
+        byte[] data = null;
+        if (sub.getData() != null) {
+            data = sub.getData().toByteArray();
+        }
+        this.listener.onSubscribed(this, new ServerSubscribedEvent(channel, false, false, sub.getPositioned(), sub.getRecoverable(), sub.getPositioned() || sub.getRecoverable() ? new StreamPosition(sub.getOffset(), sub.getEpoch()) : null, data));
     }
 
     private void handleUnsubscribe(String channel, Protocol.Unsubscribe unsubscribe) {
         Subscription sub = this.getSub(channel);
         if (sub != null) {
             if (unsubscribe.getCode() < 2500) {
-                sub.moveToSubscribing(unsubscribe.getCode(), "server");
-                sub.resubscribeIfNecessary();
+                sub.moveToUnsubscribed(false, unsubscribe.getCode(), unsubscribe.getReason());
             } else {
-                sub.moveToUnsubscribed(false, unsubscribe.getCode(), "server");
+                sub.moveToSubscribing(unsubscribe.getCode(), unsubscribe.getReason());
+                sub.resubscribeIfNecessary();
             }
         } else {
             ServerSubscription serverSub = this.getServerSub(channel);
@@ -924,7 +933,7 @@ public class Client {
      * written to connection. No reply from server expected in this case.
      *
      * @param data: custom data to publish.
-     * @param cb: will be called as soon as data sent to the connection or error happened.
+     * @param cb:   will be called as soon as data sent to the connection or error happened.
      */
     public void send(byte[] data, CompletionCallback cb) {
         this.executor.submit(() -> Client.this.sendSynchronized(data, cb));
@@ -936,9 +945,9 @@ public class Client {
                 .build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
-            .setId(this.getNextId())
-            .setSend(req)
-            .build();
+                .setId(this.getNextId())
+                .setSend(req)
+                .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
@@ -995,8 +1004,8 @@ public class Client {
      * Send RPC with method to server, process result in callback.
      *
      * @param method: of RPC call.
-     * @param data: a custom payload for RPC call.
-     * @param cb: will be called as soon as rpc response received or error happened.
+     * @param data:   a custom payload for RPC call.
+     * @param cb:     will be called as soon as rpc response received or error happened.
      */
     public void rpc(String method, byte[] data, ResultCallback<RPCResult> cb) {
         this.executor.submit(() -> Client.this.rpcSynchronized(method, data, cb));
@@ -1013,9 +1022,9 @@ public class Client {
         Protocol.RPCRequest req = builder.build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
-            .setId(this.getNextId())
-            .setRpc(req)
-            .build();
+                .setId(this.getNextId())
+                .setRpc(req)
+                .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1044,8 +1053,8 @@ public class Client {
      * enabled in Centrifuge/Centrifugo server configuration.
      *
      * @param channel: to publish into.
-     * @param data: to publish.
-     * @param cb: will be called as soon as publish response received or error happened.
+     * @param data:    to publish.
+     * @param cb:      will be called as soon as publish response received or error happened.
      */
     public void publish(String channel, byte[] data, ResultCallback<PublishResult> cb) {
         this.executor.submit(() -> Client.this.publishSynchronized(channel, data, cb));
@@ -1058,9 +1067,9 @@ public class Client {
                 .build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
-            .setId(this.getNextId())
-            .setPublish(req)
-            .build();
+                .setId(this.getNextId())
+                .setPublish(req)
+                .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1086,8 +1095,8 @@ public class Client {
      * History can get channel publication history (useful for server-side subscriptions).
      *
      * @param channel: to get history for.
-     * @param opts: for history request.
-     * @param cb: will be called as soon as response receive or error happened.
+     * @param opts:    for history request.
+     * @param cb:      will be called as soon as response receive or error happened.
      */
     public void history(String channel, HistoryOptions opts, ResultCallback<HistoryResult> cb) {
         this.executor.submit(() -> Client.this.historySynchronized(channel, opts, cb));
@@ -1104,9 +1113,9 @@ public class Client {
         Protocol.HistoryRequest req = builder.build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
-            .setId(this.getNextId())
-            .setHistory(req)
-            .build();
+                .setId(this.getNextId())
+                .setHistory(req)
+                .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1151,9 +1160,9 @@ public class Client {
                 .build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
-            .setId(this.getNextId())
-            .setPresence(req)
-            .build();
+                .setId(this.getNextId())
+                .setPresence(req)
+                .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1192,9 +1201,9 @@ public class Client {
                 .build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
-            .setId(this.getNextId())
-            .setPresenceStats(req)
-            .build();
+                .setId(this.getNextId())
+                .setPresenceStats(req)
+                .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {
@@ -1225,9 +1234,9 @@ public class Client {
                 .build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
-            .setId(this.getNextId())
-            .setRefresh(req)
-            .build();
+                .setId(this.getNextId())
+                .setRefresh(req)
+                .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         f.thenAccept(reply -> {

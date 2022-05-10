@@ -42,31 +42,31 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onConnecting(Client client, ConnectingEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Connecting: " + event.getReason()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Connecting: %s", event.getReason())));
             }
             @SuppressLint("SetTextI18n")
             @Override
             public void onConnected(Client client, ConnectedEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Connected with client ID " + event.getClient()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Connected with client ID %s", event.getClient())));
             }
             @SuppressLint("SetTextI18n")
             @Override
             public void onDisconnected(Client client, DisconnectedEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Disconnected: " + event.getReason()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Disconnected: %s", event.getReason())));
             }
             @SuppressLint("SetTextI18n")
             @Override
             public void onError(Client client, ErrorEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Client error  " + event.getError().toString()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Client error  %s", event.getError().toString())));
             }
             @Override
             public void onSubscribed(Client client, ServerSubscribedEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribed to server-side channel " + event.getChannel()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Subscribed to server-side channel %s", event.getChannel())));
             }
             @Override
             public void onPublication(Client client, ServerPublicationEvent event) {
                 String data = new String(event.getData(), UTF_8);
-                MainActivity.this.runOnUiThread(() -> tv.setText("Message from " + event.getChannel() + ": " + data));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Message from %s: %s", event.getChannel(), data)));
             }
         };
 
@@ -81,28 +81,28 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("SetTextI18n")
             @Override
             public void onSubscribing(Subscription sub, SubscribingEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribing to " + sub.getChannel() + ", reason: " + event.getReason()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Subscribing to %s, reason: %s", sub.getChannel(), event.getReason())));
             }
             @SuppressLint("SetTextI18n")
             @Override
             public void onSubscribed(Subscription sub, SubscribedEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribed to " + sub.getChannel() + ", recovered: " + event.getRecovered().toString()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Subscribed to %s, recovered: %s", sub.getChannel(), event.getRecovered().toString())));
             }
             @SuppressLint("SetTextI18n")
             @Override
             public void onUnsubscribed(Subscription sub, UnsubscribedEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Unsubscribed from " + sub.getChannel() + ", reason: " + event.getReason()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Unsubscribed from %s, reason: %s", sub.getChannel(), event.getReason())));
             }
             @SuppressLint("SetTextI18n")
             @Override
             public void onError(Subscription sub, SubscriptionErrorEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribe error " + sub.getChannel() + ": " + event.getError().toString()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Subscribe error %s: %s", sub.getChannel(), event.getError().toString())));
             }
             @SuppressLint("SetTextI18n")
             @Override
             public void onPublication(Subscription sub, PublicationEvent event) {
                 String data = new String(event.getData(), UTF_8);
-                MainActivity.this.runOnUiThread(() -> tv.setText("Message from " + sub.getChannel() + ": " + data));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Message from %s: %s", sub.getChannel(), data)));
             }
         };
 

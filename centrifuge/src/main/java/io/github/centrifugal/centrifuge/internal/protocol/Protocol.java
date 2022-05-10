@@ -8299,6 +8299,18 @@ public final class Protocol {
      * @return The code.
      */
     int getCode();
+
+    /**
+     * <code>string reason = 3;</code>
+     * @return The reason.
+     */
+    java.lang.String getReason();
+    /**
+     * <code>string reason = 3;</code>
+     * @return The bytes for reason.
+     */
+    com.google.protobuf.ByteString
+        getReasonBytes();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.Unsubscribe}
@@ -8309,6 +8321,7 @@ public final class Protocol {
       // @@protoc_insertion_point(message_implements:centrifugal.centrifuge.protocol.Unsubscribe)
       UnsubscribeOrBuilder {
     private Unsubscribe() {
+      reason_ = "";
     }
     public static final int CODE_FIELD_NUMBER = 2;
     private int code_;
@@ -8346,6 +8359,53 @@ public final class Protocol {
     private void clearCode() {
       
       code_ = 0;
+    }
+
+    public static final int REASON_FIELD_NUMBER = 3;
+    private java.lang.String reason_;
+    /**
+     * <code>string reason = 3;</code>
+     * @return The reason.
+     */
+    @java.lang.Override
+    public java.lang.String getReason() {
+      return reason_;
+    }
+    /**
+     * <code>string reason = 3;</code>
+     * @return The bytes for reason.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getReasonBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(reason_);
+    }
+    /**
+     * <code>string reason = 3;</code>
+     * @param value The reason to set.
+     */
+    private void setReason(
+        java.lang.String value) {
+      java.lang.Class<?> valueClass = value.getClass();
+  
+      reason_ = value;
+    }
+    /**
+     * <code>string reason = 3;</code>
+     */
+    private void clearReason() {
+      
+      reason_ = getDefaultInstance().getReason();
+    }
+    /**
+     * <code>string reason = 3;</code>
+     * @param value The bytes for reason to set.
+     */
+    private void setReasonBytes(
+        com.google.protobuf.ByteString value) {
+      checkByteStringIsUtf8(value);
+      reason_ = value.toStringUtf8();
+      
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.Unsubscribe parseFrom(
@@ -8483,6 +8543,55 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>string reason = 3;</code>
+       * @return The reason.
+       */
+      @java.lang.Override
+      public java.lang.String getReason() {
+        return instance.getReason();
+      }
+      /**
+       * <code>string reason = 3;</code>
+       * @return The bytes for reason.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString
+          getReasonBytes() {
+        return instance.getReasonBytes();
+      }
+      /**
+       * <code>string reason = 3;</code>
+       * @param value The reason to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReason(
+          java.lang.String value) {
+        copyOnWrite();
+        instance.setReason(value);
+        return this;
+      }
+      /**
+       * <code>string reason = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearReason() {
+        copyOnWrite();
+        instance.clearReason();
+        return this;
+      }
+      /**
+       * <code>string reason = 3;</code>
+       * @param value The bytes for reason to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReasonBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setReasonBytes(value);
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.Unsubscribe)
     }
     @java.lang.Override
@@ -8500,9 +8609,11 @@ public final class Protocol {
         case BUILD_MESSAGE_INFO: {
             java.lang.Object[] objects = new java.lang.Object[] {
               "code_",
+              "reason_",
             };
             java.lang.String info =
-                "\u0000\u0001\u0000\u0000\u0002\u0002\u0001\u0000\u0000\u0000\u0002\u000b";
+                "\u0000\u0002\u0000\u0000\u0002\u0003\u0002\u0000\u0000\u0000\u0002\u000b\u0003\u0208" +
+                "";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -14108,6 +14219,18 @@ public final class Protocol {
      * @return The data.
      */
     com.google.protobuf.ByteString getData();
+
+    /**
+     * <code>bool positioned = 9;</code>
+     * @return The positioned.
+     */
+    boolean getPositioned();
+
+    /**
+     * <code>bool recoverable = 10;</code>
+     * @return The recoverable.
+     */
+    boolean getRecoverable();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.SubscribeRequest}
@@ -14361,6 +14484,58 @@ public final class Protocol {
     private void clearData() {
       
       data_ = getDefaultInstance().getData();
+    }
+
+    public static final int POSITIONED_FIELD_NUMBER = 9;
+    private boolean positioned_;
+    /**
+     * <code>bool positioned = 9;</code>
+     * @return The positioned.
+     */
+    @java.lang.Override
+    public boolean getPositioned() {
+      return positioned_;
+    }
+    /**
+     * <code>bool positioned = 9;</code>
+     * @param value The positioned to set.
+     */
+    private void setPositioned(boolean value) {
+      
+      positioned_ = value;
+    }
+    /**
+     * <code>bool positioned = 9;</code>
+     */
+    private void clearPositioned() {
+      
+      positioned_ = false;
+    }
+
+    public static final int RECOVERABLE_FIELD_NUMBER = 10;
+    private boolean recoverable_;
+    /**
+     * <code>bool recoverable = 10;</code>
+     * @return The recoverable.
+     */
+    @java.lang.Override
+    public boolean getRecoverable() {
+      return recoverable_;
+    }
+    /**
+     * <code>bool recoverable = 10;</code>
+     * @param value The recoverable to set.
+     */
+    private void setRecoverable(boolean value) {
+      
+      recoverable_ = value;
+    }
+    /**
+     * <code>bool recoverable = 10;</code>
+     */
+    private void clearRecoverable() {
+      
+      recoverable_ = false;
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest parseFrom(
@@ -14709,6 +14884,62 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>bool positioned = 9;</code>
+       * @return The positioned.
+       */
+      @java.lang.Override
+      public boolean getPositioned() {
+        return instance.getPositioned();
+      }
+      /**
+       * <code>bool positioned = 9;</code>
+       * @param value The positioned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPositioned(boolean value) {
+        copyOnWrite();
+        instance.setPositioned(value);
+        return this;
+      }
+      /**
+       * <code>bool positioned = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPositioned() {
+        copyOnWrite();
+        instance.clearPositioned();
+        return this;
+      }
+
+      /**
+       * <code>bool recoverable = 10;</code>
+       * @return The recoverable.
+       */
+      @java.lang.Override
+      public boolean getRecoverable() {
+        return instance.getRecoverable();
+      }
+      /**
+       * <code>bool recoverable = 10;</code>
+       * @param value The recoverable to set.
+       * @return This builder for chaining.
+       */
+      public Builder setRecoverable(boolean value) {
+        copyOnWrite();
+        instance.setRecoverable(value);
+        return this;
+      }
+      /**
+       * <code>bool recoverable = 10;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearRecoverable() {
+        copyOnWrite();
+        instance.clearRecoverable();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.SubscribeRequest)
     }
     @java.lang.Override
@@ -14731,10 +14962,12 @@ public final class Protocol {
               "epoch_",
               "offset_",
               "data_",
+              "positioned_",
+              "recoverable_",
             };
             java.lang.String info =
-                "\u0000\u0006\u0000\u0000\u0001\b\u0006\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
-                "\u0003\u0007\u0006\u0208\u0007\u0003\b\n";
+                "\u0000\b\u0000\u0000\u0001\n\b\u0000\u0000\u0000\u0001\u0208\u0002\u0208\u0003\u0007" +
+                "\u0006\u0208\u0007\u0003\b\n\t\u0007\n\u0007";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
