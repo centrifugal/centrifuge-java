@@ -303,7 +303,7 @@ public class Client {
                     if (disconnectCode < 3000) {
                         if (disconnectCode == MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS) {
                             disconnectCode = DISCONNECTED_MESSAGE_SIZE_LIMIT;
-
+                            disconnectReason = "message size limit";
                         } else {
                             disconnectCode = CONNECTING_TRANSPORT_CLOSED;
                             disconnectReason = "transport closed";
