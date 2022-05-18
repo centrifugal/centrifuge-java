@@ -309,7 +309,7 @@ public class Client {
                             disconnectReason = "transport closed";
                         }
                     }
-                    if (Client.this.getState() == ClientState.CONNECTED) {
+                    if (Client.this.getState() != ClientState.DISCONNECTED) {
                         Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
                     }
                     if (Client.this.getState() == ClientState.CONNECTING) {
