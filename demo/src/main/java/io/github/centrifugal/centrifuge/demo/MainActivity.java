@@ -73,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
         Options opts = new Options();
 //        opts.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
 
-        String endpoint = "ws://192.168.1.102:8000/connection/websocket?cf_protocol_version=v2";
+        // Change the endpoint if needed.
+        String endpoint = "ws://10.0.2.2:8000/connection/websocket?cf_protocol_version=v2";
         client = new Client(endpoint, opts, listener);
         client.connect();
 

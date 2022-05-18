@@ -54,16 +54,6 @@ public class Options {
     /* Connect data to send to a server inside Connect command. */
     private byte[] data;
 
-    public String getPrivateChannelPrefix() {
-        return privateChannelPrefix;
-    }
-
-    public void setPrivateChannelPrefix(String privateChannelPrefix) {
-        this.privateChannelPrefix = privateChannelPrefix;
-    }
-
-    private String privateChannelPrefix = "$";
-
     public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
@@ -141,23 +131,13 @@ public class Options {
         return proxyPassword;
     }
 
-    public ConnectionTokenGetter getConnectionTokenGetter() {
-        return connectionTokenGetter;
+    public ConnectionTokenGetter getTokenGetter() {
+        return tokenGetter;
     }
 
-    public void setConnectionTokenGetter(ConnectionTokenGetter connectionTokenGetter) {
-        this.connectionTokenGetter = connectionTokenGetter;
+    public void setTokenGetter(ConnectionTokenGetter tokenGetter) {
+        this.tokenGetter = tokenGetter;
     }
 
-    public ConnectionTokenGetter connectionTokenGetter;
-
-    public SubscriptionTokenGetter getSubscriptionTokenGetter() {
-        return subscriptionTokenGetter;
-    }
-
-    public void setSubscriptionTokenGetter(SubscriptionTokenGetter subscriptionTokenGetter) {
-        this.subscriptionTokenGetter = subscriptionTokenGetter;
-    }
-
-    public SubscriptionTokenGetter subscriptionTokenGetter;
+    private ConnectionTokenGetter tokenGetter;
 }

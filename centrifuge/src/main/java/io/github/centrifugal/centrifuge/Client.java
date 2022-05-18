@@ -339,9 +339,9 @@ public class Client {
         if (this.getState() != ClientState.CONNECTING) {
             return;
         }
-        if (this.refreshRequired || (this.token == null && this.opts.getConnectionTokenGetter() != null)) {
+        if (this.refreshRequired || (this.token == null && this.opts.getTokenGetter() != null)) {
             ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
-            this.opts.getConnectionTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
+            this.opts.getTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTING) {
                     return;
                 }
@@ -683,10 +683,10 @@ public class Client {
     }
 
     private void sendRefresh() {
-        if (this.opts.getConnectionTokenGetter() == null) {
+        if (this.opts.getTokenGetter() == null) {
             return;
         }
-        this.executor.submit(() -> Client.this.opts.getConnectionTokenGetter().getConnectionToken(new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
+        this.executor.submit(() -> Client.this.opts.getTokenGetter().getConnectionToken(new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
             if (Client.this.getState() != ClientState.CONNECTED) {
                 return;
             }

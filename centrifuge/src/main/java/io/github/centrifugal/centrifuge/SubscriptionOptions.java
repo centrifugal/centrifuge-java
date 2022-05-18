@@ -65,4 +65,14 @@ public class SubscriptionOptions {
     }
 
     private boolean recoverable = false;
+
+    public SubscriptionTokenGetter getTokenGetter() {
+        return tokenGetter;
+    }
+
+    public void setTokenGetter(SubscriptionTokenGetter tokenGetter) {
+        this.tokenGetter = tokenGetter;
+    }
+
+    public SubscriptionTokenGetter tokenGetter;
 }

@@ -85,10 +85,10 @@ public class Subscription {
     }
 
     void sendRefresh() {
-        if (this.client.getOpts().getSubscriptionTokenGetter() == null) {
+        if (this.opts.getTokenGetter() == null) {
             return;
         }
-        this.client.getExecutor().submit(() -> Subscription.this.client.getOpts().getSubscriptionTokenGetter().getSubscriptionToken(new SubscriptionTokenEvent(this.getChannel()), (err, token) -> {
+        this.client.getExecutor().submit(() -> Subscription.this.opts.getTokenGetter().getSubscriptionToken(new SubscriptionTokenEvent(this.getChannel()), (err, token) -> {
             if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
                 return;
             }
@@ -261,9 +261,9 @@ public class Subscription {
             streamPosition.setEpoch(this.getEpoch());
         }
 
-        if (this.channel.startsWith(this.client.getOpts().getPrivateChannelPrefix()) && this.token.equals("")) {
+        if (this.token.equals("") && this.opts.getTokenGetter() != null) {
             SubscriptionTokenEvent subscriptionTokenEvent = new SubscriptionTokenEvent(this.channel);
-            this.client.getOpts().getSubscriptionTokenGetter().getSubscriptionToken(subscriptionTokenEvent, (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
+            this.opts.getTokenGetter().getSubscriptionToken(subscriptionTokenEvent, (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
                 if (Subscription.this.getState() != SubscriptionState.SUBSCRIBING) {
                     return;
                 }
