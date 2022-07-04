@@ -66,6 +66,16 @@ public class SubscriptionOptions {
 
     private boolean recoverable = false;
 
+    public boolean isJoinLeave() {
+        return joinLeave;
+    }
+
+    public void setJoinLeave(boolean joinLeave) {
+        this.joinLeave = joinLeave;
+    }
+
+    private boolean joinLeave = false;
+
     public SubscriptionTokenGetter getTokenGetter() {
         return tokenGetter;
     }

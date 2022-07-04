@@ -248,6 +248,7 @@ public class Subscription {
 
         builder.setPositioned(this.opts.isPositioned());
         builder.setRecoverable(this.opts.isRecoverable());
+        builder.setJoinLeave(this.opts.isJoinLeave());
 
         return builder.build();
     }

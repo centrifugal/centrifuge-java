@@ -14231,6 +14231,12 @@ public final class Protocol {
      * @return The recoverable.
      */
     boolean getRecoverable();
+
+    /**
+     * <code>bool join_leave = 11;</code>
+     * @return The joinLeave.
+     */
+    boolean getJoinLeave();
   }
   /**
    * Protobuf type {@code centrifugal.centrifuge.protocol.SubscribeRequest}
@@ -14536,6 +14542,32 @@ public final class Protocol {
     private void clearRecoverable() {
       
       recoverable_ = false;
+    }
+
+    public static final int JOIN_LEAVE_FIELD_NUMBER = 11;
+    private boolean joinLeave_;
+    /**
+     * <code>bool join_leave = 11;</code>
+     * @return The joinLeave.
+     */
+    @java.lang.Override
+    public boolean getJoinLeave() {
+      return joinLeave_;
+    }
+    /**
+     * <code>bool join_leave = 11;</code>
+     * @param value The joinLeave to set.
+     */
+    private void setJoinLeave(boolean value) {
+      
+      joinLeave_ = value;
+    }
+    /**
+     * <code>bool join_leave = 11;</code>
+     */
+    private void clearJoinLeave() {
+      
+      joinLeave_ = false;
     }
 
     public static io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest parseFrom(
@@ -14940,6 +14972,34 @@ public final class Protocol {
         return this;
       }
 
+      /**
+       * <code>bool join_leave = 11;</code>
+       * @return The joinLeave.
+       */
+      @java.lang.Override
+      public boolean getJoinLeave() {
+        return instance.getJoinLeave();
+      }
+      /**
+       * <code>bool join_leave = 11;</code>
+       * @param value The joinLeave to set.
+       * @return This builder for chaining.
+       */
+      public Builder setJoinLeave(boolean value) {
+        copyOnWrite();
+        instance.setJoinLeave(value);
+        return this;
+      }
+      /**
+       * <code>bool join_leave = 11;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearJoinLeave() {
+        copyOnWrite();
+        instance.clearJoinLeave();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:centrifugal.centrifuge.protocol.SubscribeRequest)
     }
     @java.lang.Override
@@ -14964,10 +15024,11 @@ public final class Protocol {
               "data_",
               "positioned_",
               "recoverable_",
+              "joinLeave_",
             };
             java.lang.String info =
-                "\u0000\b\u0000\u0000\u0001\n\b\u0000\u0000\u0000\u0001\u0208\u0002\u0208\u0003\u0007" +
-                "\u0006\u0208\u0007\u0003\b\n\t\u0007\n\u0007";
+                "\u0000\t\u0000\u0000\u0001\u000b\t\u0000\u0000\u0000\u0001\u0208\u0002\u0208\u0003" +
+                "\u0007\u0006\u0208\u0007\u0003\b\n\t\u0007\n\u0007\u000b\u0007";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
