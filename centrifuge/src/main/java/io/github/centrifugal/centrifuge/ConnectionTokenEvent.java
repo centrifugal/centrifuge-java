@@ -1,4 +1,4 @@
 package io.github.centrifugal.centrifuge;
 
-public class RefreshEvent {
+public class ConnectionTokenEvent {
 }

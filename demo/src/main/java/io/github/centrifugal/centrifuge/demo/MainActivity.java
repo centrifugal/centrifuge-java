@@ -1,25 +1,34 @@
 package io.github.centrifugal.centrifuge.demo;
 
 import android.annotation.SuppressLint;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import io.github.centrifugal.centrifuge.Client;
-import io.github.centrifugal.centrifuge.ConnectEvent;
-import io.github.centrifugal.centrifuge.DisconnectEvent;
+import io.github.centrifugal.centrifuge.ConnectedEvent;
+import io.github.centrifugal.centrifuge.ConnectingEvent;
+import io.github.centrifugal.centrifuge.DisconnectedEvent;
+import io.github.centrifugal.centrifuge.ErrorEvent;
 import io.github.centrifugal.centrifuge.EventListener;
 import io.github.centrifugal.centrifuge.Options;
-import io.github.centrifugal.centrifuge.PublishEvent;
-import io.github.centrifugal.centrifuge.SubscribeErrorEvent;
-import io.github.centrifugal.centrifuge.SubscribeSuccessEvent;
+import io.github.centrifugal.centrifuge.PublicationEvent;
+import io.github.centrifugal.centrifuge.ServerPublicationEvent;
+import io.github.centrifugal.centrifuge.ServerSubscribedEvent;
+import io.github.centrifugal.centrifuge.SubscribingEvent;
+import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
+import io.github.centrifugal.centrifuge.SubscribedEvent;
 import io.github.centrifugal.centrifuge.Subscription;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
-import io.github.centrifugal.centrifuge.UnsubscribeEvent;
+import io.github.centrifugal.centrifuge.UnsubscribedEvent;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Client client;
+    private boolean activityPaused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,48 +36,74 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         TextView tv = findViewById(R.id.text);
 
+        Toast.makeText(this, "Create", Toast.LENGTH_SHORT).show();
+
         EventListener listener = new EventListener() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onConnect(Client client, ConnectEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Connected with client ID " + event.getClient()));
+            public void onConnecting(Client client, ConnectingEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Connecting: %s", event.getReason())));
             }
             @SuppressLint("SetTextI18n")
             @Override
-            public void onDisconnect(Client client, DisconnectEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Disconnected: " + event.getReason()));
+            public void onConnected(Client client, ConnectedEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Connected with client ID %s", event.getClient())));
+            }
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDisconnected(Client client, DisconnectedEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Disconnected: %s", event.getReason())));
+            }
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onError(Client client, ErrorEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Client error  %s", event.getError().toString())));
+            }
+            @Override
+            public void onSubscribed(Client client, ServerSubscribedEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Subscribed to server-side channel %s", event.getChannel())));
+            }
+            @Override
+            public void onPublication(Client client, ServerPublicationEvent event) {
+                String data = new String(event.getData(), UTF_8);
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Message from %s: %s", event.getChannel(), data)));
             }
         };
 
-        Client client = new Client(
-                "ws://192.168.1.35:8000/connection/websocket?format=protobuf",
-                new Options(),
-                listener
-        );
-        client.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
+        Options opts = new Options();
+//        opts.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
+
+        // Change the endpoint if needed.
+        String endpoint = "ws://10.0.2.2:8000/connection/websocket?cf_protocol_version=v2";
+        client = new Client(endpoint, opts, listener);
         client.connect();
 
         SubscriptionEventListener subListener = new SubscriptionEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
-            public void onSubscribeSuccess(Subscription sub, SubscribeSuccessEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribed to " + sub.getChannel()));
+            public void onSubscribing(Subscription sub, SubscribingEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Subscribing to %s, reason: %s", sub.getChannel(), event.getReason())));
             }
             @SuppressLint("SetTextI18n")
             @Override
-            public void onSubscribeError(Subscription sub, SubscribeErrorEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Subscribe error " + sub.getChannel() + ": " + event.getMessage()));
+            public void onSubscribed(Subscription sub, SubscribedEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Subscribed to %s, recovered: %s", sub.getChannel(), event.getRecovered().toString())));
             }
             @SuppressLint("SetTextI18n")
             @Override
-            public void onPublish(Subscription sub, PublishEvent event) {
+            public void onUnsubscribed(Subscription sub, UnsubscribedEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Unsubscribed from %s, reason: %s", sub.getChannel(), event.getReason())));
+            }
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onError(Subscription sub, SubscriptionErrorEvent event) {
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Subscribe error %s: %s", sub.getChannel(), event.getError().toString())));
+            }
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onPublication(Subscription sub, PublicationEvent event) {
                 String data = new String(event.getData(), UTF_8);
-                MainActivity.this.runOnUiThread(() -> tv.setText("Message from " + sub.getChannel() + ": " + data));
-            }
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onUnsubscribe(Subscription sub, UnsubscribeEvent event) {
-                MainActivity.this.runOnUiThread(() -> tv.setText("Unsubscribed from " + sub.getChannel()));
+                MainActivity.this.runOnUiThread(() -> tv.setText(String.format("Message from %s: %s", sub.getChannel(), data)));
             }
         };
 
@@ -80,5 +115,39 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         sub.subscribe();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        activityPaused = true;
+        client.disconnect();
+        Toast.makeText(this, "Paused", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (activityPaused) {
+            client.connect();
+            Toast.makeText(this, "Resumed", Toast.LENGTH_SHORT).show();
+            activityPaused = false;
+        }
+    }
+
+//    @Override
+//    public void onBackPressed(){
+//        moveTaskToBack(true);
+//    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            client.close(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(this, "Destroyed", Toast.LENGTH_SHORT).show();
     }
 }

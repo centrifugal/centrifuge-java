@@ -1,5 +1,5 @@
 package io.github.centrifugal.centrifuge;
 
 public enum SubscriptionState {
-    UNSUBSCRIBED, SUBSCRIBING, SUBSCRIBED, ERROR
+    UNSUBSCRIBED, SUBSCRIBING, SUBSCRIBED
 }

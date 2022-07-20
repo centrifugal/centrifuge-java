@@ -1,6 +1,6 @@
 package io.github.centrifugal.centrifuge;
 
-public class ConnectEvent {
+public class ConnectedEvent {
     public String getClient() {
         return client;
     }
@@ -17,6 +17,7 @@ public class ConnectEvent {
         this.data = data;
     }
 
-    private String client;
     private byte[] data;
+
+    private String client;
 }

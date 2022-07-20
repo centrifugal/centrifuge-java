@@ -1,7 +1,13 @@
 package io.github.centrifugal.centrifuge;
 
-public class ReplyError {
+public class ReplyError extends Throwable {
     private int code;
+
+    public ReplyError(int code, String message, boolean temporary) {
+        this.code = code;
+        this.message = message;
+        this.temporary = temporary;
+    }
 
     public int getCode() {
         return code;
@@ -20,4 +26,14 @@ public class ReplyError {
     }
 
     private String message;
+
+    public boolean isTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(boolean temporary) {
+        this.temporary = temporary;
+    }
+
+    private boolean temporary;
 }

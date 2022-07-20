@@ -3,12 +3,10 @@ apply plugin: 'signing'
 apply plugin: 'java-library'
 
 task javadocJar(type: Jar) {
-    classifier = 'javadoc'
     from javadoc
 }
 
 task sourcesJar(type: Jar) {
-    classifier = 'sources'
     from sourceSets.main.allSource
 }
 
@@ -18,13 +16,12 @@ artifacts {
 
 group = "io.github.centrifugal"
 archivesBaseName = "centrifuge-java"
-version = "0.1.0"
+version = "0.2.0"
 
 dependencies {
-    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
-    implementation 'com.google.protobuf:protobuf-javalite:3.11.4'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.google.protobuf:protobuf-javalite:3.19.4'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
 
     testImplementation 'junit:junit:4.12'
 }

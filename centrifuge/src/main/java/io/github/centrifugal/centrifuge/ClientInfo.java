@@ -59,5 +59,5 @@ public class ClientInfo {
         } else {
             return null;
         }
-    };
+    }
 }

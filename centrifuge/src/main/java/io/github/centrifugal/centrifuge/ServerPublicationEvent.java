@@ -1,6 +1,8 @@
 package io.github.centrifugal.centrifuge;
 
-public class ServerPublishEvent {
+import java.util.Map;
+
+public class ServerPublicationEvent {
     public byte[] getData() {
         return data;
     }
@@ -40,4 +42,14 @@ public class ServerPublishEvent {
     }
 
     private String channel;
+
+    public Map<String, String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Map<String, String> tags) {
+        this.tags = tags;
+    }
+
+    Map<String,String> tags;
 }

@@ -1,6 +1,8 @@
 package io.github.centrifugal.centrifuge;
 
-public class PublishEvent {
+import java.util.Map;
+
+public class PublicationEvent {
     public byte[] getData() {
         return data;
     }
@@ -31,4 +33,14 @@ public class PublishEvent {
     }
 
     private long offset;
+
+    public Map<String, String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Map<String, String> tags) {
+        this.tags = tags;
+    }
+
+    Map<String,String> tags;
 }

@@ -2,47 +2,47 @@ package io.github.centrifugal.centrifuge;
 
 public abstract class EventListener {
 
-    public void onConnect(Client client, ConnectEvent event) {
+    public void onConnecting(Client client, ConnectingEvent event) {
 
-    };
+    }
 
-    public void onDisconnect(Client client, DisconnectEvent event) {
+    public void onConnected(Client client, ConnectedEvent event) {
 
-    };
+    }
 
+    public void onDisconnected(Client client, DisconnectedEvent event) {
+
+    }
+    
     public void onError(Client client, ErrorEvent event) {
 
-    };
+    }
 
     public void onMessage(Client client, MessageEvent event) {
 
-    };
+    }
 
-    public void onSubscribe(Client client, ServerSubscribeEvent event) {
+    public void onSubscribed(Client client, ServerSubscribedEvent event) {
 
-    };
+    }
 
-    public void onUnsubscribe(Client client, ServerUnsubscribeEvent event) {
+    public void onSubscribing(Client client, ServerSubscribingEvent event) {
 
-    };
+    }
 
-    public void onPublish(Client client, ServerPublishEvent event) {
+    public void onUnsubscribed(Client client, ServerUnsubscribedEvent event) {
 
-    };
+    }
+
+    public void onPublication(Client client, ServerPublicationEvent event) {
+
+    }
 
     public void onJoin(Client client, ServerJoinEvent event) {
 
-    };
+    }
 
     public void onLeave(Client client, ServerLeaveEvent event) {
 
-    };
-
-    public void onRefresh(Client client, RefreshEvent event, TokenCallback cb) {
-        cb.Fail(new UnsupportedOperationException());
-    };
-
-    public void onPrivateSub(Client client, PrivateSubEvent event, TokenCallback cb) {
-        cb.Fail(new UnsupportedOperationException());
-    };
+    }
 }

@@ -5,13 +5,13 @@ public class ServerLeaveEvent {
         return channel;
     }
 
-    private String channel;
+    private final String channel;
 
     public ClientInfo getInfo() {
         return info;
     }
 
-    private ClientInfo info;
+    private final ClientInfo info;
 
     ServerLeaveEvent(String channel, ClientInfo info) {
         this.channel = channel;

@@ -1,10 +1,10 @@
 package io.github.centrifugal.centrifuge;
 
-public class ErrorEvent {
+public class SubscriptionSubscribeError extends Throwable {
     private final Throwable error;
 
-    ErrorEvent(Throwable t) {
-        this.error = t;
+    SubscriptionSubscribeError(Throwable error) {
+        this.error = error;
     }
 
     public Throwable getError() {
