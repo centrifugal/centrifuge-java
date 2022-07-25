@@ -3,10 +3,12 @@ apply plugin: 'signing'
 apply plugin: 'java-library'
 
 task javadocJar(type: Jar) {
+    classifier = 'javadoc'
     from javadoc
 }
 
 task sourcesJar(type: Jar) {
+    classifier = 'sources'
     from sourceSets.main.allSource
 }
 
@@ -16,7 +18,7 @@ artifacts {
 
 group = "io.github.centrifugal"
 archivesBaseName = "centrifuge-java"
-version = "0.2.1"
+version = "0.2.2"
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
