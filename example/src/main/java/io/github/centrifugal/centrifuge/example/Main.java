@@ -3,6 +3,8 @@ package io.github.centrifugal.centrifuge.example;
 import io.github.centrifugal.centrifuge.Client;
 import io.github.centrifugal.centrifuge.ClientState;
 import io.github.centrifugal.centrifuge.ConnectingEvent;
+import io.github.centrifugal.centrifuge.ConnectionTokenEvent;
+import io.github.centrifugal.centrifuge.ConnectionTokenGetter;
 import io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
 import io.github.centrifugal.centrifuge.HistoryOptions;
 import io.github.centrifugal.centrifuge.JoinEvent;
@@ -25,6 +27,7 @@ import io.github.centrifugal.centrifuge.SubscribingEvent;
 import io.github.centrifugal.centrifuge.PublicationEvent;
 import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
 import io.github.centrifugal.centrifuge.SubscribedEvent;
+import io.github.centrifugal.centrifuge.TokenCallback;
 import io.github.centrifugal.centrifuge.UnsubscribedEvent;
 
 import org.slf4j.Logger;
@@ -90,18 +93,11 @@ public class Main {
 
         Options opts = new Options();
 //        opts.setToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsImV4cCI6MTY1OTQ0MTY4MiwiaWF0IjoxNjU4ODM2ODgyfQ.tyd2_TVq29WZuhh5OBni6dq7Lqry2s8z2PHZavplr7A");
-//        opts.setConnectionTokenGetter(new ConnectionTokenGetter() {
+//        opts.setTokenGetter(new ConnectionTokenGetter() {
 //            @Override
 //            public void getConnectionToken(ConnectionTokenEvent event, TokenCallback cb) {
-//                super.getConnectionToken(event, cb);
-//                cb.Done(null, "");
-//            }
-//        });
-//        opts.setSubscriptionTokenGetter(new SubscriptionTokenGetter() {
-//            @Override
-//            public void getSubscriptionToken(SubscriptionTokenEvent event, TokenCallback cb) {
-//                super.getSubscriptionToken(event, cb);
-//                cb.Done(null, "");
+//                // At this place you must request the token from the backend in real app.
+//                cb.Done(null, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsImV4cCI6MTY2MDA3MDYzMiwiaWF0IjoxNjU5NDY1ODMyfQ.EWBmBsvbUsOublFJeG0fAMQz_RnX3ZQwd5E00ldyyh0");
 //            }
 //        });
 
