@@ -185,9 +185,12 @@ public class Client {
             this.reconnectTask.cancel(true);
             this.reconnectTask = null;
         }
+        boolean needEvent;
         if (shouldReconnect) {
+            needEvent = previousState != ClientState.CONNECTING;
             this.setState(ClientState.CONNECTING);
         } else {
+            needEvent = previousState != ClientState.DISCONNECTED;
             this.setState(ClientState.DISCONNECTED);
         }
 
@@ -212,12 +215,14 @@ public class Client {
             }
         }
 
-        if (shouldReconnect) {
-            ConnectingEvent event = new ConnectingEvent(code, reason);
-            this.listener.onConnecting(this, event);
-        } else {
-            DisconnectedEvent event = new DisconnectedEvent(code, reason);
-            this.listener.onDisconnected(this, event);
+        if (needEvent) {
+            if (shouldReconnect) {
+                ConnectingEvent event = new ConnectingEvent(code, reason);
+                this.listener.onConnecting(this, event);
+            } else {
+                DisconnectedEvent event = new DisconnectedEvent(code, reason);
+                this.listener.onDisconnected(this, event);
+            }
         }
 
         this.ws.close(NORMAL_CLOSURE_STATUS, "");
@@ -335,12 +340,15 @@ public class Client {
         });
     }
 
-    private void handleConnectionOpen() {
+    private void handleConnectionOpen() throws Exception {
         if (this.getState() != ClientState.CONNECTING) {
             return;
         }
         if (this.refreshRequired || (this.token == null && this.opts.getTokenGetter() != null)) {
             ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
+            if (this.opts.getTokenGetter() == null) {
+                throw new Exception("tokenGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter");
+            }
             this.opts.getTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTING) {
                     return;
@@ -597,6 +605,7 @@ public class Client {
                 sub.resubscribeIfNecessary();
             }
         }
+
         for (Map.Entry<String, Protocol.SubscribeResult> entry : result.getSubsMap().entrySet()) {
             Protocol.SubscribeResult subResult = entry.getValue();
             String channel = entry.getKey();
@@ -656,6 +665,7 @@ public class Client {
                 }
             }
         }
+
         this.connectCommands.clear();
 
         for (Map.Entry<Integer, Protocol.Command> entry : this.connectAsyncCommands.entrySet()) {

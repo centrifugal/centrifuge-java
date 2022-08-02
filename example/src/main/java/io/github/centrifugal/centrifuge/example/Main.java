@@ -50,11 +50,11 @@ public class Main {
             }
             @Override
             public void onDisconnected(Client client, DisconnectedEvent event) {
-                System.out.printf("disconnected %d %s", event.getCode(), event.getReason());
+                System.out.printf("disconnected %d %s%n", event.getCode(), event.getReason());
             }
             @Override
             public void onError(Client client, ErrorEvent event) {
-                System.out.println("There was a problem connecting!");
+                System.out.printf("There was a problem connecting: %s%n", event.getError().toString());
             }
             @Override
             public void onMessage(Client client, MessageEvent event) {
@@ -89,7 +89,7 @@ public class Main {
         };
 
         Options opts = new Options();
-//        opts.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
+//        opts.setToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsImV4cCI6MTY1OTQ0MTY4MiwiaWF0IjoxNjU4ODM2ODgyfQ.tyd2_TVq29WZuhh5OBni6dq7Lqry2s8z2PHZavplr7A");
 //        opts.setConnectionTokenGetter(new ConnectionTokenGetter() {
 //            @Override
 //            public void getConnectionToken(ConnectionTokenEvent event, TokenCallback cb) {
@@ -106,7 +106,7 @@ public class Main {
 //        });
 
         Client client = new Client(
-                "ws://localhost:8000/connection/websocket?cf_protocol=protobuf",
+                "ws://localhost:8000/connection/websocket",
                 opts,
                 listener
         );
