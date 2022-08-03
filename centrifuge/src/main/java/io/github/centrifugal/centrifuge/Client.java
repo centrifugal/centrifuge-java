@@ -225,7 +225,7 @@ public class Client {
             }
         }
 
-        this.ws.close(NORMAL_CLOSURE_STATUS, "");
+        this.ws.cancel();
     }
 
     private void _connect() {
@@ -328,11 +328,13 @@ public class Client {
                 super.onFailure(webSocket, t, response);
                 try {
                     Client.this.executor.submit(() -> {
-                        if (Client.this.getState() != ClientState.CONNECTING) {
-                            return;
-                        }
                         Client.this.handleConnectionError(t);
-                        Client.this.scheduleReconnect();
+                        Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
+                        if (Client.this.getState() == ClientState.CONNECTING) {
+                            // We need to schedule reconnect from here, since onClosed won't be called
+                            // after onFailure.
+                            Client.this.scheduleReconnect();
+                        }
                     });
                 } catch (RejectedExecutionException ignored) {
                 }
