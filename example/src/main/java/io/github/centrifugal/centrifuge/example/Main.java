@@ -57,7 +57,7 @@ public class Main {
             }
             @Override
             public void onError(Client client, ErrorEvent event) {
-                System.out.printf("There was a problem connecting: %s%n", event.getError().toString());
+                System.out.printf("connection error: %s%n", event.getError().toString());
             }
             @Override
             public void onMessage(Client client, MessageEvent event) {
