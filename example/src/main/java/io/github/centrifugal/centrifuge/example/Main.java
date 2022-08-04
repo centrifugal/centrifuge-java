@@ -45,7 +45,7 @@ public class Main {
         EventListener listener = new EventListener() {
             @Override
             public void onConnected(Client client, ConnectedEvent event) {
-                System.out.println("connected");
+                System.out.printf("connected with client id %s%n", event.getClient());
             }
             @Override
             public void onConnecting(Client client, ConnectingEvent event) {
@@ -66,7 +66,7 @@ public class Main {
             }
             @Override
             public void onSubscribed(Client client, ServerSubscribedEvent event) {
-                System.out.println("server side subscribe: " + event.getChannel() + ", recovered " + event.getRecovered());
+                System.out.println("server side subscribed: " + event.getChannel() + ", recovered " + event.getRecovered());
             }
             @Override
             public void onSubscribing(Client client, ServerSubscribingEvent event) {
@@ -74,7 +74,7 @@ public class Main {
             }
             @Override
             public void onUnsubscribed(Client client, ServerUnsubscribedEvent event) {
-                System.out.println("server side unsubscribe: " + event.getChannel());
+                System.out.println("server side unsubscribed: " + event.getChannel());
             }
             @Override
             public void onPublication(Client client, ServerPublicationEvent event) {
@@ -206,8 +206,8 @@ public class Main {
         sub.unsubscribe();
 
         // Say Client that we finished with Subscription. It will be removed from
-        // internal Subscription map so you can create new Subscription to channel
-        // later calling newSubscription method again.
+        // the internal Subscription map so you can create new Subscription to the
+        // channel later calling newSubscription method again.
         client.removeSubscription(sub);
 
         try {
@@ -219,15 +219,11 @@ public class Main {
         client.disconnect();
 
         try {
-            System.out.println(client.getState() == ClientState.DISCONNECTED);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
             boolean ok = client.close(5000);
             if (!ok) {
                 System.out.println("client was not gracefully closed");
+            } else {
+                System.out.println("client gracefully closed");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
