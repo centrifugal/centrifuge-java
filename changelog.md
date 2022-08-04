@@ -1,3 +1,27 @@
+0.2.3
+=====
+
+* Fix reconnect after onFailure [#39](https://github.com/centrifugal/centrifuge-java/pull/39)
+* Avoid duplicate connecting event, better Exception msg if tokenGetter not set. [Commit](https://github.com/centrifugal/centrifuge-java/commit/ec8dd26659bc4fe072197c2fffa91af687eff325).
+* Fixes in example
+
+0.2.2
+=====
+
+**Breaking changes**
+
+Releases 0.2.0 and 0.2.1 were broken - see [#36](https://github.com/centrifugal/centrifuge-java/issues/36)
+
+This release adopts a new iteration of Centrifugal protocol and a new iteration of API. Client now behaves according to the client [SDK API specification](https://centrifugal.dev/docs/transports/client_api). The work has been done according to [Centrifugo v4 roadmap](https://github.com/centrifugal/centrifugo/issues/500).
+
+Check out [Centrifugo v4 release post](https://centrifugal.dev/blog/2022/07/19/centrifugo-v4-released) that covers the reasoning behind changes.
+
+All the current core features of Centrifugal client protocol are now supported here.  
+
+New release only works with Centrifugo >= v4.0.0 and [Centrifuge](https://github.com/centrifugal/centrifuge) >= 0.25.0. See [Centrifugo v4 migration guide](https://centrifugal.dev/docs/getting-started/migration_v4) for details about the changes in the ecosystem.
+
+Note, that Centrifugo v4 supports clients working over the previous protocol iteration, so you can update Centrifugo to v4 without any changes on the client side (but you need to turn on `use_client_protocol_v1_by_default` option in the configuration of Centrifugo, see Centrifugo v4 migration guide for details).
+
 0.2.0
 =====
 
