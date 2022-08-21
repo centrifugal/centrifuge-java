@@ -30,6 +30,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
+
 public class Client {
     private WebSocket ws;
     private final String endpoint;
@@ -248,9 +249,13 @@ public class Client {
 
         OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder();
 
+        Dns dns = opts.getDns();
+        if (dns != null) {
+            okHttpBuilder.dns(dns::resolve);
+        }
+
         if (opts.getProxy() != null) {
             okHttpBuilder.proxy(opts.getProxy());
-
             if (this.opts.getProxyLogin() != null && this.opts.getProxyPassword() != null) {
                 okHttpBuilder.proxyAuthenticator((route, response) -> {
                     String credentials = Credentials.basic(opts.getProxyLogin(), opts.getProxyPassword());
