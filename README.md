@@ -56,20 +56,8 @@ This section contains an information for library contributors. You don't need ge
 
 ### Generate proto
 
-Make sure options set in client.proto:
-
-```
-option java_package = "io.github.centrifugal.centrifuge.internal.protocol";
-option java_outer_classname = "Protocol";
-```
-
-Then:
-
-```
-protoc --java_out=lite:./ client.proto
-mv io/github/centrifugal/centrifuge/internal/protocol/Protocol.java centrifuge/src/main/java/io/github/centrifugal/centrifuge/internal/protocol/Protocol.java
-rm -r io/
-```
+The protobuf definitions are located in `centrifuge/main/proto` directory.
+`Protocol` class is generated automatically during project compilation by `protobuf` gradle plugin.
 
 ## For maintainer
 

@@ -8,6 +8,6 @@ public class ClientTest {
     @Test
     public void testInitialization() {
         Client client = new Client("", new Options(), null);
-        assertEquals(client.getState(), ClientState.NEW);
+        assertEquals(client.getState(), ClientState.DISCONNECTED);
     }
 }
