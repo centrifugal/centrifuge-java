@@ -140,4 +140,13 @@ public class Options {
     }
 
     private ConnectionTokenGetter tokenGetter;
+
+    public Dns getDns() {
+        return this.dns;
+    }
+    public void setDns(Dns dns) {
+        this.dns = dns;
+    }
+
+    private Dns dns;
 }
