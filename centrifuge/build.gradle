@@ -1,3 +1,6 @@
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
+
 plugins {
     id "java-library"
     id "maven-publish"
@@ -5,23 +8,17 @@ plugins {
     id "com.google.protobuf" version "0.8.19"
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
+apply plugin: "com.vanniktech.maven.publish.base"
+
+// See https://github.com/vanniktech/gradle-maven-publish-plugin#base-plugin
+mavenPublishing {
+    configure(new JavaLibrary(new JavadocJar.Javadoc(), true))
 }
 
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
-
-artifacts {
-    archives javadocJar, sourcesJar
-}
-
-group = "io.github.centrifugal"
-archivesBaseName = "centrifuge-java"
-version = "0.2.3"
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'

@@ -1,6 +1,6 @@
 # centrifuge-java
 
-Websocket client for [Centrifugo](https://github.com/centrifugal/centrifugo) server and [Centrifuge](https://github.com/centrifugal/centrifuge) library. 
+Websocket client for [Centrifugo](https://github.com/centrifugal/centrifugo) server and [Centrifuge](https://github.com/centrifugal/centrifuge) library.
 
 There is no v1 release of this library yet – API still evolves. At the moment patch version updates only contain backwards compatible changes, minor version updates can have backwards incompatible API changes.
 
@@ -70,17 +70,20 @@ signing.keyId=<LAST_8_SYMBOLS_OF_KEY_ID>
 signing.password=<PASSWORD>
 signing.secretKeyRingFile=/Path/to/.gnupg/secring.gpg
 
-ossrhUsername=<USERNAME>
-ossrhPassword=<PASSWORD>
+mavenCentralUsername=<USERNAME>
+mavenCentralPassword=<PASSWORD>
 ```
 
-Bump version in `centrifuge/build.gradle`. Write changelog. Create new library tag. Then run:
+Bump version in `publish-setup.gradle`. Write changelog. Create new library tag. Then run:
 
 ```
-./gradlew publish
+./gradlew publish --no-daemon --no-parallel
+./gradlew closeAndReleaseRepository
 ```
 
-Then follow instructions:
+The second command will promote staged release to production on MavenCentral.
+
+You can do it manually by following the instructions:
 
 https://central.sonatype.org/pages/releasing-the-deployment.html
 
