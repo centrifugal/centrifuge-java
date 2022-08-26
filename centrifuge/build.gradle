@@ -1,6 +1,9 @@
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
-apply plugin: 'java-library'
+plugins {
+    id "java-library"
+    id "maven-publish"
+    id "signing"
+    id "com.google.protobuf" version "0.8.19"
+}
 
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
@@ -22,7 +25,7 @@ version = "0.2.3"
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'com.google.protobuf:protobuf-javalite:3.19.4'
+    implementation 'com.google.protobuf:protobuf-javalite:3.20.1'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
 
     testImplementation 'junit:junit:4.13.2'
@@ -31,6 +34,33 @@ dependencies {
 java {
     withJavadocJar()
     withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+sourceSets {
+    main {
+        java {
+            String baseDir = protobuf.getProperty("generatedFilesBaseDir").toString()
+            srcDirs "$baseDir/main/java"
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.20.1"
+    }
+
+    generateProtoTasks {
+        all().configureEach {
+            builtins {
+                java {
+                    option("lite")
+                }
+            }
+        }
+    }
 }
 
 publishing {
@@ -93,7 +123,7 @@ signing {
 }
 
 javadoc {
-    if(JavaVersion.current().isJava9Compatible()) {
+    if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
 }
