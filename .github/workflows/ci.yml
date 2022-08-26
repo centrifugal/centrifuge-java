@@ -58,3 +58,29 @@ jobs:
 
       - name: Compile Java Example app
         run: ./gradlew :example:assemble
+
+  checkApiCompatibility:
+    runs-on: ubuntu-latest
+    # Prevent duplicate builds on internal PRs.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Generate current API signatures
+        run: ./gradlew :centrifuge:metalavaGenerateTempSignature
+
+      - uses: int128/diff-action@v1
+        with:
+          base: centrifuge/api.txt
+          head: centrifuge/build/metalava/current.txt
+
+      - name: Check API compatibility
+        run: ./gradlew :centrifuge:metalavaCheckCompatibility

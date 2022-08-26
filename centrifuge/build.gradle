@@ -5,6 +5,7 @@ plugins {
     id "java-library"
     id "maven-publish"
     id "signing"
+    id 'me.tylerbwong.gradle.metalava'
     id "com.google.protobuf" version "0.8.19"
 }
 
@@ -63,4 +64,8 @@ javadoc {
     if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
+}
+
+metalava {
+    hiddenPackages.add("io.github.centrifugal.centrifuge.internal")
 }
