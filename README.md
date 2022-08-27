@@ -64,7 +64,7 @@ The protobuf definitions are located in `centrifuge/main/proto` directory.
 We use [metalava-gradle](https://github.com/tylerbwong/metalava-gradle) to ensure we are aware of breaking API changes in the library.
 
 All PRs check API signatures for compatibility. If you see an error, it may indicate there is a breaking change.
-Regenerate API signature with and include it in your PR:
+Regenerate API signature with the following command and include an updated `api.txt` in your PR:
 ```shell
 ./gradlew :centrifuge:metalavaGenerateSignature
 ```
