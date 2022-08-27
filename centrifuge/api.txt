@@ -73,6 +73,10 @@ package io.github.centrifugal.centrifuge {
     method public String getReason();
   }
 
+  public interface Dns {
+    method public List<InetAddress> resolve(String);
+  }
+
   public class DuplicateSubscriptionException {
   }
 
@@ -136,6 +140,7 @@ package io.github.centrifugal.centrifuge {
   public class Options {
     ctor public Options();
     method public byte[]! getData();
+    method public io.github.centrifugal.centrifuge.Dns! getDns();
     method public Map<String,String> getHeaders();
     method public int getMaxReconnectDelay();
     method public int getMaxServerPingDelay();
@@ -149,6 +154,7 @@ package io.github.centrifugal.centrifuge {
     method public io.github.centrifugal.centrifuge.ConnectionTokenGetter! getTokenGetter();
     method public String getVersion();
     method public void setData(byte[]!);
+    method public void setDns(io.github.centrifugal.centrifuge.Dns!);
     method public void setHeaders(Map<String,String>);
     method public void setMaxReconnectDelay(int);
     method public void setMaxServerPingDelay(int);
