@@ -61,11 +61,19 @@ The protobuf definitions are located in `centrifuge/main/proto` directory.
 
 ## For maintainer
 
-### release
+### Automatic publishing
 
-Create configuration file `gradle.properties` in `GRADLE_USER_HOME`:
+1. Bump version in `publish-setup.gradle`. 
+2. Update changelog to reflect API and behavior changes, bugfixes. 
+3. Create new library tag. 
 
-```
+The release GitHub Action should now publish the library.
+
+### Manual publishing
+
+Do all steps from the automatic publishing. Create configuration file `gradle.properties` in `GRADLE_USER_HOME`:
+
+```properties
 signing.keyId=<LAST_8_SYMBOLS_OF_KEY_ID>
 signing.password=<PASSWORD>
 signing.secretKeyRingFile=/Path/to/.gnupg/secring.gpg
@@ -74,9 +82,9 @@ mavenCentralUsername=<USERNAME>
 mavenCentralPassword=<PASSWORD>
 ```
 
-Bump version in `publish-setup.gradle`. Write changelog. Create new library tag. Then run:
+Then run:
 
-```
+```shell
 ./gradlew publish --no-daemon --no-parallel
 ./gradlew closeAndReleaseRepository
 ```
