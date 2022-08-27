@@ -60,6 +60,8 @@ jobs:
         run: ./gradlew :example:assemble
 
   checkApiCompatibility:
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     # Prevent duplicate builds on internal PRs.
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
@@ -77,10 +79,17 @@ jobs:
       - name: Generate current API signatures
         run: ./gradlew :centrifuge:metalavaGenerateTempSignature
 
-      - uses: int128/diff-action@v1
-        with:
-          base: centrifuge/api.txt
-          head: centrifuge/build/metalava/current.txt
+      - name: Calculate API diff
+        run: git diff --no-index centrifuge/api.txt centrifuge/build/metalava/current.txt
+
+# TODO: uncomment this when permisison to comment on PR is available
+#      - uses: int128/diff-action@v1
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          base: centrifuge/api.txt
+#          head: centrifuge/build/metalava/current.txt
+#          label: api-changed
 
       - name: Check API compatibility
         run: ./gradlew :centrifuge:metalavaCheckCompatibility
+        if: always()
