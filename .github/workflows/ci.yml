@@ -78,7 +78,10 @@ jobs:
         run: ./gradlew :centrifuge:metalavaGenerateTempSignature
 
       - name: Calculate API diff
-        run: git diff --no-index centrifuge/api.txt centrifuge/build/metalava/current.txt
+        run: |
+          set +e
+          git diff --no-index centrifuge/api.txt centrifuge/build/metalava/current.txt
+          set -e
 
 # TODO: uncomment this when permisison to comment on PR is available
 #      - uses: int128/diff-action@v1
