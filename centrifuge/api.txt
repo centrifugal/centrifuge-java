@@ -1,0 +1,379 @@
+// Signature format: 4.0
+package io.github.centrifugal.centrifuge {
+
+  public class Client {
+    ctor public Client(String, io.github.centrifugal.centrifuge.Options!, io.github.centrifugal.centrifuge.EventListener!);
+    method public boolean close(long);
+    method public void connect();
+    method public void disconnect();
+    method public io.github.centrifugal.centrifuge.ClientState! getState();
+    method public io.github.centrifugal.centrifuge.Subscription! getSubscription(String);
+    method public void history(String, io.github.centrifugal.centrifuge.HistoryOptions!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.HistoryResult!>!);
+    method public io.github.centrifugal.centrifuge.Subscription! newSubscription(String, io.github.centrifugal.centrifuge.SubscriptionEventListener!) throws io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
+    method public void presence(String, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceResult!>!);
+    method public void presenceStats(String, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceStatsResult!>!);
+    method public void publish(String, byte[]!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PublishResult!>!);
+    method public void removeSubscription(io.github.centrifugal.centrifuge.Subscription!);
+    method public void rpc(String, byte[]!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.RPCResult!>!);
+    method public void send(byte[]!, io.github.centrifugal.centrifuge.CompletionCallback!);
+  }
+
+  public class ClientInfo {
+    ctor public ClientInfo();
+    method public byte[]! getChanInfo();
+    method public String getClient();
+    method public byte[]! getConnInfo();
+    method public String getUser();
+    method public void setChanInfo(byte[]!);
+    method public void setClient(String);
+    method public void setConnInfo(byte[]!);
+    method public void setUser(String);
+  }
+
+  public enum ClientState {
+    enum_constant public static final io.github.centrifugal.centrifuge.ClientState CLOSED;
+    enum_constant public static final io.github.centrifugal.centrifuge.ClientState CONNECTED;
+    enum_constant public static final io.github.centrifugal.centrifuge.ClientState CONNECTING;
+    enum_constant public static final io.github.centrifugal.centrifuge.ClientState DISCONNECTED;
+  }
+
+  public class ClientTest {
+    ctor public ClientTest();
+    method public void testInitialization();
+  }
+
+  public interface CompletionCallback {
+    method public void onDone(Throwable);
+  }
+
+  public class ConnectedEvent {
+    ctor public ConnectedEvent();
+    method public String getClient();
+    method public byte[]! getData();
+  }
+
+  public class ConnectingEvent {
+    ctor public ConnectingEvent(int, String);
+    method public int getCode();
+    method public String getReason();
+  }
+
+  public class ConnectionTokenEvent {
+    ctor public ConnectionTokenEvent();
+  }
+
+  public abstract class ConnectionTokenGetter {
+    ctor public ConnectionTokenGetter();
+    method public void getConnectionToken(io.github.centrifugal.centrifuge.ConnectionTokenEvent!, io.github.centrifugal.centrifuge.TokenCallback!);
+  }
+
+  public class DisconnectedEvent {
+    ctor public DisconnectedEvent(int, String);
+    method public int getCode();
+    method public String getReason();
+  }
+
+  public interface Dns {
+    method public List<InetAddress> resolve(String);
+  }
+
+  public class DuplicateSubscriptionException {
+  }
+
+  public class ErrorEvent {
+    method public Throwable getError();
+  }
+
+  public abstract class EventListener {
+    ctor public EventListener();
+    method public void onConnected(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ConnectedEvent!);
+    method public void onConnecting(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ConnectingEvent!);
+    method public void onDisconnected(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.DisconnectedEvent!);
+    method public void onError(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ErrorEvent!);
+    method public void onJoin(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerJoinEvent!);
+    method public void onLeave(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerLeaveEvent!);
+    method public void onMessage(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.MessageEvent!);
+    method public void onPublication(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerPublicationEvent!);
+    method public void onSubscribed(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerSubscribedEvent!);
+    method public void onSubscribing(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerSubscribingEvent!);
+    method public void onUnsubscribed(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerUnsubscribedEvent!);
+  }
+
+  public class HistoryOptions {
+    method public int getLimit();
+    method public boolean getReverse();
+    method public io.github.centrifugal.centrifuge.StreamPosition! getSince();
+    method public String toString();
+  }
+
+  public static class HistoryOptions.Builder {
+    ctor public HistoryOptions.Builder();
+    method public io.github.centrifugal.centrifuge.HistoryOptions! build();
+    method public io.github.centrifugal.centrifuge.HistoryOptions.Builder! withLimit(int);
+    method public io.github.centrifugal.centrifuge.HistoryOptions.Builder! withReverse(boolean);
+    method public io.github.centrifugal.centrifuge.HistoryOptions.Builder! withSince(io.github.centrifugal.centrifuge.StreamPosition!);
+  }
+
+  public class HistoryResult {
+    ctor public HistoryResult();
+    method public String getEpoch();
+    method public long getOffset();
+    method public List<Publication> getPublications();
+    method public void setPublications(List<Publication>);
+  }
+
+  public class JoinEvent {
+    ctor public JoinEvent();
+    method public io.github.centrifugal.centrifuge.ClientInfo! getInfo();
+  }
+
+  public class LeaveEvent {
+    ctor public LeaveEvent();
+    method public io.github.centrifugal.centrifuge.ClientInfo! getInfo();
+  }
+
+  public class MessageEvent {
+    ctor public MessageEvent();
+    method public byte[]! getData();
+  }
+
+  public class Options {
+    ctor public Options();
+    method public byte[]! getData();
+    method public io.github.centrifugal.centrifuge.Dns! getDns();
+    method public Map<String,String> getHeaders();
+    method public int getMaxReconnectDelay();
+    method public int getMaxServerPingDelay();
+    method public int getMinReconnectDelay();
+    method public String getName();
+    method public Proxy getProxy();
+    method public String getProxyLogin();
+    method public String getProxyPassword();
+    method public int getTimeout();
+    method public String getToken();
+    method public io.github.centrifugal.centrifuge.ConnectionTokenGetter! getTokenGetter();
+    method public String getVersion();
+    method public void setData(byte[]!);
+    method public void setDns(io.github.centrifugal.centrifuge.Dns!);
+    method public void setHeaders(Map<String,String>);
+    method public void setMaxReconnectDelay(int);
+    method public void setMaxServerPingDelay(int);
+    method public void setMinReconnectDelay(int);
+    method public void setName(String);
+    method public void setProxy(Proxy);
+    method public void setProxyCredentials(String, String);
+    method public void setTimeout(int);
+    method public void setToken(String);
+    method public void setTokenGetter(io.github.centrifugal.centrifuge.ConnectionTokenGetter!);
+    method public void setVersion(String);
+  }
+
+  public class PresenceResult {
+    ctor public PresenceResult(Map<String,ClientInfo>);
+    method public Map<String,ClientInfo> getClients();
+  }
+
+  public class PresenceStatsResult {
+    ctor public PresenceStatsResult();
+    method public Integer getNumClients();
+    method public Integer getNumUsers();
+  }
+
+  public class Publication {
+    ctor public Publication();
+    method public byte[]! getData();
+    method public long getOffset();
+  }
+
+  public class PublicationEvent {
+    ctor public PublicationEvent();
+    method public byte[]! getData();
+    method public io.github.centrifugal.centrifuge.ClientInfo! getInfo();
+    method public long getOffset();
+    method public Map<String,String> getTags();
+    method public void setTags(Map<String,String>);
+  }
+
+  public class PublishResult {
+    ctor public PublishResult();
+  }
+
+  public class RPCResult {
+    ctor public RPCResult();
+    method public byte[]! getData();
+    method public io.github.centrifugal.centrifuge.ReplyError! getError();
+    method public void setData(byte[]!);
+    method public void setError(io.github.centrifugal.centrifuge.ReplyError!);
+  }
+
+  public class RefreshError {
+    method public Throwable getError();
+  }
+
+  public class ReplyError {
+    ctor public ReplyError(int, String, boolean);
+    method public int getCode();
+    method public String getMessage();
+    method public boolean isTemporary();
+    method public void setCode(int);
+    method public void setMessage(String);
+    method public void setTemporary(boolean);
+  }
+
+  public interface ResultCallback<T> {
+    method public void onDone(Throwable, T!);
+  }
+
+  public class ServerJoinEvent {
+    method public String getChannel();
+    method public io.github.centrifugal.centrifuge.ClientInfo! getInfo();
+  }
+
+  public class ServerLeaveEvent {
+    method public String getChannel();
+    method public io.github.centrifugal.centrifuge.ClientInfo! getInfo();
+  }
+
+  public class ServerPublicationEvent {
+    ctor public ServerPublicationEvent();
+    method public String getChannel();
+    method public byte[]! getData();
+    method public io.github.centrifugal.centrifuge.ClientInfo! getInfo();
+    method public long getOffset();
+    method public Map<String,String> getTags();
+    method public void setTags(Map<String,String>);
+  }
+
+  public class ServerSubscribedEvent {
+    method public String getChannel();
+    method public byte[]! getData();
+    method public Boolean getPositioned();
+    method public Boolean getRecoverable();
+    method public Boolean getRecovered();
+    method public io.github.centrifugal.centrifuge.StreamPosition! getStreamPosition();
+    method public Boolean wasRecovering();
+  }
+
+  public class ServerSubscribingEvent {
+    method public String getChannel();
+  }
+
+  public class ServerUnsubscribedEvent {
+    method public String getChannel();
+  }
+
+  public class StreamPosition {
+    ctor public StreamPosition();
+    ctor public StreamPosition(long, String);
+  }
+
+  public class SubscribedEvent {
+    method public byte[]! getData();
+    method public Boolean getPositioned();
+    method public Boolean getRecoverable();
+    method public Boolean getRecovered();
+    method public io.github.centrifugal.centrifuge.StreamPosition! getStreamPosition();
+    method public Boolean wasRecovering();
+  }
+
+  public class SubscribingEvent {
+    ctor public SubscribingEvent(int, String);
+    method public int getCode();
+    method public String getReason();
+  }
+
+  public class Subscription {
+    method public String getChannel();
+    method public io.github.centrifugal.centrifuge.SubscriptionState! getState();
+    method public void history(io.github.centrifugal.centrifuge.HistoryOptions!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.HistoryResult!>!);
+    method public void presence(io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceResult!>!);
+    method public void presenceStats(io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceStatsResult!>!);
+    method public void publish(byte[]!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PublishResult!>!);
+    method public void subscribe();
+    method public void unsubscribe();
+  }
+
+  public class SubscriptionErrorEvent {
+    method public Throwable getError();
+  }
+
+  public abstract class SubscriptionEventListener {
+    ctor public SubscriptionEventListener();
+    method public void onError(io.github.centrifugal.centrifuge.Subscription!, io.github.centrifugal.centrifuge.SubscriptionErrorEvent!);
+    method public void onJoin(io.github.centrifugal.centrifuge.Subscription!, io.github.centrifugal.centrifuge.JoinEvent!);
+    method public void onLeave(io.github.centrifugal.centrifuge.Subscription!, io.github.centrifugal.centrifuge.LeaveEvent!);
+    method public void onPublication(io.github.centrifugal.centrifuge.Subscription!, io.github.centrifugal.centrifuge.PublicationEvent!);
+    method public void onSubscribed(io.github.centrifugal.centrifuge.Subscription!, io.github.centrifugal.centrifuge.SubscribedEvent!);
+    method public void onSubscribing(io.github.centrifugal.centrifuge.Subscription!, io.github.centrifugal.centrifuge.SubscribingEvent!);
+    method public void onUnsubscribed(io.github.centrifugal.centrifuge.Subscription!, io.github.centrifugal.centrifuge.UnsubscribedEvent!);
+  }
+
+  public class SubscriptionOptions {
+    ctor public SubscriptionOptions();
+    method public byte[]! getData();
+    method public int getMaxResubscribeDelay();
+    method public int getMinResubscribeDelay();
+    method public String getToken();
+    method public io.github.centrifugal.centrifuge.SubscriptionTokenGetter! getTokenGetter();
+    method public boolean isJoinLeave();
+    method public boolean isPositioned();
+    method public boolean isRecoverable();
+    method public void setData(byte[]!);
+    method public void setJoinLeave(boolean);
+    method public void setMaxResubscribeDelay(int);
+    method public void setMinResubscribeDelay(int);
+    method public void setPositioned(boolean);
+    method public void setRecoverable(boolean);
+    method public void setToken(String);
+    method public void setTokenGetter(io.github.centrifugal.centrifuge.SubscriptionTokenGetter!);
+    field public io.github.centrifugal.centrifuge.SubscriptionTokenGetter! tokenGetter;
+  }
+
+  public class SubscriptionRefreshError {
+    method public Throwable getError();
+  }
+
+  public enum SubscriptionState {
+    enum_constant public static final io.github.centrifugal.centrifuge.SubscriptionState SUBSCRIBED;
+    enum_constant public static final io.github.centrifugal.centrifuge.SubscriptionState SUBSCRIBING;
+    enum_constant public static final io.github.centrifugal.centrifuge.SubscriptionState UNSUBSCRIBED;
+  }
+
+  public class SubscriptionStateError {
+    method public io.github.centrifugal.centrifuge.SubscriptionState! getState();
+  }
+
+  public class SubscriptionSubscribeError {
+    method public Throwable getError();
+  }
+
+  public class SubscriptionTokenError {
+    method public Throwable getError();
+  }
+
+  public class SubscriptionTokenEvent {
+    ctor public SubscriptionTokenEvent(String);
+    method public String getChannel();
+  }
+
+  public abstract class SubscriptionTokenGetter {
+    ctor public SubscriptionTokenGetter();
+    method public void getSubscriptionToken(io.github.centrifugal.centrifuge.SubscriptionTokenEvent!, io.github.centrifugal.centrifuge.TokenCallback!);
+  }
+
+  public interface TokenCallback {
+    method public void Done(Throwable, String);
+  }
+
+  public class TokenError {
+    method public Throwable getError();
+  }
+
+  public class UnsubscribedEvent {
+    ctor public UnsubscribedEvent(int, String);
+    method public int getCode();
+    method public String getReason();
+  }
+
+}
+
