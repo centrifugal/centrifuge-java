@@ -1,3 +1,14 @@
+0.2.4
+=====
+
+* Add ability to set custom DNS resolver for connecting to server [#40](https://github.com/centrifugal/centrifuge-java/pull/40)
+
+Also, several internal improvements (thanks to [@ntoskrnl](https://github.com/ntoskrnl)):
+
+* Use protobuf gradle plugin to generate Protocol.java [#41](https://github.com/centrifugal/centrifuge-java/pull/41)
+* Refactor publishing to Maven Central [#43](https://github.com/centrifugal/centrifuge-java/pull/43)
+* GitHub Actions for CI/CD: test and release [#45](https://github.com/centrifugal/centrifuge-java/pull/45)
+
 0.2.3
 =====
 
