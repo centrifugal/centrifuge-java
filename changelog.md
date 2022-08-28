@@ -1,3 +1,9 @@
+0.2.5
+=====
+
+* Include consumer proguard rules [#47](https://github.com/centrifugal/centrifuge-java/pull/47) - this should provide ProGuard rules automatically when using `centrifuge-java` thus users of the library should not add rules manually in the application.
+* API compatibility check on CI [#46](https://github.com/centrifugal/centrifuge-java/pull/46)
+
 0.2.4
 =====
 
