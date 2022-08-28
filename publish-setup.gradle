@@ -4,7 +4,7 @@ allprojects {
         project.version = "0.2.4"
 
         mavenPublishing {
-            publishToMavenCentral("S01")
+            publishToMavenCentral()
 
             // Signing will be applied to non-snapshot builds.
             // Uses credentials as described above, supports both regular and in memory signing.
