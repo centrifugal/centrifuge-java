@@ -361,7 +361,7 @@ public class Client {
         if (this.refreshRequired || (this.token == null && this.opts.getTokenGetter() != null)) {
             ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
             if (this.opts.getTokenGetter() == null) {
-                Client.this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(new Exception("tokenGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter"))));
+                this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(new Exception("tokenGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter"))));
                 this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
                 return;
             }
