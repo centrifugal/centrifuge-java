@@ -278,6 +278,7 @@ public class Client {
                     } catch (Exception e) {
                         // Should never happen.
                         e.printStackTrace();
+                        Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
                         Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (open)", false);
                     }
                 });
@@ -299,6 +300,7 @@ public class Client {
                     } catch (IOException e) {
                         // Should never happen. Corrupted server protocol data?
                         e.printStackTrace();
+                        Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
                         Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
                     }
                 });
