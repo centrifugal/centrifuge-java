@@ -303,15 +303,18 @@ public class Client {
                             // Should never happen. Corrupted server protocol data?
                             e.printStackTrace();
                             Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
-                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (proto)", false);
                             break;
                         }
                         try {
                             Client.this.processReply(reply);
                         } catch (Exception e) {
-                            // Should never happen. Most probably indicates an unexpected exception coming from user-level code.
+                            // Should never happen. Most probably indicates an unexpected exception coming from the user-level code.
+                            // Theoretically may indicate a bug of SDK also – stack trace will help here.
                             e.printStackTrace();
                             Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+                            break;
                         }
                     }
                 });
