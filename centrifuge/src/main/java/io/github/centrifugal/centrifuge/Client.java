@@ -292,16 +292,27 @@ public class Client {
                         return;
                     }
                     InputStream stream = new ByteArrayInputStream(bytes.toByteArray());
-                    try {
-                        while (stream.available() > 0) {
-                            Protocol.Reply reply = Protocol.Reply.parseDelimitedFrom(stream);
-                            Client.this.processReply(reply);
+                    while (true) {
+                        Protocol.Reply reply;
+                        try {
+                            if (stream.available() <= 0) {
+                                break;
+                            }
+                            reply = Protocol.Reply.parseDelimitedFrom(stream);
+                        } catch (IOException e) {
+                            // Should never happen. Corrupted server protocol data?
+                            e.printStackTrace();
+                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+                            break;
                         }
-                    } catch (IOException e) {
-                        // Should never happen. Corrupted server protocol data?
-                        e.printStackTrace();
-                        Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
-                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+                        try {
+                            Client.this.processReply(reply);
+                        } catch (Exception e) {
+                            // Should never happen. Most probably indicates an unexpected exception coming from user-level code.
+                            e.printStackTrace();
+                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                        }
                     }
                 });
             }
