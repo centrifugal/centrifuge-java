@@ -1,3 +1,9 @@
+0.2.6
+=====
+
+* Fix `unsubscribe` API – it used legacy format of the command sent to the server
+* Diffirentiate `bad protocol` disconnects for better understanding where those came from. See [#50](https://github.com/centrifugal/centrifuge-java/pull/50)
+
 0.2.5
 =====
 
