@@ -278,7 +278,8 @@ public class Client {
                     } catch (Exception e) {
                         // Should never happen.
                         e.printStackTrace();
-                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol", false);
+                        Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (open)", false);
                     }
                 });
             }
@@ -287,12 +288,34 @@ public class Client {
             public void onMessage(WebSocket webSocket, ByteString bytes) {
                 super.onMessage(webSocket, bytes);
                 Client.this.executor.submit(() -> {
-                    try {
-                        Client.this.handleConnectionMessage(bytes.toByteArray());
-                    } catch (Exception e) {
-                        // Should never happen.
-                        e.printStackTrace();
-                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol", false);
+                    if (Client.this.getState() != ClientState.CONNECTING && Client.this.getState() != ClientState.CONNECTED) {
+                        return;
+                    }
+                    InputStream stream = new ByteArrayInputStream(bytes.toByteArray());
+                    while (true) {
+                        Protocol.Reply reply;
+                        try {
+                            if (stream.available() <= 0) {
+                                break;
+                            }
+                            reply = Protocol.Reply.parseDelimitedFrom(stream);
+                        } catch (IOException e) {
+                            // Should never happen. Corrupted server protocol data?
+                            e.printStackTrace();
+                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (proto)", false);
+                            break;
+                        }
+                        try {
+                            Client.this.processReply(reply);
+                        } catch (Exception e) {
+                            // Should never happen. Most probably indicates an unexpected exception coming from the user-level code.
+                            // Theoretically may indicate a bug of SDK also – stack trace will help here.
+                            e.printStackTrace();
+                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+                            break;
+                        }
                     }
                 });
             }
@@ -347,14 +370,16 @@ public class Client {
         });
     }
 
-    private void handleConnectionOpen() throws Exception {
+    private void handleConnectionOpen() {
         if (this.getState() != ClientState.CONNECTING) {
             return;
         }
         if (this.refreshRequired || (this.token == null && this.opts.getTokenGetter() != null)) {
             ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
             if (this.opts.getTokenGetter() == null) {
-                throw new Exception("tokenGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter");
+                this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(new Exception("tokenGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter"))));
+                this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
+                return;
             }
             this.opts.getTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTING) {
@@ -375,23 +400,6 @@ public class Client {
             }));
         } else {
             this.sendConnect();
-        }
-    }
-
-    private void handleConnectionMessage(byte[] bytes) {
-        if (this.getState() != ClientState.CONNECTING && this.getState() != ClientState.CONNECTED) {
-            return;
-        }
-        InputStream stream = new ByteArrayInputStream(bytes);
-        try {
-            while (stream.available() > 0) {
-                Protocol.Reply reply = Protocol.Reply.parseDelimitedFrom(stream);
-                this.processReply(reply);
-            }
-        } catch (IOException e) {
-            // Should never happen. Corrupted server protocol data?
-            e.printStackTrace();
-            this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol", false);
         }
     }
 
@@ -470,8 +478,7 @@ public class Client {
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
-                .setMethod(Protocol.Command.MethodType.UNSUBSCRIBE)
-                .setParams(req.toByteString())
+                .setUnsubscribe(req)
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
