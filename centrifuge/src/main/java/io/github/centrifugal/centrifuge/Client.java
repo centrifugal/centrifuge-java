@@ -518,6 +518,7 @@ public class Client {
      *
      * @param channel:  to create Subscription for.
      * @param listener: to pass event handler.
+     * @param options: to pass SubscriptionOptions, e.g. token.
      * @return Subscription.
      * @throws DuplicateSubscriptionException if Subscription already exists in internal registry.
      */
