@@ -521,13 +521,13 @@ public class Client {
      * @return Subscription.
      * @throws DuplicateSubscriptionException if Subscription already exists in internal registry.
      */
-    public Subscription newSubscription(String channel, SubscriptionEventListener listener) throws DuplicateSubscriptionException {
+    public Subscription newSubscription(String channel, SubscriptionEventListener listener, SubscriptionOptions options) throws DuplicateSubscriptionException {
         Subscription sub;
         synchronized (this.subs) {
             if (this.subs.get(channel) != null) {
                 throw new DuplicateSubscriptionException();
             }
-            sub = new Subscription(Client.this, channel, listener);
+            sub = new Subscription(Client.this, channel, listener, options);
             this.subs.put(channel, sub);
         }
         return sub;
