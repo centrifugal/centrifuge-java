@@ -514,7 +514,7 @@ public class Client {
     }
 
     /**
-     * Create new subscription to channel with certain SubscriptionEventListener
+     * Create new subscription to channel with SubscriptionOptions and SubscriptionEventListener
      *
      * @param channel:  to create Subscription for.
      * @param options: to pass SubscriptionOptions, e.g. token.
@@ -535,7 +535,8 @@ public class Client {
     }
 
     /**
-     * Create new subscription to channel with certain SubscriptionEventListener
+     * Create new subscription to channel with SubscriptionEventListener, see also
+     * overloaded newSubscription which allows setting SubscriptionOptions
      *
      * @param channel:  to create Subscription for.
      * @param listener: to pass event handler.
