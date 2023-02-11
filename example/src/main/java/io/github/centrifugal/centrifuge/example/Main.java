@@ -27,6 +27,7 @@ import io.github.centrifugal.centrifuge.SubscribingEvent;
 import io.github.centrifugal.centrifuge.PublicationEvent;
 import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
 import io.github.centrifugal.centrifuge.SubscribedEvent;
+import io.github.centrifugal.centrifuge.SubscriptionOptions;
 import io.github.centrifugal.centrifuge.TokenCallback;
 import io.github.centrifugal.centrifuge.UnsubscribedEvent;
 
@@ -150,7 +151,7 @@ public class Main {
 
         Subscription sub;
         try {
-            sub = client.newSubscription("chat:index", subListener);
+            sub = client.newSubscription("chat:index", new SubscriptionOptions(), subListener);
         } catch (DuplicateSubscriptionException e) {
             e.printStackTrace();
             return;

@@ -21,6 +21,7 @@ import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
 import io.github.centrifugal.centrifuge.SubscribedEvent;
 import io.github.centrifugal.centrifuge.Subscription;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
+import io.github.centrifugal.centrifuge.SubscriptionOptions;
 import io.github.centrifugal.centrifuge.UnsubscribedEvent;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -109,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         Subscription sub;
         try {
-            sub = client.newSubscription("chat:index", subListener);
+            sub = client.newSubscription("chat:index", new SubscriptionOptions(), subListener);
         } catch (Exception e) {
             e.printStackTrace();
             return;
