@@ -1038,19 +1038,15 @@ public class Client {
      * @param data:   a custom payload for RPC call.
      * @param cb:     will be called as soon as rpc response received or error happened.
      */
-    public void rpc(@Nullable String method, byte[] data, ResultCallback<RPCResult> cb) {
+    public void rpc(String method, byte[] data, ResultCallback<RPCResult> cb) {
         this.executor.submit(() -> Client.this.rpcSynchronized(method, data, cb));
     }
 
-    private void rpcSynchronized(@Nullable String method, byte[] data, ResultCallback<RPCResult> cb) {
-        Protocol.RPCRequest.Builder builder = Protocol.RPCRequest.newBuilder()
-                .setData(com.google.protobuf.ByteString.copyFrom(data));
-
-        if (method != null) {
-            builder.setMethod(method);
-        }
-
-        Protocol.RPCRequest req = builder.build();
+    private void rpcSynchronized(String method, byte[] data, ResultCallback<RPCResult> cb) {
+        Protocol.RPCRequest req = Protocol.RPCRequest.newBuilder()
+                .setData(com.google.protobuf.ByteString.copyFrom(data))
+                .setMethod(method)
+                .build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
