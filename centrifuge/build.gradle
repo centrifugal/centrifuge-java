@@ -26,6 +26,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
     implementation 'com.google.protobuf:protobuf-javalite:3.20.1'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     testImplementation 'junit:junit:4.13.2'
 }

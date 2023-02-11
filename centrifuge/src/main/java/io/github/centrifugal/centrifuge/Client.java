@@ -17,6 +17,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
 
@@ -390,7 +392,7 @@ public class Client {
                     this.ws.close(NORMAL_CLOSURE_STATUS, "");
                     return;
                 }
-                if (token.equals("")) {
+                if (token == null || token.equals("")) {
                     Client.this.failUnauthorized();
                     return;
                 }
@@ -737,7 +739,7 @@ public class Client {
                 );
                 return;
             }
-            if (token.equals("")) {
+            if (token == null || token.equals("")) {
                 this.failUnauthorized();
                 return;
             }
@@ -746,31 +748,22 @@ public class Client {
                 if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
                 }
-                if (error != null) {
-                    Client.this.listener.onError(Client.this, new ErrorEvent(new RefreshError(error)));
-                    if (error instanceof ReplyError) {
-                        ReplyError e;
-                        e = (ReplyError) error;
-                        if (e.isTemporary()) {
-                            Client.this.refreshTask = Client.this.scheduler.schedule(
-                                    Client.this::sendRefresh,
-                                    Client.this.backoff.duration(0, 10000, 20000),
-                                    TimeUnit.MILLISECONDS
-                            );
-                        } else {
-                            Client.this.processDisconnect(e.getCode(), e.getMessage(), false);
-                        }
-                        return;
-                    } else {
+                Client.this.listener.onError(Client.this, new ErrorEvent(new RefreshError(error)));
+                if (error instanceof ReplyError) {
+                    ReplyError e;
+                    e = (ReplyError) error;
+                    if (e.isTemporary()) {
                         Client.this.refreshTask = Client.this.scheduler.schedule(
                                 Client.this::sendRefresh,
                                 Client.this.backoff.duration(0, 10000, 20000),
                                 TimeUnit.MILLISECONDS
                         );
+                    } else {
+                        Client.this.processDisconnect(e.getCode(), e.getMessage(), false);
                     }
                     return;
                 }
-                if (result.getExpires()) {
+                if (result != null && result.getExpires()) {
                     int ttl = result.getTtl();
                     Client.this.refreshTask = Client.this.scheduler.schedule(Client.this::sendRefresh, ttl, TimeUnit.SECONDS);
                 }

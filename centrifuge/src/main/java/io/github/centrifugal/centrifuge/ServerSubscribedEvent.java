@@ -1,7 +1,9 @@
 package io.github.centrifugal.centrifuge;
 
+import javax.annotation.Nullable;
+
 public class ServerSubscribedEvent {
-    ServerSubscribedEvent(String channel, Boolean wasRecovering, Boolean recovered, Boolean positioned, Boolean recoverable, StreamPosition streamPosition, byte[] data) {
+    ServerSubscribedEvent(String channel, Boolean wasRecovering, Boolean recovered, Boolean positioned, Boolean recoverable, @Nullable StreamPosition streamPosition, @Nullable byte[] data) {
         this.channel = channel;
         this.wasRecovering = wasRecovering;
         this.recovered = recovered;
