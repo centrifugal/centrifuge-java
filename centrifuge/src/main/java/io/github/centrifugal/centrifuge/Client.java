@@ -517,12 +517,12 @@ public class Client {
      * Create new subscription to channel with certain SubscriptionEventListener
      *
      * @param channel:  to create Subscription for.
-     * @param listener: to pass event handler.
      * @param options: to pass SubscriptionOptions, e.g. token.
+     * @param listener: to pass event handler.
      * @return Subscription.
      * @throws DuplicateSubscriptionException if Subscription already exists in internal registry.
      */
-    public Subscription newSubscription(String channel, SubscriptionEventListener listener, SubscriptionOptions options) throws DuplicateSubscriptionException {
+    public Subscription newSubscription(String channel, SubscriptionOptions options, SubscriptionEventListener listener) throws DuplicateSubscriptionException {
         Subscription sub;
         synchronized (this.subs) {
             if (this.subs.get(channel) != null) {
