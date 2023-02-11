@@ -535,6 +535,18 @@ public class Client {
     }
 
     /**
+     * Create new subscription to channel with certain SubscriptionEventListener
+     *
+     * @param channel:  to create Subscription for.
+     * @param listener: to pass event handler.
+     * @return Subscription.
+     * @throws DuplicateSubscriptionException if Subscription already exists in internal registry.
+     */
+    public Subscription newSubscription(String channel, SubscriptionEventListener listener) throws DuplicateSubscriptionException {
+        return newSubscription(channel, new SubscriptionOptions(), listener);
+    }
+
+    /**
      * Try to get Subscription from internal client registry. Can return null if Subscription
      * does not exist yet.
      *
