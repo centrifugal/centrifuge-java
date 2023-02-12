@@ -354,7 +354,7 @@ public class Client {
             }
 
             @Override
-            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
                 super.onFailure(webSocket, t, response);
                 try {
                     Client.this.executor.submit(() -> {

@@ -1,5 +1,7 @@
 package io.github.centrifugal.centrifuge;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
  */
 public interface Dns {
 
+    @NotNull
     List<InetAddress> resolve(String host) throws UnknownHostException;
 
 }
