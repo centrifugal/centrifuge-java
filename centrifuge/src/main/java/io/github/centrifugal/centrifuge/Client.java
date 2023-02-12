@@ -748,18 +748,27 @@ public class Client {
                 if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
                 }
-                Client.this.listener.onError(Client.this, new ErrorEvent(new RefreshError(error)));
-                if (error instanceof ReplyError) {
-                    ReplyError e;
-                    e = (ReplyError) error;
-                    if (e.isTemporary()) {
+                if (error != null) {
+                    Client.this.listener.onError(Client.this, new ErrorEvent(new RefreshError(error)));
+                    if (error instanceof ReplyError) {
+                        ReplyError e;
+                        e = (ReplyError) error;
+                        if (e.isTemporary()) {
+                            Client.this.refreshTask = Client.this.scheduler.schedule(
+                                    Client.this::sendRefresh,
+                                    Client.this.backoff.duration(0, 10000, 20000),
+                                    TimeUnit.MILLISECONDS
+                            );
+                        } else {
+                            Client.this.processDisconnect(e.getCode(), e.getMessage(), false);
+                        }
+                        return;
+                    } else {
                         Client.this.refreshTask = Client.this.scheduler.schedule(
                                 Client.this::sendRefresh,
                                 Client.this.backoff.duration(0, 10000, 20000),
                                 TimeUnit.MILLISECONDS
                         );
-                    } else {
-                        Client.this.processDisconnect(e.getCode(), e.getMessage(), false);
                     }
                     return;
                 }
