@@ -17,6 +17,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
 
@@ -352,7 +354,7 @@ public class Client {
             }
 
             @Override
-            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            public void onFailure(WebSocket webSocket, Throwable t, @Nullable Response response) {
                 super.onFailure(webSocket, t, response);
                 try {
                     Client.this.executor.submit(() -> {
@@ -390,7 +392,7 @@ public class Client {
                     this.ws.close(NORMAL_CLOSURE_STATUS, "");
                     return;
                 }
-                if (token.equals("")) {
+                if (token == null || token.equals("")) {
                     Client.this.failUnauthorized();
                     return;
                 }
@@ -737,7 +739,7 @@ public class Client {
                 );
                 return;
             }
-            if (token.equals("")) {
+            if (token == null || token.equals("")) {
                 this.failUnauthorized();
                 return;
             }
@@ -770,7 +772,7 @@ public class Client {
                     }
                     return;
                 }
-                if (result.getExpires()) {
+                if (result != null && result.getExpires()) {
                     int ttl = result.getTtl();
                     Client.this.refreshTask = Client.this.scheduler.schedule(Client.this::sendRefresh, ttl, TimeUnit.SECONDS);
                 }
@@ -1050,14 +1052,10 @@ public class Client {
     }
 
     private void rpcSynchronized(String method, byte[] data, ResultCallback<RPCResult> cb) {
-        Protocol.RPCRequest.Builder builder = Protocol.RPCRequest.newBuilder()
-                .setData(com.google.protobuf.ByteString.copyFrom(data));
-
-        if (method != null) {
-            builder.setMethod(method);
-        }
-
-        Protocol.RPCRequest req = builder.build();
+        Protocol.RPCRequest req = Protocol.RPCRequest.newBuilder()
+                .setData(com.google.protobuf.ByteString.copyFrom(data))
+                .setMethod(method)
+                .build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
