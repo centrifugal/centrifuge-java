@@ -5,6 +5,7 @@ public class UnclassifiedError extends Throwable {
 
     UnclassifiedError(Throwable error) {
         this.error = error;
+        this.initCause(error);
     }
 
     public Throwable getError() {

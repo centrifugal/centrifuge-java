@@ -5,6 +5,7 @@ public class TokenError extends Throwable {
 
     TokenError(Throwable error) {
         this.error = error;
+        this.initCause(error);
     }
 
     public Throwable getError() {

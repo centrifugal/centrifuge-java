@@ -5,6 +5,7 @@ public class RefreshError extends Throwable {
 
     RefreshError(Throwable error) {
         this.error = error;
+        this.initCause(error);
     }
 
     public Throwable getError() {

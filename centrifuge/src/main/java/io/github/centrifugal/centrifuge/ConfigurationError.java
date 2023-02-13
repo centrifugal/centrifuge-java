@@ -5,6 +5,7 @@ public class ConfigurationError extends Throwable {
 
     ConfigurationError(Throwable error) {
         this.error = error;
+        this.initCause(error);
     }
 
     public Throwable getError() {

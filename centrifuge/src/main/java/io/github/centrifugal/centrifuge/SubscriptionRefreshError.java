@@ -5,6 +5,7 @@ public class SubscriptionRefreshError extends Throwable {
 
     SubscriptionRefreshError(Throwable error) {
         this.error = error;
+        this.initCause(error);
     }
 
     public Throwable getError() {

@@ -5,6 +5,7 @@ public class SubscriptionSubscribeError extends Throwable {
 
     SubscriptionSubscribeError(Throwable error) {
         this.error = error;
+        this.initCause(error);
     }
 
     public Throwable getError() {
