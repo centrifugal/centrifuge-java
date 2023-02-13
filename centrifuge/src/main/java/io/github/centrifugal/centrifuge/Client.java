@@ -226,7 +226,7 @@ public class Client {
             }
         }
 
-        this.ws.cancel();
+        this.ws.close(NORMAL_CLOSURE_STATUS, null);
     }
 
     private void _connect() {
