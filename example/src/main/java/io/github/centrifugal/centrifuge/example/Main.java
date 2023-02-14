@@ -36,9 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
