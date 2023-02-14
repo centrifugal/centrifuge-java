@@ -110,7 +110,7 @@ public class Subscription {
                 if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
                     return;
                 }
-                Throwable errorOrNull = error != null ? error : (result == null ? new NullPointerException() : null);
+                Exception errorOrNull = error != null ? (Exception) error : (result == null ? new NullPointerException() : null);
                 if (errorOrNull != null) {
                     Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionRefreshError(errorOrNull)));
                     if (error instanceof ReplyError) {

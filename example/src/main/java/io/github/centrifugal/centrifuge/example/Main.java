@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -58,7 +61,7 @@ public class Main {
             }
             @Override
             public void onError(Client client, ErrorEvent event) {
-                System.out.printf("connection error: %s%n", event.getError().toString());
+                System.out.printf("connection error: %s%n", event.toString());
             }
             @Override
             public void onMessage(Client client, MessageEvent event) {
@@ -116,7 +119,7 @@ public class Main {
                 String data="{\"input\": \"I just subscribed to channel\"}";
                 sub.publish(data.getBytes(), (err, res) -> {
                     if (err != null) {
-                        System.out.println("error publish: " + err.getMessage());
+                        System.out.println("error publish: " + err);
                         return;
                     }
                     System.out.println("successfully published");
@@ -132,7 +135,7 @@ public class Main {
             }
             @Override
             public void onError(Subscription sub, SubscriptionErrorEvent event) {
-                System.out.println("subscription error " + sub.getChannel() + " " + event.getError().toString());
+                System.out.println("subscription error " + sub.getChannel() + " " + event.toString());
             }
             @Override
             public void onPublication(Subscription sub, PublicationEvent event) {

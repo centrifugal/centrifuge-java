@@ -1,6 +1,6 @@
 package io.github.centrifugal.centrifuge;
 
-public class ReplyError extends Throwable {
+public class ReplyError extends Exception {
     private int code;
 
     public ReplyError(int code, String message, boolean temporary) {

@@ -358,7 +358,7 @@ public class Client {
                 super.onFailure(webSocket, t, response);
                 try {
                     Client.this.executor.submit(() -> {
-                        Client.this.handleConnectionError(t);
+                        Client.this.handleConnectionError((Exception) t);
                         Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
                         if (Client.this.getState() == ClientState.CONNECTING) {
                             // We need to schedule reconnect from here, since onClosed won't be called
@@ -749,7 +749,7 @@ public class Client {
                     return;
                 }
                 if (error != null) {
-                    Client.this.listener.onError(Client.this, new ErrorEvent(new RefreshError(error)));
+                    Client.this.listener.onError(Client.this, new ErrorEvent(new RefreshError((Exception) error)));
                     if (error instanceof ReplyError) {
                         ReplyError e;
                         e = (ReplyError) error;
