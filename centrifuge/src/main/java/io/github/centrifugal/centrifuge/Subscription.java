@@ -101,7 +101,7 @@ public class Subscription {
                 );
                 return;
             }
-            if (token == null || token.equals("")) {
+            if (token.equals("")) {
                 this.failUnauthorized(true);
                 return;
             }
@@ -110,9 +110,8 @@ public class Subscription {
                 if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
                     return;
                 }
-                Throwable errorOrNull = error != null ? error : (result == null ? new NullPointerException() : null);
-                if (errorOrNull != null) {
-                    Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionRefreshError(errorOrNull)));
+                if (error != null) {
+                    Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionRefreshError(error)));
                     if (error instanceof ReplyError) {
                         ReplyError e;
                         e = (ReplyError) error;
@@ -274,7 +273,7 @@ public class Subscription {
                     Subscription.this.scheduleResubscribe();
                     return;
                 }
-                if (token == null || token.equals("")) {
+                if (token.equals("")) {
                     Subscription.this.failUnauthorized(false);
                     return;
                 }
