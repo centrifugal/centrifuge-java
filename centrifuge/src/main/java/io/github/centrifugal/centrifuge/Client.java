@@ -390,7 +390,7 @@ public class Client {
                     this.ws.close(NORMAL_CLOSURE_STATUS, "");
                     return;
                 }
-                if (token.equals("")) {
+                if (token == null || token.equals("")) {
                     Client.this.failUnauthorized();
                     return;
                 }
@@ -737,7 +737,7 @@ public class Client {
                 );
                 return;
             }
-            if (token.equals("")) {
+            if (token == null || token.equals("")) {
                 this.failUnauthorized();
                 return;
             }
@@ -1050,14 +1050,10 @@ public class Client {
     }
 
     private void rpcSynchronized(String method, byte[] data, ResultCallback<RPCResult> cb) {
-        Protocol.RPCRequest.Builder builder = Protocol.RPCRequest.newBuilder()
-                .setData(com.google.protobuf.ByteString.copyFrom(data));
-
-        if (method != null) {
-            builder.setMethod(method);
-        }
-
-        Protocol.RPCRequest req = builder.build();
+        Protocol.RPCRequest req = Protocol.RPCRequest.newBuilder()
+                .setData(com.google.protobuf.ByteString.copyFrom(data))
+                .setMethod(method)
+                .build();
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())

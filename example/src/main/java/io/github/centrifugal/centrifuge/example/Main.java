@@ -166,7 +166,7 @@ public class Main {
         // publication - see publishing over sub object below.
         client.publish("chat:index", data.getBytes(), (err, res) -> {
             if (err != null) {
-                System.out.println("error publish: " + err.toString());
+                System.out.println("error publish: " + err);
                 return;
             }
             System.out.println("successfully published");
@@ -175,7 +175,7 @@ public class Main {
         // Publish via subscription (will wait for subscribe success before publishing).
         sub.publish(data.getBytes(), (err, res) -> {
             if (err != null) {
-                System.out.println("error publish: " + err.toString());
+                System.out.println("error publish: " + err);
                 return;
             }
             System.out.println("successfully published");
@@ -183,7 +183,7 @@ public class Main {
 
         sub.presenceStats((err, res) -> {
             if (err != null) {
-                System.out.println("error presence stats: " + err.toString());
+                System.out.println("error presence stats: " + err);
                 return;
             }
             System.out.println("Num clients connected: " + res.getNumClients());
@@ -191,7 +191,7 @@ public class Main {
 
         sub.history(new HistoryOptions.Builder().withLimit(-1).build(), (err, res) -> {
             if (err != null) {
-                System.out.println("error history: " + err.toString());
+                System.out.println("error history: " + err);
                 return;
             }
             System.out.println("Num history publication: " + res.getPublications().size());
