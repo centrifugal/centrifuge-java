@@ -11,5 +11,5 @@ public class PresenceResult {
         return clients;
     }
 
-    private Map<String, ClientInfo> clients;
+    private final Map<String, ClientInfo> clients;
 }
