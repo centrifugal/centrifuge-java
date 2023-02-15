@@ -2,6 +2,7 @@ package io.github.centrifugal.centrifuge.demo;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,13 +27,16 @@ import io.github.centrifugal.centrifuge.UnsubscribedEvent;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class MainActivity extends AppCompatActivity {
 
     private Client client;
     private boolean activityPaused;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView tv = findViewById(R.id.text);
