@@ -1,7 +1,7 @@
 allprojects {
     plugins.withId("com.vanniktech.maven.publish.base") {
         project.group = "io.github.centrifugal"
-        project.version = "0.2.6"
+        project.version = "0.2.7"
 
         mavenPublishing {
             publishToMavenCentral()

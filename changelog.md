@@ -1,3 +1,9 @@
+0.2.7
+=====
+
+* Our errors inherit from `Throwable`, and now we call `super()` in their constructors. This allows propagating exception `cause`, as the result the whole chain of exceptions is visible in error handler. [#58](https://github.com/centrifugal/centrifuge-java/pull/58)
+* Disconnect gracefully from WebSocket, instead of calling `ws.cancel()`. [#56](https://github.com/centrifugal/centrifuge-java/pull/56)
+
 0.2.6
 =====
 
