@@ -1,5 +1,7 @@
 package io.github.centrifugal.centrifuge;
 
+import javax.annotation.Nullable;
+
 public class RefreshError extends Throwable {
     private final Throwable error;
 
@@ -8,7 +10,7 @@ public class RefreshError extends Throwable {
         this.error = error;
     }
 
-    public Throwable getError() {
+    public @Nullable Throwable getError() {
         return error;
     }
 }
