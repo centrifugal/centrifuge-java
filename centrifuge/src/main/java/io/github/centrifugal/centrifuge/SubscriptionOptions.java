@@ -15,6 +15,16 @@ public class SubscriptionOptions {
     /* Connection token. This is a token you have to receive from your application backend. */
     private String token = "";
 
+    public SubscriptionTokenGetter getTokenGetter() {
+        return tokenGetter;
+    }
+
+    public void setTokenGetter(SubscriptionTokenGetter tokenGetter) {
+        this.tokenGetter = tokenGetter;
+    }
+
+    public SubscriptionTokenGetter tokenGetter;
+
     public byte[] getData() {
         return data;
     }
@@ -75,14 +85,4 @@ public class SubscriptionOptions {
     }
 
     private boolean joinLeave = false;
-
-    public SubscriptionTokenGetter getTokenGetter() {
-        return tokenGetter;
-    }
-
-    public void setTokenGetter(SubscriptionTokenGetter tokenGetter) {
-        this.tokenGetter = tokenGetter;
-    }
-
-    public SubscriptionTokenGetter tokenGetter;
 }
