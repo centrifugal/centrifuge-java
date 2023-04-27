@@ -937,6 +937,14 @@ public class Client {
         this.listener.onMessage(this, event);
     }
 
+    private void handleDisconnect(Protocol.Disconnect disconnect) {
+        int code = disconnect.getCode();
+        boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
+        if (Client.this.getState() != ClientState.DISCONNECTED) {
+            Client.this.processDisconnect(code, disconnect.getReason(), reconnect);
+        }
+    }
+
     private void handlePush(Protocol.Push push) {
         String channel = push.getChannel();
         if (push.hasPub()) {
@@ -951,6 +959,8 @@ public class Client {
             this.handleUnsubscribe(channel, push.getUnsubscribe());
         } else if (push.hasMessage()) {
             this.handleMessage(push.getMessage());
+        } else if (push.hasDisconnect()) {
+            this.handleDisconnect(push.getDisconnect());
         }
     }
 
