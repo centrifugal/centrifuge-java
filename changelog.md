@@ -1,3 +1,8 @@
+0.2.8
+=====
+
+* Handle disconnect push. This is not used at the moment - but is an enabler for the future development.
+
 0.2.7
 =====
 
