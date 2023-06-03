@@ -143,18 +143,17 @@ public class Client {
      * Disconnect from server and do not reconnect.
      */
     public void disconnect() {
-        this.disconnect(DisconnectOptions.builder().build());
+        this.executor.submit(() -> {
+            Client.this.processDisconnect(DISCONNECTED_DISCONNECT_CALLED, "disconnect called", false);
+        });
     }
 
     /**
-     * Disconnect from server and do not reconnect.
+     * setToken allows updating connection token.
      */
-    public void disconnect(final DisconnectOptions opts) {
+    public void setToken(String token) {
         this.executor.submit(() -> {
-            if (opts.isResetConnectionToken()) {
-                Client.this.token = "";
-            }
-            Client.this.processDisconnect(DISCONNECTED_DISCONNECT_CALLED, "disconnect called", false);
+            Client.this.token = token;
         });
     }
 
