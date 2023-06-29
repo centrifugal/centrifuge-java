@@ -93,6 +93,10 @@ public class Subscription {
                 return;
             }
             if (err != null) {
+                if (err instanceof UnauthorizedException) {
+                    Subscription.this.failUnauthorized(true);
+                    return;
+                }
                 Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionTokenError(err)));
                 Subscription.this.refreshTask = Subscription.this.client.getScheduler().schedule(
                         Subscription.this::sendRefresh,
@@ -270,6 +274,10 @@ public class Subscription {
                     return;
                 }
                 if (err != null) {
+                    if (err instanceof UnauthorizedException) {
+                        Subscription.this.failUnauthorized(true);
+                        return;
+                    }
                     Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionTokenError(err)));
                     Subscription.this.scheduleResubscribe();
                     return;

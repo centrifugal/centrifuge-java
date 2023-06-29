@@ -143,7 +143,18 @@ public class Client {
      * Disconnect from server and do not reconnect.
      */
     public void disconnect() {
-        this.executor.submit(() -> Client.this.processDisconnect(DISCONNECTED_DISCONNECT_CALLED, "disconnect called", false));
+        this.executor.submit(() -> {
+            Client.this.processDisconnect(DISCONNECTED_DISCONNECT_CALLED, "disconnect called", false);
+        });
+    }
+
+    /**
+     * setToken allows updating connection token.
+     */
+    public void setToken(String token) {
+        this.executor.submit(() -> {
+            Client.this.token = token;
+        });
     }
 
     /**
@@ -374,7 +385,7 @@ public class Client {
         if (this.getState() != ClientState.CONNECTING) {
             return;
         }
-        if (this.refreshRequired || (this.token == null && this.opts.getTokenGetter() != null)) {
+        if (this.refreshRequired || (this.token.equals("") && this.opts.getTokenGetter() != null)) {
             ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
             if (this.opts.getTokenGetter() == null) {
                 this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(new Exception("tokenGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter"))));
@@ -386,12 +397,16 @@ public class Client {
                     return;
                 }
                 if (err != null) {
+                    if (err instanceof UnauthorizedException) {
+                        Client.this.failUnauthorized();
+                        return;
+                    }
                     Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
                     this.ws.close(NORMAL_CLOSURE_STATUS, "");
                     return;
                 }
-                if (token == null || token.equals("")) {
-                    Client.this.failUnauthorized();
+                if (token == null) {
+                    Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (token)", false);
                     return;
                 }
                 Client.this.token = token;
@@ -729,6 +744,10 @@ public class Client {
                 return;
             }
             if (err != null) {
+                if (err instanceof UnauthorizedException) {
+                    Client.this.failUnauthorized();
+                    return;
+                }
                 Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
                 Client.this.refreshTask = Client.this.scheduler.schedule(
                         Client.this::sendRefresh,
