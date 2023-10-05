@@ -3,6 +3,8 @@ package io.github.centrifugal.centrifuge;
 import java.net.Proxy;
 import java.util.Map;
 
+import okhttp3.OkHttpClient;
+
 /**
  * Configuration for a {@link Client} instance.
  */
@@ -164,7 +166,10 @@ public class Options {
 
     /**
      * Set proxy credentials.
+     *
+     * @deprecated set up proxy in OkHttpClient and pass it to {@link #setOkHttpClient}
      */
+    @Deprecated
     public void setProxyCredentials(String login, String password) {
         this.proxyLogin = login;
         this.proxyPassword = password;
@@ -183,11 +188,27 @@ public class Options {
     }
 
     /**
-     * Set custom DNS resolver..
+     * Set custom DNS resolver.
+     *
+     * @deprecated set DNS in OkHttpClient and pass it to {@link #setOkHttpClient}
      */
+    @Deprecated
     public void setDns(Dns dns) {
         this.dns = dns;
     }
 
     private Dns dns;
+
+    public OkHttpClient getOkHttpClient() {
+        return this.okHttpClient;
+    }
+
+    /**
+     * Set OkHttpClient. Can be used to configure custom network settings (DNS, proxy etc.).
+     */
+    public void setOkHttpClient(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
+    }
+
+    private OkHttpClient okHttpClient;
 }

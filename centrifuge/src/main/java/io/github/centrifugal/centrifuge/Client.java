@@ -258,7 +258,12 @@ public class Client {
             this.ws.cancel();
         }
 
-        OkHttpClient.Builder okHttpBuilder = new OkHttpClient.Builder();
+        OkHttpClient.Builder okHttpBuilder;
+        if (opts.getOkHttpClient() != null) {
+            okHttpBuilder = opts.getOkHttpClient().newBuilder();
+        } else {
+            okHttpBuilder = new OkHttpClient.Builder()
+        }
 
         Dns dns = opts.getDns();
         if (dns != null) {
@@ -532,7 +537,7 @@ public class Client {
      * Create new subscription to channel with SubscriptionOptions and SubscriptionEventListener
      *
      * @param channel:  to create Subscription for.
-     * @param options: to pass SubscriptionOptions, e.g. token.
+     * @param options:  to pass SubscriptionOptions, e.g. token.
      * @param listener: to pass event handler.
      * @return Subscription.
      * @throws DuplicateSubscriptionException if Subscription already exists in internal registry.

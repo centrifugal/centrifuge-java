@@ -23,7 +23,7 @@ publishing {
 }
 
 dependencies {
-    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    api 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'com.google.protobuf:protobuf-javalite:3.21.12'
     implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
 
