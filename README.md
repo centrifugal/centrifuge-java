@@ -14,6 +14,14 @@ The features implemented by this SDK can be found in [SDK feature matrix](https:
 
 Library available in Maven: https://search.maven.org/artifact/io.github.centrifugal/centrifuge-java
 
+This library depends on `streamsupport-minifuture`. In case your project has a dependency to `streamsupport-cfuture` and you have a class name conflicts, you can exclude minifuture safely. Example for Gradle: 
+
+```
+implementation('io.github.centrifugal:centrifuge-java:{version}') {
+    exclude group: 'net.sourceforge.streamsupport', module: 'streamsupport-minifuture'
+}
+```
+
 ## Javadoc online
 
 http://www.javadoc.io/doc/io.github.centrifugal/centrifuge-java
