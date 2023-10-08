@@ -283,52 +283,58 @@ public class Client {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                 super.onOpen(webSocket, response);
-                Client.this.executor.submit(() -> {
-                    try {
-                        Client.this.handleConnectionOpen();
-                    } catch (Exception e) {
-                        // Should never happen.
-                        e.printStackTrace();
-                        Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
-                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (open)", false);
-                    }
-                });
+                try {
+                    Client.this.executor.submit(() -> {
+                        try {
+                            Client.this.handleConnectionOpen();
+                        } catch (Exception e) {
+                            // Should never happen.
+                            e.printStackTrace();
+                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (open)", false);
+                        }
+                    });
+                } catch (RejectedExecutionException ignored) {
+                }
             }
 
             @Override
             public void onMessage(WebSocket webSocket, ByteString bytes) {
                 super.onMessage(webSocket, bytes);
-                Client.this.executor.submit(() -> {
-                    if (Client.this.getState() != ClientState.CONNECTING && Client.this.getState() != ClientState.CONNECTED) {
-                        return;
-                    }
-                    InputStream stream = new ByteArrayInputStream(bytes.toByteArray());
-                    while (true) {
-                        Protocol.Reply reply;
-                        try {
-                            if (stream.available() <= 0) {
+                try {
+                    Client.this.executor.submit(() -> {
+                        if (Client.this.getState() != ClientState.CONNECTING && Client.this.getState() != ClientState.CONNECTED) {
+                            return;
+                        }
+                        InputStream stream = new ByteArrayInputStream(bytes.toByteArray());
+                        while (true) {
+                            Protocol.Reply reply;
+                            try {
+                                if (stream.available() <= 0) {
+                                    break;
+                                }
+                                reply = Protocol.Reply.parseDelimitedFrom(stream);
+                            } catch (IOException e) {
+                                // Should never happen. Corrupted server protocol data?
+                                e.printStackTrace();
+                                Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                                Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (proto)", false);
                                 break;
                             }
-                            reply = Protocol.Reply.parseDelimitedFrom(stream);
-                        } catch (IOException e) {
-                            // Should never happen. Corrupted server protocol data?
-                            e.printStackTrace();
-                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
-                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (proto)", false);
-                            break;
+                            try {
+                                Client.this.processReply(reply);
+                            } catch (Exception e) {
+                                // Should never happen. Most probably indicates an unexpected exception coming from the user-level code.
+                                // Theoretically may indicate a bug of SDK also – stack trace will help here.
+                                e.printStackTrace();
+                                Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                                Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+                                break;
+                            }
                         }
-                        try {
-                            Client.this.processReply(reply);
-                        } catch (Exception e) {
-                            // Should never happen. Most probably indicates an unexpected exception coming from the user-level code.
-                            // Theoretically may indicate a bug of SDK also – stack trace will help here.
-                            e.printStackTrace();
-                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
-                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
-                            break;
-                        }
-                    }
-                });
+                    });
+                } catch (RejectedExecutionException ignored) {
+                }
             }
 
             @Override
@@ -340,26 +346,29 @@ public class Client {
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 super.onClosed(webSocket, code, reason);
-                Client.this.executor.submit(() -> {
-                    boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
-                    int disconnectCode = code;
-                    String disconnectReason = reason;
-                    if (disconnectCode < 3000) {
-                        if (disconnectCode == MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS) {
-                            disconnectCode = DISCONNECTED_MESSAGE_SIZE_LIMIT;
-                            disconnectReason = "message size limit";
-                        } else {
-                            disconnectCode = CONNECTING_TRANSPORT_CLOSED;
-                            disconnectReason = "transport closed";
+                try {
+                    Client.this.executor.submit(() -> {
+                        boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
+                        int disconnectCode = code;
+                        String disconnectReason = reason;
+                        if (disconnectCode < 3000) {
+                            if (disconnectCode == MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS) {
+                                disconnectCode = DISCONNECTED_MESSAGE_SIZE_LIMIT;
+                                disconnectReason = "message size limit";
+                            } else {
+                                disconnectCode = CONNECTING_TRANSPORT_CLOSED;
+                                disconnectReason = "transport closed";
+                            }
                         }
-                    }
-                    if (Client.this.getState() != ClientState.DISCONNECTED) {
-                        Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
-                    }
-                    if (Client.this.getState() == ClientState.CONNECTING) {
-                        Client.this.scheduleReconnect();
-                    }
-                });
+                        if (Client.this.getState() != ClientState.DISCONNECTED) {
+                            Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
+                        }
+                        if (Client.this.getState() == ClientState.CONNECTING) {
+                            Client.this.scheduleReconnect();
+                        }
+                    });
+                } catch (RejectedExecutionException ignored) {
+                }
             }
 
             @Override
