@@ -367,7 +367,6 @@ public class Client {
                 super.onFailure(webSocket, t, response);
                 try {
                     Client.this.executor.submit(() -> {
-                        Client.this.handleConnectionError(t);
                         Integer responseCode = (response != null) ? response.code() : null;
                         listener.onError(Client.this, new ErrorEvent(t, responseCode));
                         Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
