@@ -1,10 +1,7 @@
 package io.github.centrifugal.centrifuge.example;
 
 import io.github.centrifugal.centrifuge.Client;
-import io.github.centrifugal.centrifuge.ClientState;
 import io.github.centrifugal.centrifuge.ConnectingEvent;
-import io.github.centrifugal.centrifuge.ConnectionTokenEvent;
-import io.github.centrifugal.centrifuge.ConnectionTokenGetter;
 import io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
 import io.github.centrifugal.centrifuge.HistoryOptions;
 import io.github.centrifugal.centrifuge.JoinEvent;
@@ -28,7 +25,6 @@ import io.github.centrifugal.centrifuge.PublicationEvent;
 import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
 import io.github.centrifugal.centrifuge.SubscribedEvent;
 import io.github.centrifugal.centrifuge.SubscriptionOptions;
-import io.github.centrifugal.centrifuge.TokenCallback;
 import io.github.centrifugal.centrifuge.UnsubscribedEvent;
 
 import org.slf4j.Logger;
@@ -36,6 +32,9 @@ import org.slf4j.LoggerFactory;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -182,7 +181,7 @@ public class Main {
         });
 
         sub.presenceStats((err, res) -> {
-            if (err != null) {
+            if (res == null || err != null) {
                 System.out.println("error presence stats: " + err);
                 return;
             }
@@ -190,7 +189,7 @@ public class Main {
         });
 
         sub.history(new HistoryOptions.Builder().withLimit(-1).build(), (err, res) -> {
-            if (err != null) {
+            if (res == null || err != null) {
                 System.out.println("error history: " + err);
                 return;
             }
