@@ -1,3 +1,8 @@
+0.3.1
+=====
+
+* Handle closed executor in ws callbacks (#71)
+
 0.3.0
 =====
 
