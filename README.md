@@ -85,8 +85,7 @@ To verify API compatibility locally, run the following command:
 ### Automatic publishing
 
 1. Bump version in `publish-setup.gradle`. 
-2. Update changelog to reflect API and behavior changes, bugfixes. 
-3. Create new library tag. 
+2. Create new library tag.
 
 The release GitHub Action should now publish the library.
 
