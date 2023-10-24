@@ -27,7 +27,7 @@ public class Publication {
         return info;
     }
 
-    public void setInfo(ClientInfo info) {
+    void setInfo(ClientInfo info) {
         this.info = info;
     }
 }
