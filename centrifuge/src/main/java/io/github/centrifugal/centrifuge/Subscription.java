@@ -185,6 +185,7 @@ public class Subscription {
                 PublicationEvent publicationEvent = new PublicationEvent();
                 publicationEvent.setData(publication.getData().toByteArray());
                 publicationEvent.setOffset(publication.getOffset());
+                publicationEvent.setInfo(ClientInfo.fromProtocolClientInfo(publication.getInfo()));
                 this.listener.onPublication(this, publicationEvent);
                 this.setOffset(publication.getOffset());
             }

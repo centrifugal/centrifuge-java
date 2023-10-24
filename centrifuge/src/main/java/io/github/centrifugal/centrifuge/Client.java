@@ -1205,6 +1205,7 @@ public class Client {
                     Publication pub = new Publication();
                     pub.setData(protoPub.getData().toByteArray());
                     pub.setOffset(protoPub.getOffset());
+                    pub.setInfo(ClientInfo.fromProtocolClientInfo(protoPub.getInfo()));
                     pubs.add(pub);
                 }
                 result.setPublications(pubs);
