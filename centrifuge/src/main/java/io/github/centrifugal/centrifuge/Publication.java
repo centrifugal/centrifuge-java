@@ -20,4 +20,14 @@ public class Publication {
     }
 
     private long offset;
+
+    private ClientInfo info;
+
+    public ClientInfo getInfo() {
+        return info;
+    }
+
+    void setInfo(ClientInfo info) {
+        this.info = info;
+    }
 }
