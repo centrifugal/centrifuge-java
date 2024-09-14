@@ -27,6 +27,9 @@ public class Subscription {
     private int resubscribeAttempts = 0;
     private String token;
     private com.google.protobuf.ByteString data;
+    private String delta;
+    private boolean deltaNegotiated;
+    private byte[] prevData;
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener, final SubscriptionOptions options) {
         this.client = client;
@@ -38,6 +41,9 @@ public class Subscription {
         if (opts.getData() != null) {
             this.data = com.google.protobuf.ByteString.copyFrom(opts.getData());
         }
+        this.prevData = null;
+        this.delta = "";
+        this.deltaNegotiated = false;
     }
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener) {
@@ -172,6 +178,7 @@ public class Subscription {
             this.recover = true;
         }
         this.setEpoch(result.getEpoch());
+        this.deltaNegotiated = result.getDelta();
 
         byte[] data = null;
         if (result.getData() != null) {
@@ -255,6 +262,7 @@ public class Subscription {
         builder.setPositioned(this.opts.isPositioned());
         builder.setRecoverable(this.opts.isRecoverable());
         builder.setJoinLeave(this.opts.isJoinLeave());
+        builder.setDelta(this.opts.getDelta());
 
         return builder.build();
     }
@@ -458,5 +466,13 @@ public class Subscription {
         if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
         }
+    }
+
+    public byte[] getPrevData() {
+        return prevData;
+    }
+
+    public void setPrevData(byte[] prevData) {
+        this.prevData = prevData;
     }
 }

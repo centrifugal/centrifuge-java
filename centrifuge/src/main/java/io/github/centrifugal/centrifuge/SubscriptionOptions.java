@@ -85,4 +85,14 @@ public class SubscriptionOptions {
     }
 
     private boolean joinLeave = false;
+
+    public String getDelta() {
+        return delta;
+    }
+
+    public void setDelta(String delta) {
+        this.delta = delta;
+    }
+
+    private String delta = "";
 }
