@@ -873,7 +873,15 @@ public class Client {
         Subscription sub = this.getSub(channel);
         if (sub != null) {
             PublicationEvent event = new PublicationEvent();
-            event.setData(pub.getData().toByteArray());
+            byte[] pubData = pub.getData().toByteArray();
+            byte[] prevData = sub.getPrevData();
+            if (prevData != null && pub.getDelta()) {
+                try {
+                    pubData = Fossil.applyDelta(prevData, pubData);
+                } catch (Exception e) {}
+            }
+            sub.setPrevData(pubData);
+            event.setData(pubData);
             event.setInfo(info);
             event.setOffset(pub.getOffset());
             event.setTags(pub.getTagsMap());

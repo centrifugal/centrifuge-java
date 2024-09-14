@@ -103,6 +103,7 @@ message Publication {
   ClientInfo info = 5;
   uint64 offset = 6;
   map<string, string> tags = 7;
+  bool delta = 8;
 }
 
 message Join {
@@ -199,6 +200,7 @@ message SubscribeRequest {
   bool positioned = 9;
   bool recoverable = 10;
   bool join_leave = 11;
+  string delta = 12;
 }
 
 message SubscribeResult {
@@ -213,6 +215,7 @@ message SubscribeResult {
   bool positioned = 10;
   bytes data = 11;
   bool was_recovering = 12;
+  bool delta = 13;
 }
 
 message SubRefreshRequest {
