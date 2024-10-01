@@ -69,3 +69,9 @@ javadoc {
 metalava {
     hiddenPackages.add("io.github.centrifugal.centrifuge.internal")
 }
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}

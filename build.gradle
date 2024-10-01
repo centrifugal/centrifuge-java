@@ -25,3 +25,9 @@ subprojects {
 }
 
 apply from: './publish-setup.gradle'
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
