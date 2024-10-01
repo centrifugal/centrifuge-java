@@ -226,7 +226,7 @@ public class FossilTest {
     @Test
     public void testApplyDeltaFromFiles() throws Exception {
         for (int i = 1; i <= 5; i++) {
-            String dir = "/data/" + i;
+            String dir = "data/" + i;
 
             byte[] origin = readResourceAsBytes(dir + "/origin");
             byte[] target = readResourceAsBytes(dir + "/target");
