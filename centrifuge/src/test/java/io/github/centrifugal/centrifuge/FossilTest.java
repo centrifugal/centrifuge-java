@@ -226,7 +226,7 @@ public class FossilTest {
     @Test
     public void testApplyDeltaFromFiles() throws Exception {
         for (int i = 1; i <= 5; i++) {
-            String dir = "data/" + i;
+            String dir = "/data/" + i;
 
             byte[] origin = readResourceAsBytes(dir + "/origin");
             byte[] target = readResourceAsBytes(dir + "/target");
@@ -265,6 +265,8 @@ public class FossilTest {
      * Helper method to read a resource file into a byte array.
      */
     private byte[] readResourceAsBytes(String resourcePath) throws Exception {
+        System.out.println("Resource path: " + resourcePath);
+        System.out.println("Resolved: " + getClass().getResourceAsStream(resourcePath));
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
         if (inputStream == null) {
             throw new Exception("Resource not found: " + resourcePath);

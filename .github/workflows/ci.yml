@@ -15,7 +15,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-          cache: gradle
+          # cache: gradle
 
       - name: Compile library
         run: ./gradlew :centrifuge:jar
