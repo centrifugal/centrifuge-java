@@ -77,3 +77,14 @@ test {
         showStandardStreams = true            // Show standard output and error streams
     }
 }
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
+}
