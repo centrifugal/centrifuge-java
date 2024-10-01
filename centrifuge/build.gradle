@@ -72,6 +72,8 @@ metalava {
 
 test {
     testLogging {
-        showStandardStreams = true
+        events "passed", "skipped", "failed"  // Show detailed information for failures
+        exceptionFormat "full"                // Display full stack trace with the error message
+        showStandardStreams = true            // Show standard output and error streams
     }
 }
