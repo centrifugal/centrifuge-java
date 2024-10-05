@@ -855,7 +855,7 @@ public class Client {
         this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
     }
 
-    private void processReply(Protocol.Reply reply) {
+    private void processReply(Protocol.Reply reply) throws Exception {
         if (reply.getId() > 0) {
             CompletableFuture<Protocol.Reply> cf = this.futures.get(reply.getId());
             if (cf != null) cf.complete(reply);
@@ -868,12 +868,18 @@ public class Client {
         }
     }
 
-    private void handlePub(String channel, Protocol.Publication pub) {
+    private void handlePub(String channel, Protocol.Publication pub) throws Exception {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
         Subscription sub = this.getSub(channel);
         if (sub != null) {
             PublicationEvent event = new PublicationEvent();
-            event.setData(pub.getData().toByteArray());
+            byte[] pubData = pub.getData().toByteArray();
+            byte[] prevData = sub.getPrevData();
+            if (prevData != null && pub.getDelta()) {
+                pubData = Fossil.applyDelta(prevData, pubData);
+            }
+            sub.setPrevData(pubData);
+            event.setData(pubData);
             event.setInfo(info);
             event.setOffset(pub.getOffset());
             event.setTags(pub.getTagsMap());
@@ -974,7 +980,7 @@ public class Client {
         }
     }
 
-    private void handlePush(Protocol.Push push) {
+    private void handlePush(Protocol.Push push) throws Exception {
         String channel = push.getChannel();
         if (push.hasPub()) {
             this.handlePub(channel, push.getPub());

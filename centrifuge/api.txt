@@ -9,6 +9,7 @@ package io.github.centrifugal.centrifuge {
     method public io.github.centrifugal.centrifuge.ClientState! getState();
     method public io.github.centrifugal.centrifuge.Subscription! getSubscription(String);
     method public void history(String, io.github.centrifugal.centrifuge.HistoryOptions!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.HistoryResult!>!);
+    method public io.github.centrifugal.centrifuge.Subscription! newSubscription(String, io.github.centrifugal.centrifuge.SubscriptionOptions!, io.github.centrifugal.centrifuge.SubscriptionEventListener!) throws io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
     method public io.github.centrifugal.centrifuge.Subscription! newSubscription(String, io.github.centrifugal.centrifuge.SubscriptionEventListener!) throws io.github.centrifugal.centrifuge.DuplicateSubscriptionException;
     method public void presence(String, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceResult!>!);
     method public void presenceStats(String, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceStatsResult!>!);
@@ -16,6 +17,7 @@ package io.github.centrifugal.centrifuge {
     method public void removeSubscription(io.github.centrifugal.centrifuge.Subscription!);
     method public void rpc(String, byte[]!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.RPCResult!>!);
     method public void send(byte[]!, io.github.centrifugal.centrifuge.CompletionCallback!);
+    method public void setToken(String);
   }
 
   public class ClientInfo {
@@ -44,6 +46,10 @@ package io.github.centrifugal.centrifuge {
 
   public interface CompletionCallback {
     method public void onDone(Throwable);
+  }
+
+  public class ConfigurationError {
+    method public Throwable getError();
   }
 
   public class ConnectedEvent {
@@ -82,6 +88,7 @@ package io.github.centrifugal.centrifuge {
 
   public class ErrorEvent {
     method public Throwable getError();
+    method public Integer getHttpResponseCode();
   }
 
   public abstract class EventListener {
@@ -97,6 +104,17 @@ package io.github.centrifugal.centrifuge {
     method public void onSubscribed(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerSubscribedEvent!);
     method public void onSubscribing(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerSubscribingEvent!);
     method public void onUnsubscribed(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerUnsubscribedEvent!);
+  }
+
+  public class Fossil {
+    ctor public Fossil();
+    method public static byte[]! applyDelta(byte[]!, byte[]!);
+    method public static long checksum(byte[]!);
+  }
+
+  public class FossilTest {
+    ctor public FossilTest();
+    method public void testApplyDelta();
   }
 
   public class HistoryOptions {
@@ -182,6 +200,7 @@ package io.github.centrifugal.centrifuge {
   public class Publication {
     ctor public Publication();
     method public byte[]! getData();
+    method public io.github.centrifugal.centrifuge.ClientInfo! getInfo();
     method public long getOffset();
   }
 
@@ -284,11 +303,13 @@ package io.github.centrifugal.centrifuge {
 
   public class Subscription {
     method public String getChannel();
+    method public byte[]! getPrevData();
     method public io.github.centrifugal.centrifuge.SubscriptionState! getState();
     method public void history(io.github.centrifugal.centrifuge.HistoryOptions!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.HistoryResult!>!);
     method public void presence(io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceResult!>!);
     method public void presenceStats(io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceStatsResult!>!);
     method public void publish(byte[]!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PublishResult!>!);
+    method public void setPrevData(byte[]!);
     method public void subscribe();
     method public void unsubscribe();
   }
@@ -311,6 +332,7 @@ package io.github.centrifugal.centrifuge {
   public class SubscriptionOptions {
     ctor public SubscriptionOptions();
     method public byte[]! getData();
+    method public String getDelta();
     method public int getMaxResubscribeDelay();
     method public int getMinResubscribeDelay();
     method public String getToken();
@@ -319,6 +341,7 @@ package io.github.centrifugal.centrifuge {
     method public boolean isPositioned();
     method public boolean isRecoverable();
     method public void setData(byte[]!);
+    method public void setDelta(String);
     method public void setJoinLeave(boolean);
     method public void setMaxResubscribeDelay(int);
     method public void setMinResubscribeDelay(int);
@@ -366,6 +389,14 @@ package io.github.centrifugal.centrifuge {
   }
 
   public class TokenError {
+    method public Throwable getError();
+  }
+
+  public class UnauthorizedException {
+    ctor public UnauthorizedException();
+  }
+
+  public class UnclassifiedError {
     method public Throwable getError();
   }
 

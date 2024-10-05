@@ -23,7 +23,6 @@ public class PublicationEvent {
 
     private ClientInfo info;
 
-
     public long getOffset() {
         return offset;
     }
