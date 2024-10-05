@@ -465,7 +465,12 @@ public class Client {
             if (Client.this.getState() != ClientState.CONNECTED) {
                 return;
             }
-            this.handleSubscribeReply(channel, reply);
+            try {
+                this.handleSubscribeReply(channel, reply);
+            } catch (Exception e) {
+                // Should never happen.
+                e.printStackTrace();
+            }
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.executor.submit(() -> {
@@ -602,7 +607,7 @@ public class Client {
         }
     }
 
-    private void handleSubscribeReply(String channel, Protocol.Reply reply) {
+    private void handleSubscribeReply(String channel, Protocol.Reply reply) throws Exception {
         Subscription sub = this.getSub(channel);
         if (sub != null) {
             Protocol.SubscribeResult result;
@@ -868,25 +873,11 @@ public class Client {
         }
     }
 
-    private void handlePub(String channel, Protocol.Publication pub) throws Exception {
+    void handlePub(String channel, Protocol.Publication pub) throws Exception {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
         Subscription sub = this.getSub(channel);
         if (sub != null) {
-            PublicationEvent event = new PublicationEvent();
-            byte[] pubData = pub.getData().toByteArray();
-            byte[] prevData = sub.getPrevData();
-            if (prevData != null && pub.getDelta()) {
-                pubData = Fossil.applyDelta(prevData, pubData);
-            }
-            sub.setPrevData(pubData);
-            event.setData(pubData);
-            event.setInfo(info);
-            event.setOffset(pub.getOffset());
-            event.setTags(pub.getTagsMap());
-            if (pub.getOffset() > 0) {
-                sub.setOffset(pub.getOffset());
-            }
-            sub.getListener().onPublication(sub, event);
+            sub.handlePublication(pub);
         } else {
             ServerSubscription serverSub = this.getServerSub(channel);
             if (serverSub != null) {

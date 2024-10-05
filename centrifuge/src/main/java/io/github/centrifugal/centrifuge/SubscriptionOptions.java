@@ -90,9 +90,22 @@ public class SubscriptionOptions {
         return delta;
     }
 
+    // setDelta allows using delta compression for subscription. The delta compression
+    // must be also enabled on server side. The only value at this point is "fossil".
+    // See https://centrifugal.dev/docs/server/delta_compression.
     public void setDelta(String delta) {
         this.delta = delta;
     }
 
     private String delta = "";
+
+    public void setSince(StreamPosition streamPosition) {
+        this.since = streamPosition;
+    }
+
+    public StreamPosition getSince() {
+        return since;
+    }
+
+    private StreamPosition since;
 }

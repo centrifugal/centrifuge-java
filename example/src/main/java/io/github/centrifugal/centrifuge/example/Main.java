@@ -152,7 +152,7 @@ public class Main {
         Subscription sub;
         SubscriptionOptions subOpts = new SubscriptionOptions();
         // You can set `delta` to `"fossil"` for using delta compression via
-        // `subOpts.setDelta("fossil")`;
+        // subOpts.setDelta("fossil");
         try {
             sub = client.newSubscription("chat:index", subOpts, subListener);
         } catch (DuplicateSubscriptionException e) {
