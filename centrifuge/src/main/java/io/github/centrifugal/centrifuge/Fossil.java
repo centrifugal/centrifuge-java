@@ -3,7 +3,7 @@ package io.github.centrifugal.centrifuge;
 import java.io.ByteArrayOutputStream;
 
 
-public class Fossil {
+class Fossil {
 
     private static final int[] zValue = new int[] {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,

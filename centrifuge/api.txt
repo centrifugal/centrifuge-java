@@ -106,15 +106,11 @@ package io.github.centrifugal.centrifuge {
     method public void onUnsubscribed(io.github.centrifugal.centrifuge.Client!, io.github.centrifugal.centrifuge.ServerUnsubscribedEvent!);
   }
 
-  public class Fossil {
-    ctor public Fossil();
-    method public static byte[]! applyDelta(byte[]!, byte[]!);
-    method public static long checksum(byte[]!);
-  }
-
   public class FossilTest {
     ctor public FossilTest();
     method public void testApplyDelta();
+    method public void testApplyDeltaFromFiles();
+    method public void testApplyDeltaWithTruncatedDelta();
   }
 
   public class HistoryOptions {
@@ -303,13 +299,11 @@ package io.github.centrifugal.centrifuge {
 
   public class Subscription {
     method public String getChannel();
-    method public byte[]! getPrevData();
     method public io.github.centrifugal.centrifuge.SubscriptionState! getState();
     method public void history(io.github.centrifugal.centrifuge.HistoryOptions!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.HistoryResult!>!);
     method public void presence(io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceResult!>!);
     method public void presenceStats(io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PresenceStatsResult!>!);
     method public void publish(byte[]!, io.github.centrifugal.centrifuge.ResultCallback<io.github.centrifugal.centrifuge.PublishResult!>!);
-    method public void setPrevData(byte[]!);
     method public void subscribe();
     method public void unsubscribe();
   }
@@ -335,6 +329,7 @@ package io.github.centrifugal.centrifuge {
     method public String getDelta();
     method public int getMaxResubscribeDelay();
     method public int getMinResubscribeDelay();
+    method public io.github.centrifugal.centrifuge.StreamPosition! getSince();
     method public String getToken();
     method public io.github.centrifugal.centrifuge.SubscriptionTokenGetter! getTokenGetter();
     method public boolean isJoinLeave();
@@ -347,6 +342,7 @@ package io.github.centrifugal.centrifuge {
     method public void setMinResubscribeDelay(int);
     method public void setPositioned(boolean);
     method public void setRecoverable(boolean);
+    method public void setSince(io.github.centrifugal.centrifuge.StreamPosition!);
     method public void setToken(String);
     method public void setTokenGetter(io.github.centrifugal.centrifuge.SubscriptionTokenGetter!);
     field public io.github.centrifugal.centrifuge.SubscriptionTokenGetter! tokenGetter;
