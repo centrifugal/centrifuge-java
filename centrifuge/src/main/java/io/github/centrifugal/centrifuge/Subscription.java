@@ -27,7 +27,6 @@ public class Subscription {
     private int resubscribeAttempts = 0;
     private String token;
     private com.google.protobuf.ByteString data;
-    private String delta;
     private boolean deltaNegotiated;
     private byte[] prevData;
 
@@ -42,8 +41,12 @@ public class Subscription {
             this.data = com.google.protobuf.ByteString.copyFrom(opts.getData());
         }
         this.prevData = null;
-        this.delta = "";
         this.deltaNegotiated = false;
+        if (opts.getSince() != null) {
+            this.offset = opts.getSince().getOffset();
+            this.epoch = opts.getSince().getEpoch();
+            this.recover = true;
+        }
     }
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener) {
@@ -70,7 +73,7 @@ public class Subscription {
         return offset;
     }
 
-    void setOffset(long offset) {
+    private void setOffset(long offset) {
         this.offset = offset;
     }
 
@@ -172,7 +175,26 @@ public class Subscription {
         this._unsubscribe(sendUnsubscribe, code, reason);
     }
 
-    void moveToSubscribed(Protocol.SubscribeResult result) {
+    void handlePublication(Protocol.Publication pub) throws Exception {
+        ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
+        PublicationEvent event = new PublicationEvent();
+        byte[] pubData = pub.getData().toByteArray();
+        byte[] prevData = this.getPrevData();
+        if (prevData != null && pub.getDelta()) {
+            pubData = Fossil.applyDelta(prevData, pubData);
+        }
+        this.setPrevData(pubData);
+        event.setData(pubData);
+        event.setInfo(info);
+        event.setOffset(pub.getOffset());
+        event.setTags(pub.getTagsMap());
+        if (pub.getOffset() > 0) {
+            this.setOffset(pub.getOffset());
+        }
+        this.listener.onPublication(this, event);
+    }
+
+    void moveToSubscribed(Protocol.SubscribeResult result) throws Exception {
         this.setState(SubscriptionState.SUBSCRIBED);
         if (result.getRecoverable()) {
             this.recover = true;
@@ -189,12 +211,7 @@ public class Subscription {
 
         if (result.getPublicationsCount() > 0) {
             for (Protocol.Publication publication : result.getPublicationsList()) {
-                PublicationEvent publicationEvent = new PublicationEvent();
-                publicationEvent.setData(publication.getData().toByteArray());
-                publicationEvent.setOffset(publication.getOffset());
-                publicationEvent.setInfo(ClientInfo.fromProtocolClientInfo(publication.getInfo()));
-                this.listener.onPublication(this, publicationEvent);
-                this.setOffset(publication.getOffset());
+                this.client.handlePub(this.channel, publication);
             }
         } else {
             this.setOffset(result.getOffset());
@@ -468,11 +485,11 @@ public class Subscription {
         }
     }
 
-    public byte[] getPrevData() {
+    private byte[] getPrevData() {
         return prevData;
     }
 
-    public void setPrevData(byte[] prevData) {
+    private void setPrevData(byte[] prevData) {
         this.prevData = prevData;
     }
 }
