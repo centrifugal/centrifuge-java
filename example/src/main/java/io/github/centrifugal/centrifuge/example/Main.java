@@ -151,8 +151,8 @@ public class Main {
 
         Subscription sub;
         SubscriptionOptions subOpts = new SubscriptionOptions();
-        // You can set `delta` to `"fossil"` for using delta compression via
-        // subOpts.setDelta("fossil");
+        // See the available options which can be set for a Subscription:
+        // https://www.javadoc.io/doc/io.github.centrifugal/centrifuge-java/latest/io/github/centrifugal/centrifuge/SubscriptionOptions.html
         try {
             sub = client.newSubscription("chat:index", subOpts, subListener);
         } catch (DuplicateSubscriptionException e) {
