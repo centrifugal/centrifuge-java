@@ -179,11 +179,13 @@ public class Subscription {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
         PublicationEvent event = new PublicationEvent();
         byte[] pubData = pub.getData().toByteArray();
-        byte[] prevData = this.getPrevData();
-        if (prevData != null && pub.getDelta()) {
-            pubData = Fossil.applyDelta(prevData, pubData);
+        if (this.deltaNegotiated) {
+            byte[] prevData = this.getPrevData();
+            if (prevData != null && pub.getDelta()) {
+                pubData = Fossil.applyDelta(prevData, pubData);
+            }
+            this.setPrevData(pubData);
         }
-        this.setPrevData(pubData);
         event.setData(pubData);
         event.setInfo(info);
         event.setOffset(pub.getOffset());
