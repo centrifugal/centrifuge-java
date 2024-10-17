@@ -395,14 +395,14 @@ public class Client {
         if (this.getState() != ClientState.CONNECTING) {
             return;
         }
-        if (this.refreshRequired || (this.token.equals("") && this.opts.getTokenGetter() != null)) {
-            ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
-            if (this.opts.getTokenGetter() == null) {
-                this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(new Exception("tokenGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter"))));
+        if (this.refreshRequired || (this.data == null && this.opts.getDataGetter() != null)) {
+            ConnectionDataEvent connectionDataEvent = new ConnectionDataEvent();
+            if (this.opts.getDataGetter() == null) {
+                this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(new Exception("dataGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter"))));
                 this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
                 return;
             }
-            this.opts.getTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
+            this.opts.getDataGetter().getConnectionData(connectionDataEvent, (err, data) -> this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTING) {
                     return;
                 }
@@ -415,11 +415,11 @@ public class Client {
                     this.ws.close(NORMAL_CLOSURE_STATUS, "");
                     return;
                 }
-                if (token == null) {
-                    Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (token)", false);
+                if (data == null) {
+                    Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (data)", false);
                     return;
                 }
-                Client.this.token = token;
+                Client.this.data = com.google.protobuf.ByteString.copyFrom(data);
                 Client.this.refreshRequired = false;
                 this.sendConnect();
             }));
@@ -547,7 +547,7 @@ public class Client {
      * Create new subscription to channel with SubscriptionOptions and SubscriptionEventListener
      *
      * @param channel:  to create Subscription for.
-     * @param options: to pass SubscriptionOptions, e.g. token.
+     * @param options:  to pass SubscriptionOptions, e.g. token.
      * @param listener: to pass event handler.
      * @return Subscription.
      * @throws DuplicateSubscriptionException if Subscription already exists in internal registry.
@@ -751,65 +751,122 @@ public class Client {
     }
 
     private void sendRefresh() {
-        if (this.opts.getTokenGetter() == null) {
-            return;
-        }
-        this.executor.submit(() -> Client.this.opts.getTokenGetter().getConnectionToken(new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
-            if (Client.this.getState() != ClientState.CONNECTED) {
-                return;
-            }
-            if (err != null) {
-                if (err instanceof UnauthorizedException) {
-                    Client.this.failUnauthorized();
-                    return;
-                }
-                Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
-                Client.this.refreshTask = Client.this.scheduler.schedule(
-                        Client.this::sendRefresh,
-                        Client.this.backoff.duration(0, 10000, 20000),
-                        TimeUnit.MILLISECONDS
-                );
-                return;
-            }
-            if (token == null || token.equals("")) {
-                this.failUnauthorized();
-                return;
-            }
-            Client.this.token = token;
-            refreshSynchronized(token, (error, result) -> {
+
+        if (this.opts.getDataGetter() != null) {
+            this.executor.submit(() -> Client.this.opts.getDataGetter().getConnectionData(new ConnectionDataEvent(), (err, data) -> Client.this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
                 }
-                if (error != null) {
-                    Client.this.listener.onError(Client.this, new ErrorEvent(new RefreshError(error)));
-                    if (error instanceof ReplyError) {
-                        ReplyError e;
-                        e = (ReplyError) error;
-                        if (e.isTemporary()) {
+                if (err != null) {
+                    if (err instanceof UnauthorizedException) {
+                        Client.this.failUnauthorized();
+                        return;
+                    }
+                    Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
+                    Client.this.refreshTask = Client.this.scheduler.schedule(
+                            Client.this::sendRefresh,
+                            Client.this.backoff.duration(0, 10000, 20000),
+                            TimeUnit.MILLISECONDS
+                    );
+                    return;
+                }
+                if (data == null || data.length == 0) {
+                    this.failUnauthorized();
+                    return;
+                }
+                Client.this.data = com.google.protobuf.ByteString.copyFrom(data);
+                refreshSynchronized(data, null, (error, result) -> {
+                    if (Client.this.getState() != ClientState.CONNECTED) {
+                        return;
+                    }
+                    if (error != null) {
+                        Client.this.listener.onError(Client.this, new ErrorEvent(new RefreshError(error)));
+                        if (error instanceof ReplyError) {
+                            ReplyError e;
+                            e = (ReplyError) error;
+                            if (e.isTemporary()) {
+                                Client.this.refreshTask = Client.this.scheduler.schedule(
+                                        Client.this::sendRefresh,
+                                        Client.this.backoff.duration(0, 10000, 20000),
+                                        TimeUnit.MILLISECONDS
+                                );
+                            } else {
+                                Client.this.processDisconnect(e.getCode(), e.getMessage(), false);
+                            }
+                            return;
+                        } else {
                             Client.this.refreshTask = Client.this.scheduler.schedule(
                                     Client.this::sendRefresh,
                                     Client.this.backoff.duration(0, 10000, 20000),
                                     TimeUnit.MILLISECONDS
                             );
-                        } else {
-                            Client.this.processDisconnect(e.getCode(), e.getMessage(), false);
                         }
                         return;
-                    } else {
-                        Client.this.refreshTask = Client.this.scheduler.schedule(
-                                Client.this::sendRefresh,
-                                Client.this.backoff.duration(0, 10000, 20000),
-                                TimeUnit.MILLISECONDS
-                        );
                     }
+                    if (result.getExpires()) {
+                        int ttl = result.getTtl();
+                        Client.this.refreshTask = Client.this.scheduler.schedule(Client.this::sendRefresh, ttl, TimeUnit.SECONDS);
+                    }
+                });
+            })));
+        } else if (this.opts.getTokenGetter() != null) {
+            this.executor.submit(() -> Client.this.opts.getTokenGetter().getConnectionToken(new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
+                if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
                 }
-                if (result.getExpires()) {
-                    int ttl = result.getTtl();
-                    Client.this.refreshTask = Client.this.scheduler.schedule(Client.this::sendRefresh, ttl, TimeUnit.SECONDS);
+                if (err != null) {
+                    if (err instanceof UnauthorizedException) {
+                        Client.this.failUnauthorized();
+                        return;
+                    }
+                    Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
+                    Client.this.refreshTask = Client.this.scheduler.schedule(
+                            Client.this::sendRefresh,
+                            Client.this.backoff.duration(0, 10000, 20000),
+                            TimeUnit.MILLISECONDS
+                    );
+                    return;
                 }
-            });
-        })));
+                if (token == null || token.equals("")) {
+                    this.failUnauthorized();
+                    return;
+                }
+                Client.this.token = token;
+                refreshSynchronized(null, token, (error, result) -> {
+                    if (Client.this.getState() != ClientState.CONNECTED) {
+                        return;
+                    }
+                    if (error != null) {
+                        Client.this.listener.onError(Client.this, new ErrorEvent(new RefreshError(error)));
+                        if (error instanceof ReplyError) {
+                            ReplyError e;
+                            e = (ReplyError) error;
+                            if (e.isTemporary()) {
+                                Client.this.refreshTask = Client.this.scheduler.schedule(
+                                        Client.this::sendRefresh,
+                                        Client.this.backoff.duration(0, 10000, 20000),
+                                        TimeUnit.MILLISECONDS
+                                );
+                            } else {
+                                Client.this.processDisconnect(e.getCode(), e.getMessage(), false);
+                            }
+                            return;
+                        } else {
+                            Client.this.refreshTask = Client.this.scheduler.schedule(
+                                    Client.this::sendRefresh,
+                                    Client.this.backoff.duration(0, 10000, 20000),
+                                    TimeUnit.MILLISECONDS
+                            );
+                        }
+                        return;
+                    }
+                    if (result.getExpires()) {
+                        int ttl = result.getTtl();
+                        Client.this.refreshTask = Client.this.scheduler.schedule(Client.this::sendRefresh, ttl, TimeUnit.SECONDS);
+                    }
+                });
+            })));
+        }
     }
 
     private void sendConnect() {
@@ -1299,10 +1356,16 @@ public class Client {
         this.enqueueCommandFuture(cmd, f);
     }
 
-    private void refreshSynchronized(String token, ResultCallback<Protocol.RefreshResult> cb) {
-        Protocol.RefreshRequest req = Protocol.RefreshRequest.newBuilder()
-                .setToken(token)
-                .build();
+    private void refreshSynchronized(byte[] data, String token, ResultCallback<Protocol.RefreshResult> cb) {
+        Protocol.RefreshRequest.Builder req = Protocol.RefreshRequest.newBuilder();
+
+        if (data != null) {
+            req.setTokenBytes(com.google.protobuf.ByteString.copyFrom(data));
+        }
+
+        if (token != null) {
+            req.setToken(token);
+        }
 
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
