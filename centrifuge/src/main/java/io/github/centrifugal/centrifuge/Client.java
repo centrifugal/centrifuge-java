@@ -395,34 +395,67 @@ public class Client {
         if (this.getState() != ClientState.CONNECTING) {
             return;
         }
-        if (this.refreshRequired || (this.data == null && this.opts.getDataGetter() != null)) {
-            ConnectionDataEvent connectionDataEvent = new ConnectionDataEvent();
-            if (this.opts.getDataGetter() == null) {
-                this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(new Exception("dataGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter"))));
-                this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
-                return;
-            }
-            this.opts.getDataGetter().getConnectionData(connectionDataEvent, (err, data) -> this.executor.submit(() -> {
-                if (Client.this.getState() != ClientState.CONNECTING) {
+        if (this.refreshRequired) {
+            if (this.data == null && this.opts.getDataGetter() != null) {
+                ConnectionDataEvent connectionDataEvent = new ConnectionDataEvent();
+                if (this.opts.getDataGetter() == null) {
+                    this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(new Exception("dataGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter"))));
+                    this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
                     return;
                 }
-                if (err != null) {
-                    if (err instanceof UnauthorizedException) {
-                        Client.this.failUnauthorized();
+                this.opts.getDataGetter().getConnectionData(connectionDataEvent, (err, data) -> this.executor.submit(() -> {
+                    if (Client.this.getState() != ClientState.CONNECTING) {
                         return;
                     }
-                    Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
-                    this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                    if (err != null) {
+                        if (err instanceof UnauthorizedException) {
+                            Client.this.failUnauthorized();
+                            return;
+                        }
+                        Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
+                        this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                        return;
+                    }
+                    if (data == null) {
+                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (data)", false);
+                        return;
+                    }
+                    Client.this.data = com.google.protobuf.ByteString.copyFrom(data);
+                    Client.this.refreshRequired = false;
+                    this.sendConnect();
+                }));
+
+            } else if (this.token.equals("") && this.opts.getTokenGetter() != null) {
+                ConnectionTokenEvent connectionTokenEvent = new ConnectionTokenEvent();
+                if (this.opts.getTokenGetter() == null) {
+                    this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(new Exception("dataGetter function should be provided in Client options to handle token refresh, see Options.setTokenGetter"))));
+                    this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
                     return;
                 }
-                if (data == null) {
-                    Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (data)", false);
-                    return;
-                }
-                Client.this.data = com.google.protobuf.ByteString.copyFrom(data);
-                Client.this.refreshRequired = false;
+                this.opts.getTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
+                    if (Client.this.getState() != ClientState.CONNECTING) {
+                        return;
+                    }
+                    if (err != null) {
+                        if (err instanceof UnauthorizedException) {
+                            Client.this.failUnauthorized();
+                            return;
+                        }
+                        Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
+                        this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                        return;
+                    }
+                    if (token == null) {
+                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (data)", false);
+                        return;
+                    }
+                    Client.this.token = token;
+                    Client.this.refreshRequired = false;
+                    this.sendConnect();
+                }));
+            } else {
                 this.sendConnect();
-            }));
+            }
         } else {
             this.sendConnect();
         }
