@@ -236,6 +236,7 @@ public class Subscription {
         this.listener.onError(this, new SubscriptionErrorEvent(new SubscriptionSubscribeError(err)));
         if (err.getCode() == 109) { // Token expired.
             this.token = "";
+            this.data = null;
             this.scheduleResubscribe();
         } if (err.isTemporary()) {
             this.scheduleResubscribe();

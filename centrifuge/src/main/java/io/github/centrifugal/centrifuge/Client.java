@@ -673,6 +673,7 @@ public class Client {
             this.handleConnectionError(new ReplyError(reply.getError().getCode(), reply.getError().getMessage(), reply.getError().getTemporary()));
             if (reply.getError().getCode() == 109) { // Token expired.
                 this.refreshRequired = true;
+                this.data = null;
                 this.ws.close(NORMAL_CLOSURE_STATUS, "");
             } else if (reply.getError().getTemporary()) {
                 this.ws.close(NORMAL_CLOSURE_STATUS, "");
