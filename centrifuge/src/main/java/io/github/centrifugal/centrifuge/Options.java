@@ -1,5 +1,6 @@
 package io.github.centrifugal.centrifuge;
 
+import javax.net.ssl.SSLSocketFactory;
 import java.net.Proxy;
 import java.util.Map;
 
@@ -190,4 +191,17 @@ public class Options {
     }
 
     private Dns dns;
+
+    /**
+     * Set custom SSLSocketFactory
+     */
+    public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
+        this.sslSocketFactory = sslSocketFactory;
+    }
+
+    public SSLSocketFactory getSSLSocketFactory() {
+        return this.sslSocketFactory;
+    }
+
+    private SSLSocketFactory sslSocketFactory;
 }
