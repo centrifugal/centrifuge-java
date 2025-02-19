@@ -17,6 +17,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 
 import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
@@ -267,7 +268,12 @@ public class Client {
 
         SSLSocketFactory socketFactory = opts.getSSLSocketFactory();
         if (socketFactory != null) {
-            okHttpBuilder.setSslSocketFactoryOrNull$okhttp(socketFactory);
+            X509TrustManager trustManager = opts.getTrustManager();
+            if (trustManager != null) {
+                okHttpBuilder.sslSocketFactory(socketFactory, trustManager);
+            } else {
+                okHttpBuilder.setSslSocketFactoryOrNull$okhttp(socketFactory);
+            }
         }
 
         if (opts.getProxy() != null) {

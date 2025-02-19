@@ -1,6 +1,7 @@
 package io.github.centrifugal.centrifuge;
 
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 import java.net.Proxy;
 import java.util.Map;
 
@@ -199,9 +200,22 @@ public class Options {
         this.sslSocketFactory = sslSocketFactory;
     }
 
+    /**
+     * Set custom SSLSocketFactory & X509TrustManager
+     */
+    public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory, X509TrustManager trustManager) {
+        this.sslSocketFactory = sslSocketFactory;
+        this.trustManager = trustManager;
+    }
+
     public SSLSocketFactory getSSLSocketFactory() {
         return this.sslSocketFactory;
     }
 
     private SSLSocketFactory sslSocketFactory;
+    private X509TrustManager trustManager;
+
+    public X509TrustManager getTrustManager() {
+        return trustManager;
+    }
 }
