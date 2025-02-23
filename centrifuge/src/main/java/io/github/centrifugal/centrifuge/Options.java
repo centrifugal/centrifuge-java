@@ -201,7 +201,7 @@ public class Options {
     }
 
     /**
-     * Set custom SSLSocketFactory & X509TrustManager
+     * Set custom SSLSocketFactory and X509TrustManager
      */
     public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory, X509TrustManager trustManager) {
         this.sslSocketFactory = sslSocketFactory;
