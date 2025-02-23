@@ -16,6 +16,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 
 import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
@@ -29,7 +31,6 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
-
 
 public class Client {
     private WebSocket ws;
@@ -263,6 +264,16 @@ public class Client {
         Dns dns = opts.getDns();
         if (dns != null) {
             okHttpBuilder.dns(dns::resolve);
+        }
+
+        SSLSocketFactory socketFactory = opts.getSSLSocketFactory();
+        if (socketFactory != null) {
+            X509TrustManager trustManager = opts.getTrustManager();
+            if (trustManager != null) {
+                okHttpBuilder.sslSocketFactory(socketFactory, trustManager);
+            } else {
+                okHttpBuilder.setSslSocketFactoryOrNull$okhttp(socketFactory);
+            }
         }
 
         if (opts.getProxy() != null) {
