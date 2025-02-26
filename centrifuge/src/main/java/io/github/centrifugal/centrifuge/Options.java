@@ -82,6 +82,19 @@ public class Options {
 
     private byte[] data;
 
+    public ConnectionDataGetter getDataGetter() {
+        return dataGetter;
+    }
+
+    /**
+     * Set a method to extract new connection data.
+     */
+    public void setDataGetter(ConnectionDataGetter dataGetter) {
+        this.dataGetter = dataGetter;
+    }
+
+    private ConnectionDataGetter dataGetter;
+
     /**
      * Set custom headers for WebSocket Upgrade request.
      */

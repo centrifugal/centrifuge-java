@@ -1,5 +1,7 @@
 package io.github.centrifugal.centrifuge.demo;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +11,9 @@ import android.widget.Toast;
 import io.github.centrifugal.centrifuge.Client;
 import io.github.centrifugal.centrifuge.ConnectedEvent;
 import io.github.centrifugal.centrifuge.ConnectingEvent;
+import io.github.centrifugal.centrifuge.ConnectionDataEvent;
+import io.github.centrifugal.centrifuge.ConnectionDataGetter;
+import io.github.centrifugal.centrifuge.DataCallback;
 import io.github.centrifugal.centrifuge.DisconnectedEvent;
 import io.github.centrifugal.centrifuge.ErrorEvent;
 import io.github.centrifugal.centrifuge.EventListener;
@@ -16,15 +21,13 @@ import io.github.centrifugal.centrifuge.Options;
 import io.github.centrifugal.centrifuge.PublicationEvent;
 import io.github.centrifugal.centrifuge.ServerPublicationEvent;
 import io.github.centrifugal.centrifuge.ServerSubscribedEvent;
-import io.github.centrifugal.centrifuge.SubscribingEvent;
-import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
 import io.github.centrifugal.centrifuge.SubscribedEvent;
+import io.github.centrifugal.centrifuge.SubscribingEvent;
 import io.github.centrifugal.centrifuge.Subscription;
+import io.github.centrifugal.centrifuge.SubscriptionErrorEvent;
 import io.github.centrifugal.centrifuge.SubscriptionEventListener;
 import io.github.centrifugal.centrifuge.SubscriptionOptions;
 import io.github.centrifugal.centrifuge.UnsubscribedEvent;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,7 +75,18 @@ public class MainActivity extends AppCompatActivity {
         };
 
         Options opts = new Options();
-//        opts.setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0c3VpdGVfand0In0.hPmHsVqvtY88PvK4EmJlcdwNuKFuy3BGaF7dMaKdPlw");
+        String dataStr = "{ \"data\": { \"token\": \"jwt_token\" } }";
+        byte[] data = dataStr.getBytes();
+
+        opts.setData(data);
+
+        //Example with data
+        opts.setDataGetter(new ConnectionDataGetter() {
+            @Override
+            public void getConnectionData(ConnectionDataEvent event, DataCallback cb) {
+                cb.Done(null, data);
+            }
+        });
 
         // Change the endpoint if needed.
         String endpoint = "ws://10.0.2.2:8000/connection/websocket?cf_protocol_version=v2";
