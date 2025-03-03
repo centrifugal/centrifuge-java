@@ -213,7 +213,7 @@ public class Options {
     }
 
     private Dns dns;
-  
+
     /**
      * Set custom SSLSocketFactory
      *
