@@ -263,7 +263,7 @@ public class Client {
         if (opts.getOkHttpClient() != null) {
             okHttpBuilder = opts.getOkHttpClient().newBuilder();
         } else {
-            okHttpBuilder = new OkHttpClient.Builder()
+            okHttpBuilder = new OkHttpClient.Builder();
         }
 
         Dns dns = opts.getDns();
