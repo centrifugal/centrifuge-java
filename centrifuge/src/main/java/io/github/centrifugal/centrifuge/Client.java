@@ -16,6 +16,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 
 import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
@@ -29,7 +31,6 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
-
 
 public class Client {
     private WebSocket ws;
@@ -270,6 +271,16 @@ public class Client {
             okHttpBuilder.dns(dns::resolve);
         }
 
+        SSLSocketFactory socketFactory = opts.getSSLSocketFactory();
+        if (socketFactory != null) {
+            X509TrustManager trustManager = opts.getTrustManager();
+            if (trustManager != null) {
+                okHttpBuilder.sslSocketFactory(socketFactory, trustManager);
+            } else {
+                okHttpBuilder.setSslSocketFactoryOrNull$okhttp(socketFactory);
+            }
+        }
+
         if (opts.getProxy() != null) {
             okHttpBuilder.proxy(opts.getProxy());
             if (this.opts.getProxyLogin() != null && this.opts.getProxyPassword() != null) {
@@ -288,52 +299,58 @@ public class Client {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                 super.onOpen(webSocket, response);
-                Client.this.executor.submit(() -> {
-                    try {
-                        Client.this.handleConnectionOpen();
-                    } catch (Exception e) {
-                        // Should never happen.
-                        e.printStackTrace();
-                        Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
-                        Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (open)", false);
-                    }
-                });
+                try {
+                    Client.this.executor.submit(() -> {
+                        try {
+                            Client.this.handleConnectionOpen();
+                        } catch (Exception e) {
+                            // Should never happen.
+                            e.printStackTrace();
+                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (open)", false);
+                        }
+                    });
+                } catch (RejectedExecutionException ignored) {
+                }
             }
 
             @Override
             public void onMessage(WebSocket webSocket, ByteString bytes) {
                 super.onMessage(webSocket, bytes);
-                Client.this.executor.submit(() -> {
-                    if (Client.this.getState() != ClientState.CONNECTING && Client.this.getState() != ClientState.CONNECTED) {
-                        return;
-                    }
-                    InputStream stream = new ByteArrayInputStream(bytes.toByteArray());
-                    while (true) {
-                        Protocol.Reply reply;
-                        try {
-                            if (stream.available() <= 0) {
+                try {
+                    Client.this.executor.submit(() -> {
+                        if (Client.this.getState() != ClientState.CONNECTING && Client.this.getState() != ClientState.CONNECTED) {
+                            return;
+                        }
+                        InputStream stream = new ByteArrayInputStream(bytes.toByteArray());
+                        while (true) {
+                            Protocol.Reply reply;
+                            try {
+                                if (stream.available() <= 0) {
+                                    break;
+                                }
+                                reply = Protocol.Reply.parseDelimitedFrom(stream);
+                            } catch (IOException e) {
+                                // Should never happen. Corrupted server protocol data?
+                                e.printStackTrace();
+                                Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                                Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (proto)", false);
                                 break;
                             }
-                            reply = Protocol.Reply.parseDelimitedFrom(stream);
-                        } catch (IOException e) {
-                            // Should never happen. Corrupted server protocol data?
-                            e.printStackTrace();
-                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
-                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (proto)", false);
-                            break;
+                            try {
+                                Client.this.processReply(reply);
+                            } catch (Exception e) {
+                                // Should never happen. Most probably indicates an unexpected exception coming from the user-level code.
+                                // Theoretically may indicate a bug of SDK also – stack trace will help here.
+                                e.printStackTrace();
+                                Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
+                                Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+                                break;
+                            }
                         }
-                        try {
-                            Client.this.processReply(reply);
-                        } catch (Exception e) {
-                            // Should never happen. Most probably indicates an unexpected exception coming from the user-level code.
-                            // Theoretically may indicate a bug of SDK also – stack trace will help here.
-                            e.printStackTrace();
-                            Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
-                            Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
-                            break;
-                        }
-                    }
-                });
+                    });
+                } catch (RejectedExecutionException ignored) {
+                }
             }
 
             @Override
@@ -345,26 +362,29 @@ public class Client {
             @Override
             public void onClosed(WebSocket webSocket, int code, String reason) {
                 super.onClosed(webSocket, code, reason);
-                Client.this.executor.submit(() -> {
-                    boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
-                    int disconnectCode = code;
-                    String disconnectReason = reason;
-                    if (disconnectCode < 3000) {
-                        if (disconnectCode == MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS) {
-                            disconnectCode = DISCONNECTED_MESSAGE_SIZE_LIMIT;
-                            disconnectReason = "message size limit";
-                        } else {
-                            disconnectCode = CONNECTING_TRANSPORT_CLOSED;
-                            disconnectReason = "transport closed";
+                try {
+                    Client.this.executor.submit(() -> {
+                        boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
+                        int disconnectCode = code;
+                        String disconnectReason = reason;
+                        if (disconnectCode < 3000) {
+                            if (disconnectCode == MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS) {
+                                disconnectCode = DISCONNECTED_MESSAGE_SIZE_LIMIT;
+                                disconnectReason = "message size limit";
+                            } else {
+                                disconnectCode = CONNECTING_TRANSPORT_CLOSED;
+                                disconnectReason = "transport closed";
+                            }
                         }
-                    }
-                    if (Client.this.getState() != ClientState.DISCONNECTED) {
-                        Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
-                    }
-                    if (Client.this.getState() == ClientState.CONNECTING) {
-                        Client.this.scheduleReconnect();
-                    }
-                });
+                        if (Client.this.getState() != ClientState.DISCONNECTED) {
+                            Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
+                        }
+                        if (Client.this.getState() == ClientState.CONNECTING) {
+                            Client.this.scheduleReconnect();
+                        }
+                    });
+                } catch (RejectedExecutionException ignored) {
+                }
             }
 
             @Override
@@ -372,7 +392,8 @@ public class Client {
                 super.onFailure(webSocket, t, response);
                 try {
                     Client.this.executor.submit(() -> {
-                        Client.this.handleConnectionError(t);
+                        Integer responseCode = (response != null) ? response.code() : null;
+                        listener.onError(Client.this, new ErrorEvent(t, responseCode));
                         Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
                         if (Client.this.getState() == ClientState.CONNECTING) {
                             // We need to schedule reconnect from here, since onClosed won't be called
@@ -460,7 +481,12 @@ public class Client {
             if (Client.this.getState() != ClientState.CONNECTED) {
                 return;
             }
-            this.handleSubscribeReply(channel, reply);
+            try {
+                this.handleSubscribeReply(channel, reply);
+            } catch (Exception e) {
+                // Should never happen.
+                e.printStackTrace();
+            }
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.executor.submit(() -> {
@@ -597,7 +623,7 @@ public class Client {
         }
     }
 
-    private void handleSubscribeReply(String channel, Protocol.Reply reply) {
+    private void handleSubscribeReply(String channel, Protocol.Reply reply) throws Exception {
         Subscription sub = this.getSub(channel);
         if (sub != null) {
             Protocol.SubscribeResult result;
@@ -850,7 +876,7 @@ public class Client {
         this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
     }
 
-    private void processReply(Protocol.Reply reply) {
+    private void processReply(Protocol.Reply reply) throws Exception {
         if (reply.getId() > 0) {
             CompletableFuture<Protocol.Reply> cf = this.futures.get(reply.getId());
             if (cf != null) cf.complete(reply);
@@ -863,19 +889,11 @@ public class Client {
         }
     }
 
-    private void handlePub(String channel, Protocol.Publication pub) {
+    void handlePub(String channel, Protocol.Publication pub) throws Exception {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
         Subscription sub = this.getSub(channel);
         if (sub != null) {
-            PublicationEvent event = new PublicationEvent();
-            event.setData(pub.getData().toByteArray());
-            event.setInfo(info);
-            event.setOffset(pub.getOffset());
-            event.setTags(pub.getTagsMap());
-            if (pub.getOffset() > 0) {
-                sub.setOffset(pub.getOffset());
-            }
-            sub.getListener().onPublication(sub, event);
+            sub.handlePublication(pub);
         } else {
             ServerSubscription serverSub = this.getServerSub(channel);
             if (serverSub != null) {
@@ -969,7 +987,7 @@ public class Client {
         }
     }
 
-    private void handlePush(Protocol.Push push) {
+    private void handlePush(Protocol.Push push) throws Exception {
         String channel = push.getChannel();
         if (push.hasPub()) {
             this.handlePub(channel, push.getPub());
@@ -1200,6 +1218,7 @@ public class Client {
                     Publication pub = new Publication();
                     pub.setData(protoPub.getData().toByteArray());
                     pub.setOffset(protoPub.getOffset());
+                    pub.setInfo(ClientInfo.fromProtocolClientInfo(protoPub.getInfo()));
                     pubs.add(pub);
                 }
                 result.setPublications(pubs);

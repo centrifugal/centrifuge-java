@@ -8,11 +8,19 @@ Check out [client SDK API specification](https://centrifugal.dev/docs/transports
 
 The features implemented by this SDK can be found in [SDK feature matrix](https://centrifugal.dev/docs/transports/client_sdk#sdk-feature-matrix).
 
-> **The latest `centrifuge-java` is compatible with [Centrifugo](https://github.com/centrifugal/centrifugo) server v5 and v4 and [Centrifuge](https://github.com/centrifugal/centrifuge) >= 0.25.0. For Centrifugo v2, Centrifugo v3 and Centrifuge < 0.25.0 you should use `centrifuge-java` v0.1.0.**
+> **The latest `centrifuge-java` is compatible with [Centrifugo](https://github.com/centrifugal/centrifugo) server v6, v5 and v4 and [Centrifuge](https://github.com/centrifugal/centrifuge) >= 0.25.0. For Centrifugo v2, Centrifugo v3 and Centrifuge < 0.25.0 you should use `centrifuge-java` v0.1.0.**
 
 ## Installation
 
 Library available in Maven: https://search.maven.org/artifact/io.github.centrifugal/centrifuge-java
+
+This library depends on `streamsupport-minifuture`. In case your project has a dependency to `streamsupport-cfuture` and you have a class name conflicts, you can exclude minifuture safely. Example for Gradle: 
+
+```
+implementation('io.github.centrifugal:centrifuge-java:{version}') {
+    exclude group: 'net.sourceforge.streamsupport', module: 'streamsupport-minifuture'
+}
+```
 
 ## Javadoc online
 
@@ -77,8 +85,7 @@ To verify API compatibility locally, run the following command:
 ### Automatic publishing
 
 1. Bump version in `publish-setup.gradle`. 
-2. Update changelog to reflect API and behavior changes, bugfixes. 
-3. Create new library tag. 
+2. Create new library tag.
 
 The release GitHub Action should now publish the library.
 

@@ -150,8 +150,11 @@ public class Main {
         };
 
         Subscription sub;
+        SubscriptionOptions subOpts = new SubscriptionOptions();
+        // See the available options which can be set for a Subscription:
+        // https://www.javadoc.io/doc/io.github.centrifugal/centrifuge-java/latest/io/github/centrifugal/centrifuge/SubscriptionOptions.html
         try {
-            sub = client.newSubscription("chat:index", new SubscriptionOptions(), subListener);
+            sub = client.newSubscription("chat:index", subOpts, subListener);
         } catch (DuplicateSubscriptionException e) {
             e.printStackTrace();
             return;

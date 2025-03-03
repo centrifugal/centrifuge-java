@@ -1,5 +1,7 @@
 package io.github.centrifugal.centrifuge;
 
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 import java.net.Proxy;
 import java.util.Map;
 
@@ -148,6 +150,19 @@ public class Options {
 
     private int maxServerPingDelay = 10000;
 
+    public OkHttpClient getOkHttpClient() {
+        return this.okHttpClient;
+    }
+
+    /**
+     * Set OkHttpClient. Can be used to configure custom network settings (DNS, proxy, SSLSocketFactory etc.).
+     */
+    public void setOkHttpClient(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
+    }
+
+    private OkHttpClient okHttpClient;
+
     /**
      * Set proxy to use.
      */
@@ -198,17 +213,34 @@ public class Options {
     }
 
     private Dns dns;
-
-    public OkHttpClient getOkHttpClient() {
-        return this.okHttpClient;
+  
+    /**
+     * Set custom SSLSocketFactory
+     *
+     * @deprecated set up SSLSocketFactory in OkHttpClient and pass it to {@link #setOkHttpClient}
+     */
+    public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
+        this.sslSocketFactory = sslSocketFactory;
     }
 
     /**
-     * Set OkHttpClient. Can be used to configure custom network settings (DNS, proxy etc.).
+     * Set custom SSLSocketFactory and X509TrustManager
+     *
+     * @deprecated set up SSLSocketFactory and X509TrustManager in OkHttpClient and pass it to {@link #setOkHttpClient}
      */
-    public void setOkHttpClient(OkHttpClient okHttpClient) {
-        this.okHttpClient = okHttpClient;
+    public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory, X509TrustManager trustManager) {
+        this.sslSocketFactory = sslSocketFactory;
+        this.trustManager = trustManager;
     }
 
-    private OkHttpClient okHttpClient;
+    public SSLSocketFactory getSSLSocketFactory() {
+        return this.sslSocketFactory;
+    }
+
+    private SSLSocketFactory sslSocketFactory;
+    private X509TrustManager trustManager;
+
+    public X509TrustManager getTrustManager() {
+        return trustManager;
+    }
 }

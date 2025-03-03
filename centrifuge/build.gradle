@@ -24,8 +24,8 @@ publishing {
 
 dependencies {
     api 'com.squareup.okhttp3:okhttp:4.10.0'
-    implementation 'com.google.protobuf:protobuf-javalite:3.21.12'
-    implementation 'net.sourceforge.streamsupport:streamsupport-cfuture:1.7.0'
+    implementation 'com.google.protobuf:protobuf-javalite:3.25.5'
+    implementation 'net.sourceforge.streamsupport:streamsupport-minifuture:1.7.4'
 
     testImplementation 'junit:junit:4.13.2'
 }
@@ -68,4 +68,12 @@ javadoc {
 
 metalava {
     hiddenPackages.add("io.github.centrifugal.centrifuge.internal")
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
 }

@@ -27,6 +27,8 @@ public class Subscription {
     private int resubscribeAttempts = 0;
     private String token;
     private com.google.protobuf.ByteString data;
+    private boolean deltaNegotiated;
+    private byte[] prevData;
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener, final SubscriptionOptions options) {
         this.client = client;
@@ -37,6 +39,13 @@ public class Subscription {
         this.token = opts.getToken();
         if (opts.getData() != null) {
             this.data = com.google.protobuf.ByteString.copyFrom(opts.getData());
+        }
+        this.prevData = null;
+        this.deltaNegotiated = false;
+        if (opts.getSince() != null) {
+            this.offset = opts.getSince().getOffset();
+            this.epoch = opts.getSince().getEpoch();
+            this.recover = true;
         }
     }
 
@@ -64,7 +73,7 @@ public class Subscription {
         return offset;
     }
 
-    void setOffset(long offset) {
+    private void setOffset(long offset) {
         this.offset = offset;
     }
 
@@ -166,12 +175,34 @@ public class Subscription {
         this._unsubscribe(sendUnsubscribe, code, reason);
     }
 
-    void moveToSubscribed(Protocol.SubscribeResult result) {
+    void handlePublication(Protocol.Publication pub) throws Exception {
+        ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
+        PublicationEvent event = new PublicationEvent();
+        byte[] pubData = pub.getData().toByteArray();
+        if (this.deltaNegotiated) {
+            byte[] prevData = this.getPrevData();
+            if (prevData != null && pub.getDelta()) {
+                pubData = Fossil.applyDelta(prevData, pubData);
+            }
+            this.setPrevData(pubData);
+        }
+        event.setData(pubData);
+        event.setInfo(info);
+        event.setOffset(pub.getOffset());
+        event.setTags(pub.getTagsMap());
+        if (pub.getOffset() > 0) {
+            this.setOffset(pub.getOffset());
+        }
+        this.listener.onPublication(this, event);
+    }
+
+    void moveToSubscribed(Protocol.SubscribeResult result) throws Exception {
         this.setState(SubscriptionState.SUBSCRIBED);
         if (result.getRecoverable()) {
             this.recover = true;
         }
         this.setEpoch(result.getEpoch());
+        this.deltaNegotiated = result.getDelta();
 
         byte[] data = null;
         if (result.getData() != null) {
@@ -182,11 +213,7 @@ public class Subscription {
 
         if (result.getPublicationsCount() > 0) {
             for (Protocol.Publication publication : result.getPublicationsList()) {
-                PublicationEvent publicationEvent = new PublicationEvent();
-                publicationEvent.setData(publication.getData().toByteArray());
-                publicationEvent.setOffset(publication.getOffset());
-                this.listener.onPublication(this, publicationEvent);
-                this.setOffset(publication.getOffset());
+                this.client.handlePub(this.channel, publication);
             }
         } else {
             this.setOffset(result.getOffset());
@@ -254,6 +281,7 @@ public class Subscription {
         builder.setPositioned(this.opts.isPositioned());
         builder.setRecoverable(this.opts.isRecoverable());
         builder.setJoinLeave(this.opts.isJoinLeave());
+        builder.setDelta(this.opts.getDelta());
 
         return builder.build();
     }
@@ -457,5 +485,13 @@ public class Subscription {
         if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
         }
+    }
+
+    private byte[] getPrevData() {
+        return prevData;
+    }
+
+    private void setPrevData(byte[] prevData) {
+        this.prevData = prevData;
     }
 }
