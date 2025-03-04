@@ -5,6 +5,8 @@ import javax.net.ssl.X509TrustManager;
 import java.net.Proxy;
 import java.util.Map;
 
+import okhttp3.OkHttpClient;
+
 /**
  * Configuration for a {@link Client} instance.
  */
@@ -148,8 +150,21 @@ public class Options {
 
     private int maxServerPingDelay = 10000;
 
+    public OkHttpClient getOkHttpClient() {
+        return this.okHttpClient;
+    }
+
     /**
-     * Set proxy to use.
+     * Set OkHttpClient. Can be used to pass configured custom OkHttpClient (with DNS, proxy, SSLSocketFactory etc.).
+     */
+    public void setOkHttpClient(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
+    }
+
+    private OkHttpClient okHttpClient;
+
+    /**
+     * Set proxy to use in default OkHttpClient builder. Won't be used if {@link #setOkHttpClient} was used.
      */
     public void setProxy(Proxy proxy) {
         this.proxy = proxy;
@@ -165,7 +180,7 @@ public class Options {
     private String proxyPassword;
 
     /**
-     * Set proxy credentials.
+     * Set proxy credentials for default OkHttpClient builder. Won't be used if {@link #setOkHttpClient} was used.
      */
     public void setProxyCredentials(String login, String password) {
         this.proxyLogin = login;
@@ -185,7 +200,7 @@ public class Options {
     }
 
     /**
-     * Set custom DNS resolver..
+     * Set custom DNS resolver for default OkHttpClient builder. Won't be used if {@link #setOkHttpClient} was used.
      */
     public void setDns(Dns dns) {
         this.dns = dns;
@@ -194,14 +209,15 @@ public class Options {
     private Dns dns;
 
     /**
-     * Set custom SSLSocketFactory
+     * Set custom SSLSocketFactory for default OkHttpClient builder. Won't be used if {@link #setOkHttpClient} was used.
      */
     public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory) {
         this.sslSocketFactory = sslSocketFactory;
     }
 
     /**
-     * Set custom SSLSocketFactory and X509TrustManager
+     * Set custom SSLSocketFactory and X509TrustManager for default OkHttpClient builder. 
+     * Won't be used if {@link #setOkHttpClient} was used.
      */
     public void setSSLSocketFactory(SSLSocketFactory sslSocketFactory, X509TrustManager trustManager) {
         this.sslSocketFactory = sslSocketFactory;
