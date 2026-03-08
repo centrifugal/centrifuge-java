@@ -181,7 +181,6 @@ class Fossil {
                     return out;
 
                 default:
-                    System.out.println(c);
                     throw new Exception("unknown delta operator");
             }
         }
