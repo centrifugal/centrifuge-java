@@ -6,7 +6,7 @@ plugins {
     id "maven-publish"
     id "signing"
     id 'me.tylerbwong.gradle.metalava'
-    id "com.google.protobuf" version "0.8.19"
+    id "com.google.protobuf" version "0.9.4"
 }
 
 apply plugin: "com.vanniktech.maven.publish.base"
@@ -86,7 +86,8 @@ task integrationTest(type: Test) {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.20.1"
+        // Matches the runtime version of protobuf-javalite above.
+        artifact = "com.google.protobuf:protoc:3.25.5"
     }
 
     generateProtoTasks {
