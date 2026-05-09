@@ -27,13 +27,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+// protobuf-gradle-plugin 0.9.x already wires the generated proto sources
+// into `sourceSets.main.java` and the corresponding task dependencies. We
+// only need to declare the integrationTest source set here.
 sourceSets {
-    main {
-        java {
-            String baseDir = protobuf.getProperty("generatedFilesBaseDir").toString()
-            srcDirs "$baseDir/main/java"
-        }
-    }
     integrationTest {
         java.srcDir 'src/integrationTest/java'
         resources.srcDir 'src/integrationTest/resources'
@@ -45,16 +42,6 @@ sourceSets {
 configurations {
     integrationTestImplementation.extendsFrom testImplementation
     integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
-}
-
-// `sourceSets.main.java.srcDirs` adds the proto-generated sources, but the
-// `sourcesJar` and `javadoc` tasks don't infer the implicit dependency on
-// `generateProto`. Gradle 7 warned; Gradle 8 fails with a validation error.
-// Wire the dependency explicitly.
-afterEvaluate {
-    tasks.matching { it.name == 'sourcesJar' || it.name == 'javadoc' }.configureEach {
-        dependsOn 'generateProto'
-    }
 }
 
 dependencies {
