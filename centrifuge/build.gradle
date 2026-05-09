@@ -47,6 +47,16 @@ configurations {
     integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
+// `sourceSets.main.java.srcDirs` adds the proto-generated sources, but the
+// `sourcesJar` and `javadoc` tasks don't infer the implicit dependency on
+// `generateProto`. Gradle 7 warned; Gradle 8 fails with a validation error.
+// Wire the dependency explicitly.
+afterEvaluate {
+    tasks.matching { it.name == 'sourcesJar' || it.name == 'javadoc' }.configureEach {
+        dependsOn 'generateProto'
+    }
+}
+
 dependencies {
     api 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.google.protobuf:protobuf-javalite:3.25.5'
