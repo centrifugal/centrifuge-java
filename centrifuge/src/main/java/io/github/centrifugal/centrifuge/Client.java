@@ -336,8 +336,13 @@ public class Client {
                     Client.this.executor.submit(() -> {
                         try {
                             Client.this.handleConnectionOpen();
-                        } catch (Exception e) {
-                            // Should never happen.
+                        } catch (Throwable e) {
+                            // Catch Throwable (not just Exception) so LinkageError /
+                            // NoSuchMethodError caused by protobuf classpath conflicts
+                            // (duplicate `protobuf-java` next to `protobuf-javalite`,
+                            // R8 stripping a generated field, etc.) surfaces as an
+                            // onError event instead of dying silently inside the
+                            // executor — see issue #20.
                             e.printStackTrace();
                             Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
                             Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (open)", false);
@@ -372,9 +377,12 @@ public class Client {
                             }
                             try {
                                 Client.this.processReply(reply);
-                            } catch (Exception e) {
-                                // Should never happen. Most probably indicates an unexpected exception coming from the user-level code.
-                                // Theoretically may indicate a bug of SDK also – stack trace will help here.
+                            } catch (Throwable e) {
+                                // Catch Throwable so LinkageError / NoSuchMethodError
+                                // raised by protobuf reflection (or any other Error
+                                // surfacing from generated code) is reported via
+                                // onError rather than silently swallowed by the
+                                // executor — see issue #20.
                                 e.printStackTrace();
                                 Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
                                 Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);

@@ -32,6 +32,21 @@ Centrifuge-java library uses Protobuf library (Lite version) for client protocol
 
 More information [about Android shrinking](https://developer.android.com/studio/build/shrink-code).
 
+## Protobuf classpath conflicts
+
+Centrifuge-java pulls in `com.google.protobuf:protobuf-javalite`. If your app already depends on the full `com.google.protobuf:protobuf-java` (commonly via gRPC, Firebase, or another library), the two artifacts contain overlapping classes and the build will fail with `Duplicate class com.google.protobuf.*` errors, or — worse — the app builds but a `NoSuchMethodError` / `NoSuchFieldError` is thrown at runtime when the SDK builds its protobuf messages, leaving the connection in a `stale` state with no obvious reason in logs.
+
+If you hit this, exclude the *other* library's bundled protobuf so that the lite version provided by centrifuge-java is the only one on the classpath:
+
+```gradle
+implementation('com.example:other-library:x.y.z') {
+    exclude group: 'com.google.protobuf', module: 'protobuf-java'
+    exclude group: 'com.google.protobuf', module: 'protobuf-lite'
+}
+```
+
+Starting in `0.6.0`, an `Error` (e.g. `NoSuchMethodError`) thrown from generated protobuf code is surfaced through the SDK's `onError` event and disconnects with code `bad protocol`, instead of silently failing in the executor — so a misconfigured classpath produces an actionable stack trace.
+
 ## Basic usage
 
 See example code in [console Java example](https://github.com/centrifugal/centrifuge-java/blob/master/example/src/main/java/io/github/centrifugal/centrifuge/example/Main.java) or in [demo Android app](https://github.com/centrifugal/centrifuge-java/blob/master/demo/src/main/java/io/github/centrifugal/centrifuge/demo/MainActivity.java)
