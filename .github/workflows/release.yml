@@ -11,22 +11,32 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: set up JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
 
       - name: Publish to Maven Central
+        # publishAndReleaseToMavenCentral: uploads + auto-releases via Sonatype
+        # Central Portal (the OSSRH replacement). Replaces the old
+        # `publish` + `closeAndReleaseRepository` two-step.
+        #
+        # Credentials below come from a Central Portal "User Token"
+        # (https://central.sonatype.com/account → User Token), NOT the JIRA
+        # login. We read them from CENTRAL_PORTAL_* secrets so the legacy
+        # OSSRH MAVEN_CENTRAL_* secrets stay intact as a rollback path —
+        # if Central Portal misbehaves, swap the env vars below back to the
+        # MAVEN_CENTRAL_* secrets and revert publish-setup.gradle to the
+        # OSSRH host. GPG secrets are unchanged across both flows.
         run: |
           ./gradlew clean --no-daemon
-          ./gradlew publish --no-daemon --no-parallel
-          ./gradlew closeAndReleaseRepository
+          ./gradlew publishAndReleaseToMavenCentral --no-daemon --no-parallel
         env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME}}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD}}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.MAVEN_GPG_ID}}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.MAVEN_GPG_PASSWORD}}
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.MAVEN_GPG_PRIVATE_KEY}}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.CENTRAL_PORTAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.CENTRAL_PORTAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.MAVEN_GPG_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.MAVEN_GPG_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
