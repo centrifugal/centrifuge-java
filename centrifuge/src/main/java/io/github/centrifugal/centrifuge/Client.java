@@ -34,6 +34,7 @@ import okio.ByteString;
 
 public class Client {
     private WebSocket ws;
+    private OkHttpClient httpClient;
     private final String endpoint;
     private final Options opts;
     private String token;
@@ -169,11 +170,34 @@ public class Client {
      * zero awaitMilliseconds close always returns false.
      */
     public boolean close(long awaitMilliseconds) throws InterruptedException {
-        this.disconnect();
-        this.executor.shutdown();
-        this.scheduler.shutdownNow();
+        try {
+            this.executor.submit(() -> {
+                // Tear down the connection synchronously on the executor thread
+                // so any future-cleanup tasks scheduled by processDisconnect
+                // (e.g. orTimeout/exceptionally re-submits) get queued before
+                // we mark the executor shutdown.
+                Client.this.processDisconnect(DISCONNECTED_DISCONNECT_CALLED, "client closed", false);
+                Client.this.setState(ClientState.CLOSED);
+                if (Client.this.ws != null) {
+                    Client.this.ws.cancel();
+                }
+                // Release dispatcher threads + pooled connections on transports
+                // we built ourselves. A user-supplied OkHttpClient is left
+                // alone — we never own its lifecycle.
+                if (Client.this.httpClient != null
+                        && Client.this.httpClient != Client.this.opts.getOkHttpClient()) {
+                    Client.this.httpClient.dispatcher().executorService().shutdown();
+                    Client.this.httpClient.connectionPool().evictAll();
+                }
+                Client.this.scheduler.shutdownNow();
+                // Initiate executor shutdown as the final step. New submits
+                // will be rejected, but already-queued cleanup tasks still run.
+                Client.this.executor.shutdown();
+            });
+        } catch (RejectedExecutionException ignored) {
+            // Executor already shut down (close called twice).
+        }
         if (awaitMilliseconds > 0) {
-            // Keep this the last, executor will be closed in connection close handler.
             return this.executor.awaitTermination(awaitMilliseconds, TimeUnit.MILLISECONDS);
         }
         return false;
@@ -259,6 +283,14 @@ public class Client {
             this.ws.cancel();
         }
 
+        // If we previously built our own OkHttpClient, release its dispatcher
+        // threads and pooled connections before building a new one. When the
+        // user supplied the client (this.httpClient == opts.getOkHttpClient())
+        // we never own it, so we must not shut it down.
+        boolean previousWasOurs = this.httpClient != null
+                && this.httpClient != opts.getOkHttpClient();
+        OkHttpClient previousHttpClient = previousWasOurs ? this.httpClient : null;
+
         OkHttpClient.Builder okHttpBuilder;
         if (opts.getOkHttpClient() != null) {
             okHttpBuilder = opts.getOkHttpClient().newBuilder();
@@ -295,7 +327,8 @@ public class Client {
             }
         }
 
-        this.ws = (okHttpBuilder.build()).newWebSocket(request, new WebSocketListener() {
+        this.httpClient = okHttpBuilder.build();
+        this.ws = this.httpClient.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
                 super.onOpen(webSocket, response);
@@ -405,6 +438,14 @@ public class Client {
                 }
             }
         });
+
+        if (previousHttpClient != null) {
+            // Graceful shutdown: in-flight calls (including cancel of the
+            // previous WebSocket) finish, then dispatcher threads exit and
+            // pooled connections are released.
+            previousHttpClient.dispatcher().executorService().shutdown();
+            previousHttpClient.connectionPool().evictAll();
+        }
     }
 
     private void handleConnectionOpen() {
@@ -418,7 +459,13 @@ public class Client {
                 this.processDisconnect(DISCONNECTED_UNAUTHORIZED, "unauthorized", false);
                 return;
             }
+            final WebSocket connectionWs = this.ws;
             this.opts.getTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
+                // If the connection has been replaced (reconnect, disconnect)
+                // since this token request was issued, the callback is stale.
+                if (Client.this.ws != connectionWs) {
+                    return;
+                }
                 if (Client.this.getState() != ClientState.CONNECTING) {
                     return;
                 }
@@ -770,7 +817,14 @@ public class Client {
         if (this.opts.getTokenGetter() == null) {
             return;
         }
-        this.executor.submit(() -> Client.this.opts.getTokenGetter().getConnectionToken(new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
+        this.executor.submit(() -> {
+            final WebSocket refreshWs = Client.this.ws;
+            Client.this.opts.getTokenGetter().getConnectionToken(new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
+            // If the connection has been replaced since this refresh was
+            // issued, the callback (and any token it carries) is stale.
+            if (Client.this.ws != refreshWs) {
+                return;
+            }
             if (Client.this.getState() != ClientState.CONNECTED) {
                 return;
             }
@@ -793,6 +847,9 @@ public class Client {
             }
             Client.this.token = token;
             refreshSynchronized(token, (error, result) -> {
+                if (Client.this.ws != refreshWs) {
+                    return;
+                }
                 if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
                 }
@@ -825,7 +882,8 @@ public class Client {
                     Client.this.refreshTask = Client.this.scheduler.schedule(Client.this::sendRefresh, ttl, TimeUnit.SECONDS);
                 }
             });
-        })));
+        }));
+        });
     }
 
     private void sendConnect() {

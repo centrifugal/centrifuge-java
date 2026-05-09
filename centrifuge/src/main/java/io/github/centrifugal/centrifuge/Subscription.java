@@ -29,6 +29,10 @@ public class Subscription {
     private com.google.protobuf.ByteString data;
     private boolean deltaNegotiated;
     private byte[] prevData;
+    // Bumped on each new sendSubscribe/sendRefresh attempt. Async tokenGetter
+    // callbacks capture the epoch at issue time and bail if it has moved on,
+    // so a stale token from an earlier attempt cannot land on a later one.
+    private long subscribeEpoch = 0;
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener, final SubscriptionOptions options) {
         this.client = client;
@@ -97,7 +101,11 @@ public class Subscription {
         if (this.opts.getTokenGetter() == null) {
             return;
         }
+        final long epoch = ++this.subscribeEpoch;
         this.client.getExecutor().submit(() -> Subscription.this.opts.getTokenGetter().getSubscriptionToken(new SubscriptionTokenEvent(this.getChannel()), (err, token) -> {
+            if (Subscription.this.subscribeEpoch != epoch) {
+                return;
+            }
             if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
                 return;
             }
@@ -120,6 +128,9 @@ public class Subscription {
             }
             Subscription.this.token = token;
             Subscription.this.client.subRefreshSynchronized(Subscription.this.channel, token, (error, result) -> {
+                if (Subscription.this.subscribeEpoch != epoch) {
+                    return;
+                }
                 if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
                     return;
                 }
@@ -239,7 +250,7 @@ public class Subscription {
         if (err.getCode() == 109) { // Token expired.
             this.token = "";
             this.scheduleResubscribe();
-        } if (err.isTemporary()) {
+        } else if (err.isTemporary()) {
             this.scheduleResubscribe();
         } else {
             this._unsubscribe(false, err.getCode(), err.getMessage());
@@ -296,8 +307,12 @@ public class Subscription {
         }
 
         if (this.token.equals("") && this.opts.getTokenGetter() != null) {
+            final long epoch = ++this.subscribeEpoch;
             SubscriptionTokenEvent subscriptionTokenEvent = new SubscriptionTokenEvent(this.channel);
             this.opts.getTokenGetter().getSubscriptionToken(subscriptionTokenEvent, (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
+                if (Subscription.this.subscribeEpoch != epoch) {
+                    return;
+                }
                 if (Subscription.this.getState() != SubscriptionState.SUBSCRIBING) {
                     return;
                 }
