@@ -2,4 +2,14 @@ rootProject.name = 'centrifuge-java'
 
 include ':centrifuge'
 include ':example'
-include ':demo'
+
+// :demo is an Android module. Skip including it when the Android SDK isn't
+// available so library-only contributors can run `./gradlew :centrifuge:test`
+// without installing the Android toolchain. Set ANDROID_HOME (or place a
+// `local.properties` with `sdk.dir=...` at the repo root) to opt in.
+def hasAndroidSdk = System.getenv('ANDROID_HOME') ||
+        System.getenv('ANDROID_SDK_ROOT') ||
+        file('local.properties').exists()
+if (hasAndroidSdk) {
+    include ':demo'
+}

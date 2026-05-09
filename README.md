@@ -32,6 +32,21 @@ Centrifuge-java library uses Protobuf library (Lite version) for client protocol
 
 More information [about Android shrinking](https://developer.android.com/studio/build/shrink-code).
 
+## Protobuf classpath conflicts
+
+Centrifuge-java pulls in `com.google.protobuf:protobuf-javalite`. If your app already depends on the full `com.google.protobuf:protobuf-java` (commonly via gRPC, Firebase, or another library), the two artifacts contain overlapping classes and the build will fail with `Duplicate class com.google.protobuf.*` errors, or — worse — the app builds but a `NoSuchMethodError` / `NoSuchFieldError` is thrown at runtime when the SDK builds its protobuf messages, leaving the connection in a `stale` state with no obvious reason in logs.
+
+If you hit this, exclude the *other* library's bundled protobuf so that the lite version provided by centrifuge-java is the only one on the classpath:
+
+```gradle
+implementation('com.example:other-library:x.y.z') {
+    exclude group: 'com.google.protobuf', module: 'protobuf-java'
+    exclude group: 'com.google.protobuf', module: 'protobuf-lite'
+}
+```
+
+Starting in `0.6.0`, an `Error` (e.g. `NoSuchMethodError`) thrown from generated protobuf code is surfaced through the SDK's `onError` event and disconnects with code `bad protocol`, instead of silently failing in the executor — so a misconfigured classpath produces an actionable stack trace.
+
 ## Basic usage
 
 See example code in [console Java example](https://github.com/centrifugal/centrifuge-java/blob/master/example/src/main/java/io/github/centrifugal/centrifuge/example/Main.java) or in [demo Android app](https://github.com/centrifugal/centrifuge-java/blob/master/demo/src/main/java/io/github/centrifugal/centrifuge/demo/MainActivity.java)
@@ -62,6 +77,25 @@ This section contains an information for library contributors. You don't need ge
 
 The protobuf definitions are located in `centrifuge/main/proto` directory.
 `Protocol` class is generated automatically during project compilation by `protobuf` gradle plugin.
+
+### Running tests
+
+The unit tests run with no external services:
+
+```shell
+./gradlew :centrifuge:test
+```
+
+Integration tests exercise the SDK against a real Centrifugo server brought up via `docker-compose.yml`. The repo's `Makefile` wraps both:
+
+```shell
+make test-unit         # unit tests only
+make test-integration  # starts Centrifugo, then runs integration tests
+make test              # both
+make down              # stop Centrifugo when done
+```
+
+The Gradle wrapper is pinned at 7.5.1, which supports JDK 8–17. The `Makefile` auto-discovers `openjdk@17` from a Homebrew install (`brew install openjdk@17`); set `JAVA_HOME` yourself if you'd rather pick the JDK explicitly. CI runs both jobs on Ubuntu — see `.github/workflows/ci.yml`.
 
 ### Check API signatures
 

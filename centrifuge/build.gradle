@@ -6,7 +6,7 @@ plugins {
     id "maven-publish"
     id "signing"
     id 'me.tylerbwong.gradle.metalava'
-    id "com.google.protobuf" version "0.8.19"
+    id "com.google.protobuf" version "0.9.4"
 }
 
 apply plugin: "com.vanniktech.maven.publish.base"
@@ -22,14 +22,6 @@ publishing {
     }
 }
 
-dependencies {
-    api 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'com.google.protobuf:protobuf-javalite:3.25.5'
-    implementation 'net.sourceforge.streamsupport:streamsupport-minifuture:1.7.4'
-
-    testImplementation 'junit:junit:4.13.2'
-}
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -42,11 +34,60 @@ sourceSets {
             srcDirs "$baseDir/main/java"
         }
     }
+    integrationTest {
+        java.srcDir 'src/integrationTest/java'
+        resources.srcDir 'src/integrationTest/resources'
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+// `sourceSets.main.java.srcDirs` adds the proto-generated sources, but the
+// `sourcesJar` and `javadoc` tasks don't infer the implicit dependency on
+// `generateProto`. Gradle 7 warned; Gradle 8 fails with a validation error.
+// Wire the dependency explicitly.
+afterEvaluate {
+    tasks.matching { it.name == 'sourcesJar' || it.name == 'javadoc' }.configureEach {
+        dependsOn 'generateProto'
+    }
+}
+
+dependencies {
+    api 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.google.protobuf:protobuf-javalite:3.25.5'
+    implementation 'net.sourceforge.streamsupport:streamsupport-minifuture:1.7.4'
+
+    testImplementation 'junit:junit:4.13.2'
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs integration tests against a running Centrifugo (see docker-compose.yml).'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    shouldRunAfter test
+    useJUnit()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
+    // Endpoint can be overridden when Centrifugo runs somewhere else.
+    systemProperty 'centrifuge.endpoint',
+            System.getProperty('centrifuge.endpoint', 'ws://localhost:8000/connection/websocket')
+    systemProperty 'centrifuge.tokenSecret',
+            System.getProperty('centrifuge.tokenSecret', 'secret')
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.20.1"
+        // Matches the runtime version of protobuf-javalite above.
+        artifact = "com.google.protobuf:protoc:3.25.5"
     }
 
     generateProtoTasks {

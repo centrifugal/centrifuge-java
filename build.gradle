@@ -2,11 +2,21 @@ buildscript {
     repositories {
         google()
         gradlePluginPortal()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.24.0'
+        // AGP 7.4.x is the highest 7.x line; runs on Gradle 8.x and still
+        // accepts the demo's compileSdk 27. Bumping past 7.x would force
+        // demo modernization (compileSdk 34 + AndroidX), which is out of
+        // scope for tooling-only work.
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        // 0.30+ targets Sonatype Central Portal (replaces OSSRH). Renames
+        // the legacy `closeAndReleaseRepository` task to
+        // `publishAndReleaseToMavenCentral` — see release.yml.
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.30.0'
+        // metalava-gradle hasn't published past 0.2.3 (March 2022). Kept as-is;
+        // works on Gradle 8.x despite age. Worth replacing eventually with
+        // direct metalava CLI invocation if it breaks on a future Gradle line.
         classpath "me.tylerbwong.gradle:metalava-gradle:0.2.3"
     }
 }
