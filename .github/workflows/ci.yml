@@ -23,6 +23,35 @@ jobs:
       - name: Run unit tests
         run: ./gradlew :centrifuge:test
 
+  integrationTest:
+    runs-on: ubuntu-latest
+    # Prevent duplicate builds on internal PRs.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Start Centrifugo
+        run: docker compose up -d --wait
+
+      - name: Run integration tests
+        run: ./gradlew :centrifuge:integrationTest
+
+      - name: Centrifugo logs (on failure)
+        if: failure()
+        run: docker compose logs centrifugo
+
+      - name: Stop Centrifugo
+        if: always()
+        run: docker compose down
+
   compileAndroidSample:
     runs-on: ubuntu-latest
     # Prevent duplicate builds on internal PRs.

@@ -403,7 +403,10 @@ public class Client {
                         if (disconnectCode < 3000) {
                             if (disconnectCode == MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS) {
                                 disconnectCode = DISCONNECTED_MESSAGE_SIZE_LIMIT;
-                                disconnectReason = "message size limit";
+                                disconnectReason = "message size limit exceeded";
+                                // Reconnecting will hit the same limit, so this is terminal —
+                                // matches centrifuge-js (transport_websocket onClose).
+                                reconnect = false;
                             } else {
                                 disconnectCode = CONNECTING_TRANSPORT_CLOSED;
                                 disconnectReason = "transport closed";

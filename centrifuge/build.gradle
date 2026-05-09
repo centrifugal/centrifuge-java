@@ -22,14 +22,6 @@ publishing {
     }
 }
 
-dependencies {
-    api 'com.squareup.okhttp3:okhttp:4.12.0'
-    implementation 'com.google.protobuf:protobuf-javalite:3.25.5'
-    implementation 'net.sourceforge.streamsupport:streamsupport-minifuture:1.7.4'
-
-    testImplementation 'junit:junit:4.13.2'
-}
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -42,6 +34,44 @@ sourceSets {
             srcDirs "$baseDir/main/java"
         }
     }
+    integrationTest {
+        java.srcDir 'src/integrationTest/java'
+        resources.srcDir 'src/integrationTest/resources'
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom testImplementation
+    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
+dependencies {
+    api 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.google.protobuf:protobuf-javalite:3.25.5'
+    implementation 'net.sourceforge.streamsupport:streamsupport-minifuture:1.7.4'
+
+    testImplementation 'junit:junit:4.13.2'
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs integration tests against a running Centrifugo (see docker-compose.yml).'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    shouldRunAfter test
+    useJUnit()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showStandardStreams = true
+    }
+    // Endpoint can be overridden when Centrifugo runs somewhere else.
+    systemProperty 'centrifuge.endpoint',
+            System.getProperty('centrifuge.endpoint', 'ws://localhost:8000/connection/websocket')
+    systemProperty 'centrifuge.tokenSecret',
+            System.getProperty('centrifuge.tokenSecret', 'secret')
 }
 
 protobuf {

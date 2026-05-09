@@ -63,6 +63,25 @@ This section contains an information for library contributors. You don't need ge
 The protobuf definitions are located in `centrifuge/main/proto` directory.
 `Protocol` class is generated automatically during project compilation by `protobuf` gradle plugin.
 
+### Running tests
+
+The unit tests run with no external services:
+
+```shell
+./gradlew :centrifuge:test
+```
+
+Integration tests exercise the SDK against a real Centrifugo server brought up via `docker-compose.yml`. The repo's `Makefile` wraps both:
+
+```shell
+make test-unit         # unit tests only
+make test-integration  # starts Centrifugo, then runs integration tests
+make test              # both
+make down              # stop Centrifugo when done
+```
+
+The Gradle wrapper is pinned at 7.5.1, which supports JDK 8–17. The `Makefile` auto-discovers `openjdk@17` from a Homebrew install (`brew install openjdk@17`); set `JAVA_HOME` yourself if you'd rather pick the JDK explicitly. CI runs both jobs on Ubuntu — see `.github/workflows/ci.yml`.
+
 ### Check API signatures
 
 We use [metalava-gradle](https://github.com/tylerbwong/metalava-gradle) to ensure we are aware of breaking API changes in the library.
