@@ -35,6 +35,11 @@ import okio.ByteString;
 public class Client {
     private WebSocket ws;
     private OkHttpClient httpClient;
+    // Whether httpClient was built from scratch (no user-supplied base client),
+    // meaning its Dispatcher and ConnectionPool are ours to dispose. Recorded
+    // at build time so a later mutation of Options.okHttpClient cannot
+    // misclassify ownership of an already-built transport (#87).
+    private boolean httpClientOwned;
     private final String endpoint;
     private final Options opts;
     private String token;
@@ -185,8 +190,7 @@ public class Client {
                 // we built from scratch. When the user supplied a base client,
                 // transports derived from it via newBuilder() share the user's
                 // Dispatcher and ConnectionPool — we never own those (#87).
-                if (Client.this.httpClient != null
-                        && Client.this.opts.getOkHttpClient() == null) {
+                if (Client.this.httpClient != null && Client.this.httpClientOwned) {
                     Client.this.httpClient.dispatcher().executorService().shutdown();
                     Client.this.httpClient.connectionPool().evictAll();
                 }
@@ -292,14 +296,14 @@ public class Client {
         // the user's client and behind the very transport we are about to
         // build, permanently rejecting all of their calls and our future
         // reconnects (#87). Only transports built from scratch own their
-        // resources.
-        boolean previousWasOurs = this.httpClient != null
-                && opts.getOkHttpClient() == null;
-        OkHttpClient previousHttpClient = previousWasOurs ? this.httpClient : null;
+        // resources, tracked via httpClientOwned at build time.
+        OkHttpClient previousHttpClient =
+                (this.httpClient != null && this.httpClientOwned) ? this.httpClient : null;
 
+        OkHttpClient baseClient = opts.getOkHttpClient();
         OkHttpClient.Builder okHttpBuilder;
-        if (opts.getOkHttpClient() != null) {
-            okHttpBuilder = opts.getOkHttpClient().newBuilder();
+        if (baseClient != null) {
+            okHttpBuilder = baseClient.newBuilder();
         } else {
             okHttpBuilder = new OkHttpClient.Builder();
         }
@@ -334,6 +338,7 @@ public class Client {
         }
 
         this.httpClient = okHttpBuilder.build();
+        this.httpClientOwned = baseClient == null;
         this.ws = this.httpClient.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
