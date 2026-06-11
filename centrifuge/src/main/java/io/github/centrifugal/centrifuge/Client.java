@@ -182,10 +182,11 @@ public class Client {
                     Client.this.ws.cancel();
                 }
                 // Release dispatcher threads + pooled connections on transports
-                // we built ourselves. A user-supplied OkHttpClient is left
-                // alone — we never own its lifecycle.
+                // we built from scratch. When the user supplied a base client,
+                // transports derived from it via newBuilder() share the user's
+                // Dispatcher and ConnectionPool — we never own those (#87).
                 if (Client.this.httpClient != null
-                        && Client.this.httpClient != Client.this.opts.getOkHttpClient()) {
+                        && Client.this.opts.getOkHttpClient() == null) {
                     Client.this.httpClient.dispatcher().executorService().shutdown();
                     Client.this.httpClient.connectionPool().evictAll();
                 }
@@ -283,12 +284,17 @@ public class Client {
             this.ws.cancel();
         }
 
-        // If we previously built our own OkHttpClient, release its dispatcher
-        // threads and pooled connections before building a new one. When the
-        // user supplied the client (this.httpClient == opts.getOkHttpClient())
-        // we never own it, so we must not shut it down.
+        // If we previously built our own OkHttpClient from scratch, release its
+        // dispatcher threads and pooled connections before building a new one.
+        // When the user supplied a base client we derive each transport from it
+        // via newBuilder(), which shares the user's Dispatcher and
+        // ConnectionPool: shutting those down would kill the executor behind
+        // the user's client and behind the very transport we are about to
+        // build, permanently rejecting all of their calls and our future
+        // reconnects (#87). Only transports built from scratch own their
+        // resources.
         boolean previousWasOurs = this.httpClient != null
-                && this.httpClient != opts.getOkHttpClient();
+                && opts.getOkHttpClient() == null;
         OkHttpClient previousHttpClient = previousWasOurs ? this.httpClient : null;
 
         OkHttpClient.Builder okHttpBuilder;
