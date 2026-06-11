@@ -1,5 +1,6 @@
 package io.github.centrifugal.centrifuge;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,6 +12,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -95,6 +102,62 @@ public class ReconnectIntegrationTest extends IntegrationTestBase {
         assertTrue("got onConnecting events: " + connectingCount.get(),
                 connectingCount.get() >= 2);
         assertEquals(2, connectedCount.get());
+    }
+
+    @Test(timeout = 20_000)
+    public void testUserSuppliedOkHttpClientSurvivesReconnectAndClose() throws Exception {
+        String user = "user-" + UUID.randomUUID();
+        OkHttpClient userClient = new OkHttpClient();
+
+        Captured<ConnectedEvent> firstConnected = new Captured<>();
+        Captured<ConnectedEvent> reconnected = new Captured<>();
+
+        Options opts = fastReconnectOpts(user);
+        opts.setOkHttpClient(userClient);
+
+        client = new Client(endpoint(), opts, new EventListener() {
+            @Override public void onConnected(Client c, ConnectedEvent e) {
+                if (!firstConnected.isSet()) firstConnected.set(e);
+                else if (!reconnected.isSet()) reconnected.set(e);
+            }
+        });
+        client.connect();
+        firstConnected.await("first connect");
+
+        api.disconnectUser(user, CODE_DISCONNECT_RECONNECT, "test");
+        reconnected.await("reconnected");
+
+        // Transports are derived from the user's client via newBuilder(), which
+        // shares its Dispatcher and ConnectionPool — reconnect must not dispose
+        // them (#87).
+        assertFalse("reconnect must not shut down the user client's dispatcher executor",
+                userClient.dispatcher().executorService().isShutdown());
+
+        // Async calls on the user's client still execute after the reconnect;
+        // enqueue() goes through the dispatcher executor the disposal used to kill.
+        CountDownLatch callResponded = new CountDownLatch(1);
+        AtomicReference<IOException> callFailure = new AtomicReference<>();
+        String apiUrl = System.getProperty("centrifuge.apiUrl", "http://localhost:8000/api");
+        userClient.newCall(new Request.Builder().url(apiUrl).build()).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+                callFailure.set(e);
+                callResponded.countDown();
+            }
+
+            @Override public void onResponse(Call call, Response response) {
+                response.close();
+                callResponded.countDown();
+            }
+        });
+        awaitLatch(callResponded, "async call on user client");
+        assertNull("async call on user client must not fail: " + callFailure.get(),
+                callFailure.get());
+
+        // close() must leave the user-supplied client's resources alone too.
+        client.close(2000);
+        client = null;
+        assertFalse("close must not shut down the user client's dispatcher executor",
+                userClient.dispatcher().executorService().isShutdown());
     }
 
     @Test(timeout = 15_000)
