@@ -64,17 +64,42 @@ final class CentrifugoApi {
         post("/unsubscribe", body);
     }
 
-    private void post(String path, String body) throws IOException {
+    /** Read the current stream top position of {@code channel}. */
+    StreamPosition history(String channel) throws IOException {
+        String body = "{\"channel\":\"" + escape(channel) + "\",\"limit\":0}";
+        String resp = post("/history", body);
+        // Minimal parsing to avoid pulling a JSON dependency into tests. The
+        // response looks like {"result":{"epoch":"...","offset":N}} — offset
+        // is omitted when zero.
+        long offset = 0;
+        java.util.regex.Matcher om = java.util.regex.Pattern.compile("\"offset\":\\s*(\\d+)").matcher(resp);
+        if (om.find()) {
+            offset = Long.parseLong(om.group(1));
+        }
+        String epoch = "";
+        java.util.regex.Matcher em = java.util.regex.Pattern.compile("\"epoch\":\\s*\"([^\"]*)\"").matcher(resp);
+        if (em.find()) {
+            epoch = em.group(1);
+        }
+        return new StreamPosition(offset, epoch);
+    }
+
+    private String post(String path, String body) throws IOException {
         Request req = new Request.Builder()
                 .url(baseUrl + path)
                 .post(RequestBody.create(body, JSON))
                 .build();
         try (Response resp = http.newCall(req).execute()) {
+            ResponseBody rb = resp.body();
+            String respBody = rb != null ? rb.string() : "";
             if (!resp.isSuccessful()) {
-                ResponseBody rb = resp.body();
                 throw new IOException("Centrifugo API " + path + " HTTP " + resp.code()
-                        + ": " + (rb != null ? rb.string() : ""));
+                        + ": " + respBody);
             }
+            if (respBody.contains("\"error\"")) {
+                throw new IOException("Centrifugo API " + path + " error: " + respBody);
+            }
+            return respBody;
         }
     }
 
