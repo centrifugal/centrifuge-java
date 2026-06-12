@@ -246,6 +246,16 @@ public class Subscription {
     }
 
     void subscribeError(ReplyError err) {
+        if (err.getCode() == Client.ERROR_CODE_UNRECOVERABLE_POSITION && this.opts.getStateGetter() != null) {
+            // Unrecoverable position with state getter: reset position so the next
+            // subscribe attempt calls the getter to reload app state from scratch.
+            this.recover = false;
+            this.setOffset(0);
+            this.setEpoch("");
+            this.setPrevData(null);
+            this.scheduleResubscribe();
+            return;
+        }
         this.listener.onError(this, new SubscriptionErrorEvent(new SubscriptionSubscribeError(err)));
         if (err.getCode() == 109) { // Token expired.
             this.token = "";
@@ -293,19 +303,49 @@ public class Subscription {
         builder.setRecoverable(this.opts.isRecoverable());
         builder.setJoinLeave(this.opts.isJoinLeave());
         builder.setDelta(this.opts.getDelta());
+        if (this.opts.getStateGetter() != null) {
+            // Ask the server to reject the subscribe with error 112 when recovery
+            // from the provided position is impossible, instead of returning
+            // recovered=false — so we can call the state getter again to reload state.
+            builder.setFlag(Client.SUBSCRIPTION_FLAG_REJECT_UNRECOVERED);
+        }
 
         return builder.build();
     }
 
     void sendSubscribe() {
-        final boolean isRecover = this.getRecover();
-        StreamPosition streamPosition = new StreamPosition();
-
-        if (isRecover) {
-            streamPosition.setOffset(this.getOffset());
-            streamPosition.setEpoch(this.getEpoch());
+        // State getter: ask the app for its current state position. Only called
+        // when we don't have a saved position (first subscribe or after a position
+        // reset due to unrecoverable position error 112). On normal reconnects with
+        // a valid saved position we skip the getter and let the server try recovery —
+        // the getter is only called again if recovery fails.
+        if (this.opts.getStateGetter() != null && !this.getRecover()) {
+            final long epoch = ++this.subscribeEpoch;
+            SubscriptionGetStateEvent getStateEvent = new SubscriptionGetStateEvent(this.channel);
+            this.opts.getStateGetter().getSubscriptionState(getStateEvent, (err, position) -> Subscription.this.client.getExecutor().submit(() -> {
+                if (Subscription.this.subscribeEpoch != epoch) {
+                    return;
+                }
+                if (Subscription.this.getState() != SubscriptionState.SUBSCRIBING) {
+                    return;
+                }
+                if (err != null || position == null) {
+                    Throwable cause = err != null ? err : new NullPointerException("null stream position");
+                    Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionGetStateError(cause)));
+                    Subscription.this.scheduleResubscribe();
+                    return;
+                }
+                Subscription.this.recover = true;
+                Subscription.this.setOffset(position.getOffset());
+                Subscription.this.setEpoch(position.getEpoch() == null ? "" : position.getEpoch());
+                Subscription.this.continueSubscribe();
+            }));
+            return;
         }
+        this.continueSubscribe();
+    }
 
+    private void continueSubscribe() {
         if (this.token.equals("") && this.opts.getTokenGetter() != null) {
             final long epoch = ++this.subscribeEpoch;
             SubscriptionTokenEvent subscriptionTokenEvent = new SubscriptionTokenEvent(this.channel);

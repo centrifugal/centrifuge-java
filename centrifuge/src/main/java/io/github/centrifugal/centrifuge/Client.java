@@ -97,6 +97,13 @@ public class Client {
     static final int UNSUBSCRIBED_UNAUTHORIZED = 1;
     static final int UNSUBSCRIBED_CLIENT_CLOSED = 2;
 
+    // Subscription feature flags — bitmask sent in SubscribeRequest flag field.
+    static final long SUBSCRIPTION_FLAG_REJECT_UNRECOVERED = 2;
+
+    // Server error code returned when recovery from the provided position is
+    // impossible (only sent when SUBSCRIPTION_FLAG_REJECT_UNRECOVERED was requested).
+    static final int ERROR_CODE_UNRECOVERABLE_POSITION = 112;
+
     /**
      * Creates a new instance of Client. Client allows to allocate new Subscriptions to channels,
      * automatically manages reconnects and re-subscriptions on temporary failures.

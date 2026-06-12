@@ -99,6 +99,44 @@ public class SubscriptionOptions {
 
     private String delta = "";
 
+    public SubscriptionStateGetter getStateGetter() {
+        return stateGetter;
+    }
+
+    /**
+     * Set SubscriptionStateGetter to load the app's current state and stream position.
+     * Requires Centrifugo &gt;= 6.8.0.
+     * <p>
+     * The SDK calls the getter:
+     * <ul>
+     * <li>On initial subscribe (no saved position)</li>
+     * <li>On reconnect when recovery fails (server returns error 112 — unrecoverable position)</li>
+     * </ul>
+     * NOT called on reconnects where the server successfully recovers missed publications —
+     * in that case the recovered publications arrive as events and the getter is skipped.
+     * <p>
+     * The app should load its data from its own source of truth (database, API), render it,
+     * and call back with the stream position. The SDK subscribes with recovery from the
+     * returned position, so any publications between the state read and the subscribe are
+     * delivered as publication events.
+     * <p>
+     * IMPORTANT: inside the getter, read the stream position FIRST, then read your data.
+     * This ensures the position is a lower bound — any data loaded after the position read
+     * is guaranteed to be included. The reverse order can produce gaps.
+     * <p>
+     * Recovered publications may overlap with data already loaded by the getter. This works
+     * correctly when updates are idempotent (applying the same update twice produces the same
+     * result). For non-idempotent updates, deduplicate by publication offset.
+     * <p>
+     * On error, the SDK emits an error event with {@link SubscriptionGetStateError} and
+     * retries with backoff.
+     */
+    public void setStateGetter(SubscriptionStateGetter stateGetter) {
+        this.stateGetter = stateGetter;
+    }
+
+    private SubscriptionStateGetter stateGetter;
+
     public void setSince(StreamPosition streamPosition) {
         this.since = streamPosition;
     }
