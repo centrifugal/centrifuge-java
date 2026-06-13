@@ -50,6 +50,9 @@ dependencies {
     implementation 'net.sourceforge.streamsupport:streamsupport-minifuture:1.7.4'
 
     testImplementation 'junit:junit:4.13.2'
+    // In-process WebSocket server for channel compaction tests (the feature is
+    // Centrifugo PRO only, so it can't be exercised against the OSS server).
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 }
 
 task integrationTest(type: Test) {
