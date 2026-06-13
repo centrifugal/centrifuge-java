@@ -597,4 +597,23 @@ public class Subscription {
         this.pushId = id;
         this.client.updateSubscriptionPushId(this, oldId, id);
     }
+
+    // Resets cached subscription state on "state invalidated" (unsubscribe code
+    // 2502 or connection disconnect code 3014) so the resubscribe re-syncs: clears
+    // the token (next subscribe fetches a fresh one via the token getter), the
+    // fossil delta base (a stale base would corrupt decoding of the first
+    // publication), and the channel-compaction ID mapping. The recovery position
+    // is reset to a sentinel epoch ("_") the server can never match (offset 0);
+    // the recover flag is left untouched. So a recoverable subscription
+    // resubscribes with wasRecovering=true, recovered=false — letting the app
+    // reload via its existing recovery-failure path — while a non-recoverable one
+    // just resubscribes (the sentinel is not sent). The real epoch/offset are
+    // adopted from the subscribe reply. Runs on the client executor thread.
+    void invalidateState() {
+        this.token = "";
+        this.offset = 0;
+        this.epoch = "_";
+        this.prevData = null;
+        this.setPushId(0);
+    }
 }

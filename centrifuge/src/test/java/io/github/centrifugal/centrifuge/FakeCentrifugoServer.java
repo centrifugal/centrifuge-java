@@ -136,6 +136,18 @@ public final class FakeCentrifugoServer {
         }
     }
 
+    /**
+     * Close the active connection from the server side with a specific code,
+     * the way Centrifugo delivers a server disconnect (e.g. 3014 state
+     * invalidated) — as a WebSocket close frame rather than a Disconnect push.
+     */
+    public void disconnect(int code, String reason) {
+        WebSocket s = currentSocket.get();
+        if (s != null) {
+            s.close(code, reason);
+        }
+    }
+
     private final class ServerListener extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
