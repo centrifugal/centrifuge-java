@@ -27,6 +27,7 @@ public class Subscription {
     private int resubscribeAttempts = 0;
     private String token;
     private com.google.protobuf.ByteString data;
+    private FilterNode tagsFilter;
     private boolean deltaNegotiated;
     private byte[] prevData;
     // Numeric channel ID assigned by the server when channel compaction is
@@ -48,6 +49,7 @@ public class Subscription {
         if (opts.getData() != null) {
             this.data = com.google.protobuf.ByteString.copyFrom(opts.getData());
         }
+        this.tagsFilter = opts.getTagsFilter();
         this.prevData = null;
         this.deltaNegotiated = false;
         if (opts.getSince() != null) {
@@ -275,6 +277,20 @@ public class Subscription {
         }
     }
 
+    /**
+     * Set the server-side publication tags filter. Applied on the next subscribe
+     * attempt, not the current one. Pass {@code null} to clear it. Cannot be
+     * combined with delta compression. Build with {@link FilterNodeBuilder}.
+     *
+     * @throws IllegalStateException if delta compression is enabled for this subscription.
+     */
+    public void setTagsFilter(FilterNode tagsFilter) {
+        if (tagsFilter != null && this.opts.getDelta() != null && !this.opts.getDelta().isEmpty()) {
+            throw new IllegalStateException("cannot use delta and tags filter together");
+        }
+        this.tagsFilter = tagsFilter;
+    }
+
     public void subscribe() {
         this.client.getExecutor().submit(() -> {
             if (Subscription.this.getState() == SubscriptionState.SUBSCRIBED || Subscription.this.getState() == SubscriptionState.SUBSCRIBING) {
@@ -311,6 +327,9 @@ public class Subscription {
         builder.setRecoverable(this.opts.isRecoverable());
         builder.setJoinLeave(this.opts.isJoinLeave());
         builder.setDelta(this.opts.getDelta());
+        if (this.tagsFilter != null) {
+            builder.setTf(this.tagsFilter.getProtoNode());
+        }
         // Always offer channel compaction: when the server supports and allows it,
         // the subscribe result carries a numeric channel ID and subsequent pushes
         // use that ID instead of the string channel name.

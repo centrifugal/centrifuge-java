@@ -99,6 +99,22 @@ public class SubscriptionOptions {
 
     private String delta = "";
 
+    public FilterNode getTagsFilter() {
+        return tagsFilter;
+    }
+
+    /**
+     * Set a server-side publication filter based on publication tags. When set, the
+     * server delivers only publications whose tags match the filter. Must be enabled
+     * for the namespace on the server ({@code allow_tags_filter}) and cannot be
+     * combined with delta compression. Build with {@link FilterNodeBuilder}.
+     */
+    public void setTagsFilter(FilterNode tagsFilter) {
+        this.tagsFilter = tagsFilter;
+    }
+
+    private FilterNode tagsFilter;
+
     public SubscriptionStateGetter getStateGetter() {
         return stateGetter;
     }
