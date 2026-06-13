@@ -51,6 +51,12 @@ public class Client {
 
     private volatile ClientState state = ClientState.DISCONNECTED;
     private final Map<String, Subscription> subs = new ConcurrentHashMap<>();
+    // Channel compaction: numeric channel ID → subscription, used to route pushes
+    // that carry an ID instead of the string channel name. IDs are scoped to a
+    // server session — the registry is dropped on disconnect and each subscription
+    // re-registers from its subscribe reply. Only touched on the executor thread,
+    // but kept concurrent for consistency with subs (a leaf map, never iterated).
+    private final Map<Long, Subscription> subsById = new ConcurrentHashMap<>();
     private final Map<String, ServerSubscription> serverSubs = new ConcurrentHashMap<>();
     private final Backoff backoff;
 
@@ -98,6 +104,12 @@ public class Client {
     static final int UNSUBSCRIBED_CLIENT_CLOSED = 2;
 
     // Subscription feature flags — bitmask sent in SubscribeRequest flag field.
+    //
+    // Channel compaction asks the server to replace the string channel name with a
+    // short numeric ID in subscription pushes (bandwidth optimization). Safe to
+    // request unconditionally: servers that don't support or don't allow it ignore
+    // the bit and keep sending the full channel name.
+    static final long SUBSCRIPTION_FLAG_CHANNEL_COMPACTION = 1;
     static final long SUBSCRIPTION_FLAG_REJECT_UNRECOVERED = 2;
 
     // Server error code returned when recovery from the provided position is
@@ -242,6 +254,12 @@ public class Client {
             needEvent = previousState != ClientState.DISCONNECTED;
             this.setState(ClientState.DISCONNECTED);
         }
+
+        // Channel compaction IDs are scoped to a server session — drop the routing
+        // registry; each resubscribe re-registers a fresh ID. The per-subscription
+        // pushId field is left as-is: moveToSubscribed re-registers it on the next
+        // subscribe reply regardless of whether the server reuses the same ID.
+        this.subsById.clear();
 
         synchronized (this.subs) {
             for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
@@ -631,6 +649,30 @@ public class Client {
         return this.subs.get(channel);
     }
 
+    // Update the channel compaction registry for sub: remove the old numeric ID
+    // mapping (only if it still points to this subscription) and register the new
+    // one. Either ID may be 0 meaning "no mapping". Called on the executor thread.
+    void updateSubscriptionPushId(Subscription sub, long oldId, long newId) {
+        if (oldId > 0) {
+            // Conditional removal: don't evict another subscription's registration
+            // after a cross-session ID collision.
+            this.subsById.remove(oldId, sub);
+        }
+        if (newId > 0) {
+            this.subsById.put(newId, sub);
+        }
+    }
+
+    // Resolve a client-side subscription for a push: by numeric channel ID when
+    // channel compaction is in use (the push then has no channel name), by channel
+    // name otherwise.
+    private Subscription getSubForPush(String channel, long id) {
+        if (id > 0) {
+            return this.subsById.get(id);
+        }
+        return this.subs.get(channel);
+    }
+
     private ServerSubscription getServerSub(String channel) {
         return this.serverSubs.get(channel);
     }
@@ -977,10 +1019,18 @@ public class Client {
     }
 
     void handlePub(String channel, Protocol.Publication pub) throws Exception {
+        this.handlePub(channel, pub, 0);
+    }
+
+    void handlePub(String channel, Protocol.Publication pub, long id) throws Exception {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
-        Subscription sub = this.getSub(channel);
+        Subscription sub = this.getSubForPush(channel, id);
         if (sub != null) {
             sub.handlePublication(pub);
+        } else if (id > 0) {
+            // Compacted push with unknown ID (e.g. already unsubscribed) — drop.
+            // Server-side subscriptions never negotiate compaction.
+            return;
         } else {
             ServerSubscription serverSub = this.getServerSub(channel);
             if (serverSub != null) {
@@ -1029,13 +1079,16 @@ public class Client {
         }
     }
 
-    private void handleJoin(String channel, Protocol.Join join) {
+    private void handleJoin(String channel, Protocol.Join join, long id) {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(join.getInfo());
-        Subscription sub = this.getSub(channel);
+        Subscription sub = this.getSubForPush(channel, id);
         if (sub != null) {
             JoinEvent event = new JoinEvent();
             event.setInfo(info);
             sub.getListener().onJoin(sub, event);
+        } else if (id > 0) {
+            // Compacted push with unknown ID — drop.
+            return;
         } else {
             ServerSubscription serverSub = this.getServerSub(channel);
             if (serverSub != null) {
@@ -1044,14 +1097,17 @@ public class Client {
         }
     }
 
-    private void handleLeave(String channel, Protocol.Leave leave) {
+    private void handleLeave(String channel, Protocol.Leave leave, long id) {
         LeaveEvent event = new LeaveEvent();
         ClientInfo info = ClientInfo.fromProtocolClientInfo(leave.getInfo());
 
-        Subscription sub = this.getSub(channel);
+        Subscription sub = this.getSubForPush(channel, id);
         if (sub != null) {
             event.setInfo(info);
             sub.getListener().onLeave(sub, event);
+        } else if (id > 0) {
+            // Compacted push with unknown ID — drop.
+            return;
         } else {
             ServerSubscription serverSub = this.getServerSub(channel);
             if (serverSub != null) {
@@ -1076,14 +1132,17 @@ public class Client {
 
     private void handlePush(Protocol.Push push) throws Exception {
         String channel = push.getChannel();
+        // Channel compaction: pub/join/leave pushes may carry a numeric channel ID
+        // instead of the channel name. Other push types always carry the channel.
+        long id = push.getId();
         if (push.hasPub()) {
-            this.handlePub(channel, push.getPub());
+            this.handlePub(channel, push.getPub(), id);
         } else if (push.hasSubscribe()) {
             this.handleSubscribe(channel, push.getSubscribe());
         } else if (push.hasJoin()) {
-            this.handleJoin(channel, push.getJoin());
+            this.handleJoin(channel, push.getJoin(), id);
         } else if (push.hasLeave()) {
-            this.handleLeave(channel, push.getLeave());
+            this.handleLeave(channel, push.getLeave(), id);
         } else if (push.hasUnsubscribe()) {
             this.handleUnsubscribe(channel, push.getUnsubscribe());
         } else if (push.hasMessage()) {

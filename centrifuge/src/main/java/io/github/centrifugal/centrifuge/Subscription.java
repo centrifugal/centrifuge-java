@@ -29,6 +29,10 @@ public class Subscription {
     private com.google.protobuf.ByteString data;
     private boolean deltaNegotiated;
     private byte[] prevData;
+    // Numeric channel ID assigned by the server when channel compaction is
+    // negotiated. Pushes then carry this ID instead of the channel name.
+    // Only touched on the client executor thread (subscribe reply / unsubscribe).
+    private long pushId = 0;
     // Bumped on each new sendSubscribe/sendRefresh attempt. Async tokenGetter
     // callbacks capture the epoch at issue time and bail if it has moved on,
     // so a stale token from an earlier attempt cannot land on a later one.
@@ -214,6 +218,10 @@ public class Subscription {
         }
         this.setEpoch(result.getEpoch());
         this.deltaNegotiated = result.getDelta();
+        // Channel compaction: register the numeric channel ID assigned by the
+        // server (0 when not negotiated — also clears a stale ID from a previous
+        // subscribe session).
+        this.setPushId(result.getId());
 
         byte[] data = null;
         if (result.getData() != null) {
@@ -303,12 +311,17 @@ public class Subscription {
         builder.setRecoverable(this.opts.isRecoverable());
         builder.setJoinLeave(this.opts.isJoinLeave());
         builder.setDelta(this.opts.getDelta());
+        // Always offer channel compaction: when the server supports and allows it,
+        // the subscribe result carries a numeric channel ID and subsequent pushes
+        // use that ID instead of the string channel name.
+        long flag = Client.SUBSCRIPTION_FLAG_CHANNEL_COMPACTION;
         if (this.opts.getStateGetter() != null) {
             // Ask the server to reject the subscribe with error 112 when recovery
             // from the provided position is impossible, instead of returning
             // recovered=false — so we can call the state getter again to reload state.
-            builder.setFlag(Client.SUBSCRIPTION_FLAG_REJECT_UNRECOVERED);
+            flag |= Client.SUBSCRIPTION_FLAG_REJECT_UNRECOVERED;
         }
+        builder.setFlag(flag);
 
         return builder.build();
     }
@@ -407,6 +420,8 @@ public class Subscription {
             this.clearSubscribingState();
         }
         this.setState(SubscriptionState.UNSUBSCRIBED);
+        // Channel compaction ID is no longer valid once unsubscribed.
+        this.setPushId(0);
         if (sendUnsubscribe) {
             this.client.sendUnsubscribe(this.getChannel());
         }
@@ -548,5 +563,19 @@ public class Subscription {
 
     private void setPrevData(byte[] prevData) {
         this.prevData = prevData;
+    }
+
+    // Update the channel compaction ID registration in the client's push routing
+    // registry. Pass 0 to clear (no compaction / sub gone). Always re-registers
+    // even when the ID is unchanged: the client drops the registry on transport
+    // teardown and on reconnect the server commonly assigns the same ID again, so
+    // the registration must be restored. Runs on the client executor thread.
+    private void setPushId(long id) {
+        if (id == 0 && this.pushId == 0) {
+            return;
+        }
+        long oldId = this.pushId;
+        this.pushId = id;
+        this.client.updateSubscriptionPushId(this, oldId, id);
     }
 }
