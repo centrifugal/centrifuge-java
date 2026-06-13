@@ -116,6 +116,17 @@ public class Client {
     // impossible (only sent when SUBSCRIPTION_FLAG_REJECT_UNRECOVERED was requested).
     static final int ERROR_CODE_UNRECOVERABLE_POSITION = 112;
 
+    // Server-sent "state invalidated" codes. The server determines that the
+    // client's cached state and/or token are no longer valid and asks the client
+    // to drop them and re-sync.
+    //
+    // 2502 arrives in an Unsubscribe push for a single subscription (the client
+    // clears the subscription state and resubscribes, since it's >= 2500). 3014
+    // arrives for the whole connection (the client clears the connection token to
+    // force a fresh one via getToken, invalidates all subscriptions, reconnects).
+    static final int UNSUBSCRIBED_STATE_INVALIDATED = 2502;
+    static final int DISCONNECTED_STATE_INVALIDATED = 3014;
+
     /**
      * Creates a new instance of Client. Client allows to allocate new Subscriptions to channels,
      * automatically manages reconnects and re-subscriptions on temporary failures.
@@ -230,6 +241,18 @@ public class Client {
     void processDisconnect(int code, String reason, Boolean shouldReconnect) {
         if (this.getState() == ClientState.DISCONNECTED || this.getState() == ClientState.CLOSED) {
             return;
+        }
+
+        if (code == DISCONNECTED_STATE_INVALIDATED) {
+            // State invalidated (delivered as a WebSocket close frame or a Disconnect
+            // push, both funnel here): drop the connection token so the next connect
+            // fetches a fresh one via the token getter, and invalidate every
+            // subscription's cached state before reconnecting.
+            this.token = "";
+            this.refreshRequired = true;
+            for (Subscription sub : this.subs.values()) {
+                sub.invalidateState();
+            }
         }
 
         ClientState previousState = this.getState();
@@ -1067,6 +1090,11 @@ public class Client {
             if (unsubscribe.getCode() < 2500) {
                 sub.moveToUnsubscribed(false, unsubscribe.getCode(), unsubscribe.getReason());
             } else {
+                if (unsubscribe.getCode() == UNSUBSCRIBED_STATE_INVALIDATED) {
+                    // State invalidated: drop the subscription token and cached state so
+                    // the resubscribe below obtains a fresh token and re-syncs.
+                    sub.invalidateState();
+                }
                 sub.moveToSubscribing(unsubscribe.getCode(), unsubscribe.getReason());
                 sub.resubscribeIfNecessary();
             }
