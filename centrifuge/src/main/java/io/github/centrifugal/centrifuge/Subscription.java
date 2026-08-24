@@ -214,6 +214,9 @@ public class Subscription {
     }
 
     void moveToSubscribed(Protocol.SubscribeResult result) throws Exception {
+        // Leaving SUBSCRIBING: drop any pending resubscribe task and reset the
+        // resubscribe backoff step.
+        this.clearSubscribingState();
         this.setState(SubscriptionState.SUBSCRIBED);
         if (result.getRecoverable()) {
             this.recover = true;
@@ -423,6 +426,10 @@ public class Subscription {
     }
 
     private void clearSubscribingState() {
+        // Reset the backoff step so the next resubscribe cycle starts from
+        // minResubscribeDelay again instead of continuing to grow from where a
+        // previous cycle left off.
+        this.resubscribeAttempts = 0;
         if (this.resubscribeTask != null) {
             this.resubscribeTask.cancel(true);
             this.resubscribeTask = null;
