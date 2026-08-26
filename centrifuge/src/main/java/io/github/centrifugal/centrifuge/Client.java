@@ -650,8 +650,13 @@ public class Client {
             // No need to handle reply for now.
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
-            this.futures.remove(cmd.getId());
-            this.processDisconnect(CONNECTING_UNSUBSCRIBE_ERROR, "unsubscribe error", true);
+            this.executor.submit(() -> {
+                if (Client.this.getState() != ClientState.CONNECTED) {
+                    return;
+                }
+                Client.this.futures.remove(cmd.getId());
+                Client.this.processDisconnect(CONNECTING_UNSUBSCRIBE_ERROR, "unsubscribe error", true);
+            });
             return null;
         });
 
