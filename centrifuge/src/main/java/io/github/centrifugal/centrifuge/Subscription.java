@@ -181,6 +181,12 @@ public class Subscription {
             this.clearSubscribingState();
             return;
         }
+        if (this.getState() == SubscriptionState.SUBSCRIBED) {
+            // Leaving SUBSCRIBED: drop the pending token-refresh task tied to the
+            // subscribe reply we are leaving behind, so it cannot fire later against
+            // the state a resubscribe replaces.
+            this.clearSubscribedState();
+        }
         this.setState(SubscriptionState.SUBSCRIBING);
         this.listener.onSubscribing(this, new SubscribingEvent(code, reason));
     }
