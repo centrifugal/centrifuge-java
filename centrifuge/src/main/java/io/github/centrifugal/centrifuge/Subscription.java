@@ -108,7 +108,7 @@ public class Subscription {
             return;
         }
         final long epoch = ++this.subscribeEpoch;
-        this.client.getExecutor().submit(() -> Subscription.this.opts.getTokenGetter().getSubscriptionToken(new SubscriptionTokenEvent(this.getChannel()), (err, token) -> {
+        this.client.getExecutor().submit(() -> Subscription.this.opts.getTokenGetter().getSubscriptionToken(new SubscriptionTokenEvent(this.getChannel()), (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
             if (Subscription.this.subscribeEpoch != epoch) {
                 return;
             }
@@ -173,7 +173,7 @@ public class Subscription {
                     );
                 }
             });
-        }));
+        })));
     }
 
     void moveToSubscribing(int code, String reason) {
