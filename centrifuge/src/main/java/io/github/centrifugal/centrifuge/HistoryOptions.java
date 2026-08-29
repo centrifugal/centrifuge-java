@@ -25,7 +25,7 @@ public class HistoryOptions {
 
     @Override
     public String toString() {
-        return "HistoryOptions: "+this.limit+", "+this.since.toString() +", reverse "+this.reverse;
+        return "HistoryOptions: "+this.limit+", "+(this.since != null ? this.since.toString() : "null") +", reverse "+this.reverse;
     }
 
     public static class Builder
