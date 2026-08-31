@@ -107,73 +107,75 @@ public class Subscription {
         if (this.opts.getTokenGetter() == null) {
             return;
         }
-        final long epoch = ++this.subscribeEpoch;
-        this.client.getExecutor().submit(() -> Subscription.this.opts.getTokenGetter().getSubscriptionToken(new SubscriptionTokenEvent(this.getChannel()), (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
-            if (Subscription.this.subscribeEpoch != epoch) {
-                return;
-            }
-            if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
-                return;
-            }
-            if (err != null) {
-                if (err instanceof UnauthorizedException) {
-                    Subscription.this.failUnauthorized(true);
-                    return;
-                }
-                Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionTokenError(err)));
-                Subscription.this.refreshTask = Subscription.this.client.getScheduler().schedule(
-                        Subscription.this::sendRefresh,
-                        Subscription.this.backoff.duration(0, 10000, 20000),
-                        TimeUnit.MILLISECONDS
-                );
-                return;
-            }
-            if (token == null || token.equals("")) {
-                this.failUnauthorized(true);
-                return;
-            }
-            Subscription.this.token = token;
-            Subscription.this.client.subRefreshSynchronized(Subscription.this.channel, token, (error, result) -> {
+        this.client.getExecutor().submit(() -> {
+            final long epoch = ++Subscription.this.subscribeEpoch;
+            Subscription.this.opts.getTokenGetter().getSubscriptionToken(new SubscriptionTokenEvent(Subscription.this.getChannel()), (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
                 if (Subscription.this.subscribeEpoch != epoch) {
                     return;
                 }
                 if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
                     return;
                 }
-                Throwable errorOrNull = error != null ? error : (result == null ? new NullPointerException() : null);
-                if (errorOrNull != null) {
-                    Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionRefreshError(errorOrNull)));
-                    if (error instanceof ReplyError) {
-                        ReplyError e;
-                        e = (ReplyError) error;
-                        if (e.isTemporary()) {
+                if (err != null) {
+                    if (err instanceof UnauthorizedException) {
+                        Subscription.this.failUnauthorized(true);
+                        return;
+                    }
+                    Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionTokenError(err)));
+                    Subscription.this.refreshTask = Subscription.this.client.getScheduler().schedule(
+                            Subscription.this::sendRefresh,
+                            Subscription.this.backoff.duration(0, 10000, 20000),
+                            TimeUnit.MILLISECONDS
+                    );
+                    return;
+                }
+                if (token == null || token.equals("")) {
+                    this.failUnauthorized(true);
+                    return;
+                }
+                Subscription.this.token = token;
+                Subscription.this.client.subRefreshSynchronized(Subscription.this.channel, token, (error, result) -> {
+                    if (Subscription.this.subscribeEpoch != epoch) {
+                        return;
+                    }
+                    if (Subscription.this.getState() != SubscriptionState.SUBSCRIBED) {
+                        return;
+                    }
+                    Throwable errorOrNull = error != null ? error : (result == null ? new NullPointerException() : null);
+                    if (errorOrNull != null) {
+                        Subscription.this.listener.onError(Subscription.this, new SubscriptionErrorEvent(new SubscriptionRefreshError(errorOrNull)));
+                        if (error instanceof ReplyError) {
+                            ReplyError e;
+                            e = (ReplyError) error;
+                            if (e.isTemporary()) {
+                                Subscription.this.refreshTask = Subscription.this.client.getScheduler().schedule(
+                                        Subscription.this::sendRefresh,
+                                        Subscription.this.backoff.duration(0, 10000, 20000),
+                                        TimeUnit.MILLISECONDS
+                                );
+                            } else {
+                                Subscription.this._unsubscribe(true, e.getCode(), e.getMessage());
+                            }
+                            return;
+                        } else {
                             Subscription.this.refreshTask = Subscription.this.client.getScheduler().schedule(
                                     Subscription.this::sendRefresh,
                                     Subscription.this.backoff.duration(0, 10000, 20000),
                                     TimeUnit.MILLISECONDS
                             );
-                        } else {
-                            Subscription.this._unsubscribe(true, e.getCode(), e.getMessage());
                         }
                         return;
-                    } else {
+                    }
+                    if (result.getExpires()) {
                         Subscription.this.refreshTask = Subscription.this.client.getScheduler().schedule(
                                 Subscription.this::sendRefresh,
-                                Subscription.this.backoff.duration(0, 10000, 20000),
-                                TimeUnit.MILLISECONDS
+                                result.getTtl(),
+                                TimeUnit.SECONDS
                         );
                     }
-                    return;
-                }
-                if (result.getExpires()) {
-                    Subscription.this.refreshTask = Subscription.this.client.getScheduler().schedule(
-                            Subscription.this::sendRefresh,
-                            result.getTtl(),
-                            TimeUnit.SECONDS
-                    );
-                }
-            });
-        })));
+                });
+            }));
+        });
     }
 
     void moveToSubscribing(int code, String reason) {
