@@ -253,6 +253,15 @@ public class Client {
             for (Subscription sub : this.subs.values()) {
                 sub.invalidateState();
             }
+            // Server-side subscriptions have no invalidateState() of their own (they
+            // are plain data, not stateful Subscription objects) - reset their cached
+            // recovery position here so the next connect request (see sendConnect)
+            // does not resend a now-invalid offset/epoch pair. The recoverable flag
+            // is left untouched, matching invalidateState() above.
+            for (ServerSubscription serverSub : this.serverSubs.values()) {
+                serverSub.setLastOffset(0);
+                serverSub.setLastEpoch("_");
+            }
         }
 
         ClientState previousState = this.getState();
