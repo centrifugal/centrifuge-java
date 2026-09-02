@@ -169,4 +169,60 @@ public class StateInvalidationTest {
             client.close(1000);
         }
     }
+
+    @Test
+    public void testDisconnect3014ResetsServerSubRecoveryPosition() throws Exception {
+        // Server-side subscriptions (pushed via the Connect reply's "subs" field,
+        // tracked as ServerSubscription rather than Subscription) have no
+        // invalidateState() of their own. A 3014 disconnect must still reset their
+        // cached offset/epoch to the unrecoverable sentinel, or the next connect
+        // request (see Client#sendConnect) resends the stale pre-invalidation
+        // position and defeats the point of state invalidation.
+        server.connectResult = Protocol.ConnectResult.newBuilder()
+                .setClient("fake-client").setVersion("0.0.0").setPing(25)
+                .putSubs("ch", Protocol.SubscribeResult.newBuilder()
+                        .setRecoverable(true).setEpoch("server-epoch").setOffset(5).build())
+                .build();
+
+        LinkedBlockingQueue<ConnectedEvent> connectedQ = new LinkedBlockingQueue<>();
+        LinkedBlockingQueue<ServerSubscribedEvent> serverSubscribedQ = new LinkedBlockingQueue<>();
+        Options opts = new Options();
+        opts.setToken("conn-token-0");
+        opts.setMinReconnectDelay(50);
+        opts.setMaxReconnectDelay(200);
+        // A 3014 disconnect always sets refreshRequired, so a token getter is
+        // needed for the client to be able to reconnect at all (mirrors the
+        // connection-token test above).
+        opts.setTokenGetter(new ConnectionTokenGetter() {
+            @Override
+            public void getConnectionToken(ConnectionTokenEvent e, TokenCallback cb) {
+                cb.Done(null, "conn-token-1");
+            }
+        });
+        Client client = new Client(server.url(), opts, new EventListener() {
+            @Override public void onConnected(Client c, ConnectedEvent e) { connectedQ.add(e); }
+            @Override public void onSubscribed(Client c, ServerSubscribedEvent e) { serverSubscribedQ.add(e); }
+        });
+        client.connect();
+        try {
+            assertNotNull("connected", connectedQ.poll(5, TimeUnit.SECONDS));
+            assertNotNull("server sub established", serverSubscribedQ.poll(5, TimeUnit.SECONDS));
+
+            // Server sends "state invalidated" disconnect — the cached server-side
+            // subscription's recovery position must be reset to the sentinel before
+            // the client reconnects.
+            server.disconnect(Client.DISCONNECTED_STATE_INVALIDATED, "state invalidated");
+
+            assertNotNull("reconnected after 3014", connectedQ.poll(5, TimeUnit.SECONDS));
+
+            Protocol.ConnectRequest reconnect = lastConnect();
+            assertTrue("reconnect resends the server sub", reconnect.containsSubs("ch"));
+            Protocol.SubscribeRequest req = reconnect.getSubsMap().get("ch");
+            assertTrue("recoverable left true", req.getRecover());
+            assertEquals("offset reset to 0 by 3014", 0L, req.getOffset());
+            assertEquals("epoch reset to sentinel by 3014", "_", req.getEpoch());
+        } finally {
+            client.close(1000);
+        }
+    }
 }
