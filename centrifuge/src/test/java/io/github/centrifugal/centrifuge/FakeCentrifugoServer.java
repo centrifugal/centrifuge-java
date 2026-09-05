@@ -49,6 +49,9 @@ import okio.ByteString;
  *   server.publishChannel("news", data);   // by channel name
  *   // Fully control any command reply (return null to fall through):
  *   server.onCommand = cmd -&gt; cmd.hasRpc() ? errorReply(cmd.getId()) : null;
+ *   // Hold a reply so it lands after the client moved on, then let it through:
+ *   server.deferCommand = cmd -&gt; cmd.hasSubscribe();
+ *   server.releaseDeferredCommands();
  *   // Send anything the protocol allows:
  *   server.sendPush(Protocol.Push.newBuilder().setDisconnect(...).build());
  *   // Drive a reconnect:
@@ -75,6 +78,16 @@ public final class FakeCentrifugoServer {
 
     /** Customize the subscribe result per channel (default: empty result). */
     public BiFunction<String, Protocol.SubscribeRequest, Protocol.SubscribeResult> onSubscribe;
+
+    /**
+     * Return true to hold a command's reply instead of sending it right away. Held
+     * commands are answered with the normal default handling once the test calls
+     * {@link #releaseDeferredCommands()} — this lets a reply land after the client
+     * has already moved on (e.g. unsubscribed while the subscribe was in flight).
+     */
+    public Function<Protocol.Command, Boolean> deferCommand;
+
+    private final List<Protocol.Command> deferredCommands = Collections.synchronizedList(new ArrayList<>());
 
     public void start() throws IOException {
         server.setDispatcher(new Dispatcher() {
@@ -182,6 +195,28 @@ public final class FakeCentrifugoServer {
             }
         }
 
+        if (deferCommand != null && Boolean.TRUE.equals(deferCommand.apply(cmd))) {
+            deferredCommands.add(cmd);
+            return;
+        }
+
+        replyDefault(webSocket, cmd);
+    }
+
+    /** Answer the commands held by {@link #deferCommand}, in the order received. */
+    public void releaseDeferredCommands() {
+        List<Protocol.Command> pending;
+        synchronized (deferredCommands) {
+            pending = new ArrayList<>(deferredCommands);
+            deferredCommands.clear();
+        }
+        WebSocket s = currentSocket.get();
+        for (Protocol.Command cmd : pending) {
+            replyDefault(s, cmd);
+        }
+    }
+
+    private void replyDefault(WebSocket webSocket, Protocol.Command cmd) {
         if (cmd.hasConnect()) {
             send(webSocket, Protocol.Reply.newBuilder()
                     .setId(cmd.getId())
