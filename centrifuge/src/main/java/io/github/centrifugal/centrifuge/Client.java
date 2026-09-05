@@ -781,6 +781,17 @@ public class Client {
     private void handleSubscribeReply(String channel, Protocol.Reply reply) throws Exception {
         Subscription sub = this.getSub(channel);
         if (sub != null) {
+            if (sub.getState() != SubscriptionState.SUBSCRIBING) {
+                // The subscription left SUBSCRIBING while the subscribe command was
+                // still in flight — e.g. unsubscribe() called right after subscribe(),
+                // or the channel's subscription was removed and re-created. The reply
+                // belongs to an attempt nobody waits for anymore: applying it would
+                // resurrect the subscription into SUBSCRIBED (emitting onSubscribed
+                // after onUnsubscribed) even though the server was already told to
+                // unsubscribe. Matches centrifuge-js, which guards both the success
+                // and the error path with _isSubscribing().
+                return;
+            }
             Protocol.SubscribeResult result;
             if (reply.getError().getCode() != 0) {
                 ReplyError err = new ReplyError(reply.getError().getCode(), reply.getError().getMessage(), reply.getError().getTemporary());
