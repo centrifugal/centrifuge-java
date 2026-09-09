@@ -307,6 +307,14 @@ public class Client {
             CompletableFuture<Protocol.Reply> f = entry.getValue();
             f.completeExceptionally(new IOException());
         }
+        // Drop the pending command registry along with the futures: no reply can
+        // arrive for a connection that is gone, and command IDs are never reused.
+        // Failure handlers do remove their own entry, but only after re-checking
+        // that the client is still CONNECTED — which it no longer is at this point
+        // (the state was set above), so subscribe/unsubscribe entries would stay
+        // behind forever and accumulate one per in-flight command per reconnect.
+        // Matches centrifuge-js, which resets _callbacks in _clearOutgoingRequests.
+        this.futures.clear();
 
         if (previousState == ClientState.CONNECTED) {
             for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
