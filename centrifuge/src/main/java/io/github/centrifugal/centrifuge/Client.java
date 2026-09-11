@@ -1037,6 +1037,7 @@ public class Client {
                 .setConnect(req)
                 .build();
 
+        final WebSocket connectWs = this.ws;
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
         f.thenAccept(reply -> {
@@ -1048,9 +1049,19 @@ public class Client {
                 e.printStackTrace();
             }
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
-            this.handleConnectionError(e);
-            this.futures.remove(cmd.getId());
-            this.ws.close(NORMAL_CLOSURE_STATUS, "");
+            // A timeout completes the future on the CompletableFuture delay
+            // scheduler thread - hop to the executor like other command failures.
+            this.executor.submit(() -> {
+                Client.this.futures.remove(cmd.getId());
+                // Failed because the connection was already torn down (disconnect
+                // called or transport replaced) - nothing left to report or close.
+                // Matches centrifuge-js, whose _connectError returns unless connecting.
+                if (Client.this.ws != connectWs || Client.this.getState() != ClientState.CONNECTING) {
+                    return;
+                }
+                Client.this.handleConnectionError(e);
+                Client.this.ws.close(NORMAL_CLOSURE_STATUS, "");
+            });
             return null;
         });
 
