@@ -286,6 +286,15 @@ public class Subscription {
             this.scheduleResubscribe();
             return;
         }
+        if (err.getCode() == 109 && this.opts.getTokenGetter() == null) {
+            // The token expired and there is no token getter to get another one: like a
+            // connection, unauthorized, instead of subscribing again without a token (the
+            // server answers 103 and the app sees "permission denied"). As centrifuge-js.
+            this.listener.onError(this, new SubscriptionErrorEvent(new ConfigurationError(
+                    new Exception("subscription token expired but no tokenGetter set in SubscriptionOptions"))));
+            this._unsubscribe(false, Client.UNSUBSCRIBED_UNAUTHORIZED, "unauthorized");
+            return;
+        }
         this.listener.onError(this, new SubscriptionErrorEvent(new SubscriptionSubscribeError(err)));
         if (err.getCode() == 109) { // Token expired.
             this.token = "";
@@ -635,7 +644,11 @@ public class Subscription {
     // just resubscribes (the sentinel is not sent). The real epoch/offset are
     // adopted from the subscribe reply. Runs on the client executor thread.
     void invalidateState() {
-        this.token = "";
+        if (this.opts.getTokenGetter() != null) {
+            // Only a token the getter can replace: a static token is kept, and the
+            // server rejects it if it's no longer valid.
+            this.token = "";
+        }
         this.offset = 0;
         this.epoch = "_";
         this.prevData = null;

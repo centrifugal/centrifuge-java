@@ -200,6 +200,14 @@ public class Client {
     public void setToken(String token) {
         this.executor.submit(() -> {
             Client.this.token = token;
+            if (Client.this.opts.getTokenGetter() == null) {
+                // The token expired (109) and the app set a new one: without a token
+                // getter there is no other way to get it, so the next attempt uses it
+                // instead of failing on a configuration error. With a getter, the next
+                // attempt still fetches a new token: the one set meanwhile may be the
+                // expired one (as centrifuge-js).
+                Client.this.refreshRequired = false;
+            }
         });
     }
 
@@ -259,8 +267,14 @@ public class Client {
             // push, both funnel here): drop the connection token so the next connect
             // fetches a fresh one via the token getter, and invalidate every
             // subscription's cached state before reconnecting.
-            this.token = "";
-            this.refreshRequired = true;
+            // Without a token getter there is no new token to get: keep the token the
+            // client has (or none) and reconnect with it. The server rejects it if it's
+            // no longer valid, instead of the client stopping on a local configuration
+            // error (as centrifuge-js).
+            if (this.opts.getTokenGetter() != null) {
+                this.token = "";
+                this.refreshRequired = true;
+            }
             for (Subscription sub : this.subs.values()) {
                 sub.invalidateState();
             }
