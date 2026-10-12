@@ -115,6 +115,11 @@ public class Subscription {
         if (this.getState() != SubscriptionState.SUBSCRIBING) {
             return;
         }
+        if (this.resubscribeTask != null && !this.resubscribeTask.isDone()) {
+            // A subscribe error is retried after its backoff, also across a reconnect
+            // (as centrifuge-js): the retry subscribes once it fires.
+            return;
+        }
         this.sendSubscribe();
     }
 
@@ -195,7 +200,8 @@ public class Subscription {
 
     void moveToSubscribing(int code, String reason) {
         if (this.getState() == SubscriptionState.SUBSCRIBING) {
-            this.clearSubscribingState();
+            // Still subscribing (e.g. across a reconnect): a pending resubscribe keeps
+            // its backoff instead of retrying at once on the next connect.
             return;
         }
         if (this.getState() == SubscriptionState.SUBSCRIBED) {
@@ -399,6 +405,12 @@ public class Subscription {
     }
 
     void sendSubscribe() {
+        if (this.client.getState() != ClientState.CONNECTED) {
+            // Subscribed once the client connects (the connect reply resubscribes every
+            // subscribing subscription), as centrifuge-js: no token or state requested
+            // while disconnected, and no second request for the same subscribe on connect.
+            return;
+        }
         // State getter: ask the app for its current state position. Only called
         // when we don't have a saved position (first subscribe or after a position
         // reset due to unrecoverable position error 112). On normal reconnects with
@@ -473,6 +485,11 @@ public class Subscription {
             this.refreshTask.cancel(true);
             this.refreshTask = null;
         }
+        // Ends a refresh in flight (its token request or its sub_refresh command): a
+        // resubscribe that reuses the token doesn't start a new attempt, so the stale
+        // continuation would otherwise refresh the new subscribed period too and start a
+        // second refresh chain.
+        this.subscribeEpoch++;
     }
 
     private void clearSubscribingState() {
@@ -513,6 +530,11 @@ public class Subscription {
     private void scheduleResubscribe() {
         if (this.getState() != SubscriptionState.SUBSCRIBING) {
             return;
+        }
+        if (this.resubscribeTask != null) {
+            // One pending retry at most: an overwritten task fired too, subscribing again
+            // or fetching a token while disconnected.
+            this.resubscribeTask.cancel(false);
         }
         this.resubscribeTask = this.client.getScheduler().schedule(
                 Subscription.this::startResubscribing,
