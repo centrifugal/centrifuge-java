@@ -269,6 +269,15 @@ public class Client {
             if (Client.this.getState() == ClientState.CONNECTED || Client.this.getState() == ClientState.CONNECTING) {
                 return;
             }
+            try {
+                new Request.Builder().url(Client.this.endpoint);
+            } catch (IllegalArgumentException e) {
+                // No retry can fix an endpoint OkHttp can't open: report it and stay
+                // disconnected. Before, the client stayed connecting with nothing
+                // scheduled.
+                Client.this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(e)));
+                return;
+            }
             Client.this.reconnectAttempts = 0;
             Client.this.setState(ClientState.CONNECTING);
             ConnectingEvent event = new ConnectingEvent(CONNECTING_CONNECT_CALLED, "connect called");
@@ -1449,6 +1458,11 @@ public class Client {
                 event.setTags(pub.getTagsMap());
                 if (pub.getOffset() > 0) {
                     serverSub.setLastOffset(pub.getOffset());
+                    // As for client-side subscriptions.
+                    String knownEpoch = serverSub.getEpoch();
+                    if ((knownEpoch == null || knownEpoch.isEmpty()) && !pub.getEpoch().isEmpty()) {
+                        serverSub.setLastEpoch(pub.getEpoch());
+                    }
                 }
                 this.listener.onPublication(this, event);
             }

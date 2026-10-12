@@ -27,7 +27,8 @@ public class Subscription {
     private int resubscribeAttempts = 0;
     private String token;
     private com.google.protobuf.ByteString data;
-    private FilterNode tagsFilter;
+    // Set from the app's thread, read on the client thread when subscribing.
+    private volatile FilterNode tagsFilter;
     private boolean deltaNegotiated;
     private byte[] prevData;
     // Numeric channel ID assigned by the server when channel compaction is
@@ -238,6 +239,13 @@ public class Subscription {
         event.setTags(pub.getTagsMap());
         if (pub.getOffset() > 0) {
             this.setOffset(pub.getOffset());
+            // A subscribe reply without an epoch (a channel with no stream yet): the epoch
+            // comes with the first publication. Taken with the offset it belongs to, and
+            // only while none is known; a different one means the stream was reset, which
+            // the server reports on recovery (as centrifuge-js).
+            if ((this.epoch == null || this.epoch.isEmpty()) && !pub.getEpoch().isEmpty()) {
+                this.setEpoch(pub.getEpoch());
+            }
         }
         this.listener.onPublication(this, event);
     }
@@ -250,7 +258,10 @@ public class Subscription {
         if (result.getRecoverable()) {
             this.recover = true;
         }
-        this.setEpoch(result.getEpoch());
+        if (!result.getEpoch().isEmpty()) {
+            // A reply without an epoch doesn't drop the one already known.
+            this.setEpoch(result.getEpoch());
+        }
         this.deltaNegotiated = result.getDelta();
         // Channel compaction: register the numeric channel ID assigned by the
         // server (0 when not negotiated — also clears a stale ID from a previous
