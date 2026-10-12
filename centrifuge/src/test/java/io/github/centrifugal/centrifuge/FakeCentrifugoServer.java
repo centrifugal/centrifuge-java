@@ -161,10 +161,41 @@ public final class FakeCentrifugoServer {
         }
     }
 
+    /**
+     * Answer the client's close frame, as a real server does. Set to false to simulate a dead
+     * or half-open link whose peer never answers.
+     */
+    public volatile boolean answerClose = true;
+
+    private final java.util.concurrent.atomic.AtomicInteger openSockets = new java.util.concurrent.atomic.AtomicInteger();
+
+    /** WebSocket connections currently open on the server side. */
+    public int openSockets() {
+        return openSockets.get();
+    }
+
     private final class ServerListener extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
+            openSockets.incrementAndGet();
             currentSocket.set(webSocket);
+        }
+
+        @Override
+        public void onClosed(WebSocket webSocket, int code, String reason) {
+            openSockets.decrementAndGet();
+        }
+
+        @Override
+        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            openSockets.decrementAndGet();
+        }
+
+        @Override
+        public void onClosing(WebSocket webSocket, int code, String reason) {
+            if (answerClose) {
+                webSocket.close(1000, null);
+            }
         }
 
         @Override
@@ -256,6 +287,26 @@ public final class FakeCentrifugoServer {
     }
 
     /** Send a raw push (wrapped in a reply) to the active connection. */
+    /**
+     * Send several replies (or pushes, wrapped in replies) in one WebSocket frame, as the
+     * server does when it batches queued messages.
+     */
+    public void sendFrame(Protocol.Reply... replies) {
+        WebSocket s = currentSocket.get();
+        if (s == null) {
+            return;
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            for (Protocol.Reply reply : replies) {
+                reply.writeDelimitedTo(out);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        s.send(ByteString.of(out.toByteArray()));
+    }
+
     public void sendPush(Protocol.Push push) {
         sendReply(Protocol.Reply.newBuilder().setPush(push).build());
     }

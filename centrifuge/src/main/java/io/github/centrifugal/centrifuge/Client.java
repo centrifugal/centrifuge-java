@@ -66,30 +66,76 @@ public class Client {
 
     // Runs every step of the client. An exception escaping a step (e.g. thrown by an app
     // event handler) is reported through onError instead of vanishing in the task's
-    // Future, which left the rest of the step silently undone.
-    private final ExecutorService executor = new java.util.concurrent.ThreadPoolExecutor(
-            1, 1, 0L, TimeUnit.MILLISECONDS, new java.util.concurrent.LinkedBlockingQueue<Runnable>()) {
-        @Override
-        protected void afterExecute(Runnable r, Throwable t) {
-            super.afterExecute(r, t);
-            if (t == null && r instanceof java.util.concurrent.Future<?>) {
-                java.util.concurrent.Future<?> future = (java.util.concurrent.Future<?>) r;
-                if (future.isDone() && !future.isCancelled()) {
-                    try {
-                        future.get();
-                    } catch (java.util.concurrent.ExecutionException e) {
-                        t = e.getCause();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-            if (t != null) {
-                Client.this.reportUncaught(t);
-            }
+    // Future, which left the rest of the step silently undone. The worker
+    // thread references only the inner executor, which shuts itself down once the client
+    // is unreachable: a client that is disconnected but never closed is still collected.
+    private final ExecutorService executor = new ReportingExecutor(Executors.newSingleThreadExecutor());
+
+    /** Wraps every task so an exception it throws is reported, then delegates. */
+    private final class ReportingExecutor extends java.util.concurrent.AbstractExecutorService {
+        private final ExecutorService delegate;
+
+        ReportingExecutor(ExecutorService delegate) {
+            this.delegate = delegate;
         }
-    };
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        @Override
+        public void execute(Runnable task) {
+            this.delegate.execute(() -> {
+                try {
+                    task.run();
+                } catch (Throwable t) {
+                    Client.this.reportUncaught(t);
+                }
+            });
+        }
+
+        @Override
+        protected <T> java.util.concurrent.RunnableFuture<T> newTaskFor(Runnable task, T value) {
+            // submit(): report from inside the task, before FutureTask stores the exception.
+            return super.newTaskFor(() -> {
+                try {
+                    task.run();
+                } catch (Throwable t) {
+                    Client.this.reportUncaught(t);
+                }
+            }, value);
+        }
+
+        @Override
+        public void shutdown() {
+            this.delegate.shutdown();
+        }
+
+        @Override
+        public List<Runnable> shutdownNow() {
+            return this.delegate.shutdownNow();
+        }
+
+        @Override
+        public boolean isShutdown() {
+            return this.delegate.isShutdown();
+        }
+
+        @Override
+        public boolean isTerminated() {
+            return this.delegate.isTerminated();
+        }
+
+        @Override
+        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+            return this.delegate.awaitTermination(timeout, unit);
+        }
+    }
+    // Timers. A cancelled timer is removed from the queue at once: kept until its delay
+    // passed (e.g. the no-ping timer, ping interval + max delay), it held the client.
+    private final ScheduledExecutorService scheduler = newScheduler();
+
+    private static ScheduledExecutorService newScheduler() {
+        java.util.concurrent.ScheduledThreadPoolExecutor scheduler = new java.util.concurrent.ScheduledThreadPoolExecutor(1);
+        scheduler.setRemoveOnCancelPolicy(true);
+        return scheduler;
+    }
     private int pingInterval;
     private boolean sendPong;
     private ScheduledFuture<?> pingTask;
@@ -116,6 +162,8 @@ public class Client {
     // handled first, as centrifuge-js lateCallTimer / lateCallGrace.
     static final long LATE_TIMER_MS = 1000;
     static final long LATE_TIMER_GRACE_MS = 1000;
+    // How long a closed socket may wait for the peer's close frame before it's cancelled.
+    static final long CLOSE_GRACE_MS = 1000;
     private static final int MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS = 1009;
 
     static final int DISCONNECTED_DISCONNECT_CALLED = 0;
@@ -520,6 +568,14 @@ public class Client {
         }
         if (open) {
             transport.close(NORMAL_CLOSURE_STATUS, null);
+            // A peer on a dead or half-open link never answers the close frame: OkHttp would
+            // keep the socket for 60s next to the next connection. A healthy peer answers
+            // within the grace period, and cancel() of a closed socket does nothing.
+            try {
+                this.scheduler.schedule(transport::cancel, CLOSE_GRACE_MS, TimeUnit.MILLISECONDS);
+            } catch (RejectedExecutionException e) {
+                transport.cancel();
+            }
         } else {
             transport.cancel();
         }
@@ -679,6 +735,14 @@ public class Client {
                                 e.printStackTrace();
                                 Client.this.listener.onError(Client.this, new ErrorEvent(new UnclassifiedError(e)));
                                 Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+                                break;
+                            }
+                            if (Client.this.ws != webSocket) {
+                                // A message of this frame tore the transport down (e.g. a
+                                // disconnect push, a reconnect on an error reply): the rest
+                                // of the frame belongs to the connection that ended, e.g. a
+                                // ping that must not be answered or re-arm the ping timer on
+                                // the next one (as centrifuge-js).
                                 break;
                             }
                         }
@@ -1276,6 +1340,10 @@ public class Client {
         }
         this.connectAsyncCommands.clear();
 
+        if (this.pingTask != null) {
+            // One no-ping timer per connection: never leave an earlier one armed.
+            this.pingTask.cancel(true);
+        }
         this.pingTask = this.scheduler.schedule(Client.this::waitServerPing, this.pingInterval + this.opts.getMaxServerPingDelay(), TimeUnit.MILLISECONDS);
 
         if (result.getExpires()) {

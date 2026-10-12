@@ -66,6 +66,8 @@ public class TransportTeardownTest {
         server = new FakeCentrifugoServer();
         server.connectResult = Protocol.ConnectResult.newBuilder()
                 .setClient("fake-client").setVersion("0.0.0").setPing(1).build();
+        // A dead link: the peer never answers the client's close frame.
+        server.answerClose = false;
         server.start();
         Options opts = new Options();
         opts.setMaxServerPingDelay(300);
@@ -87,6 +89,144 @@ public class TransportTeardownTest {
             Thread.sleep(20);
         }
         assertTrue("reconnected within 5s of no ping, connect commands: " + connectCommands(), connectCommands() >= 2);
+    }
+
+    /**
+     * After "no ping" on a link that went dead (nothing gets through any more, so the close
+     * frame never reaches the peer), the client doesn't keep the dead connection's socket open
+     * next to the new one: OkHttp would keep it for up to 60s waiting for the peer's close frame.
+     */
+    @Test
+    public void testDeadConnectionSocketIsReleased() throws Exception {
+        server = new FakeCentrifugoServer();
+        server.connectResult = Protocol.ConnectResult.newBuilder()
+                .setClient("fake-client").setVersion("0.0.0").setPing(1).build();
+        server.start();
+        java.net.URI upstream = java.net.URI.create(server.url());
+        CountingRelay relay = new CountingRelay(upstream.getHost(), upstream.getPort());
+        try {
+            Options opts = new Options();
+            opts.setMaxServerPingDelay(300);
+            opts.setMinReconnectDelay(100);
+            opts.setMaxReconnectDelay(200);
+            LinkedBlockingQueue<Integer> connecting = new LinkedBlockingQueue<>();
+            CountDownLatch firstConnected = new CountDownLatch(1);
+            CountDownLatch secondConnected = new CountDownLatch(2);
+            client = new Client("ws://127.0.0.1:" + relay.port() + "/connection/websocket", opts, new EventListener() {
+                @Override
+                public void onConnecting(Client c, ConnectingEvent e) {
+                    connecting.add(e.getCode());
+                }
+
+                @Override
+                public void onConnected(Client c, ConnectedEvent e) {
+                    firstConnected.countDown();
+                    secondConnected.countDown();
+                    // From the second connection on, the server pings rarely: one no-ping only.
+                    server.connectResult = Protocol.ConnectResult.newBuilder()
+                            .setClient("fake-client").setVersion("0.0.0").setPing(25).build();
+                }
+            });
+            client.connect();
+            assertTrue("connected", firstConnected.await(5, TimeUnit.SECONDS));
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+            // The link of the first connection goes dead.
+            relay.blackholeExisting();
+            Integer code;
+            do {
+                code = connecting.poll(100, TimeUnit.MILLISECONDS);
+            } while ((code == null || code != Client.CONNECTING_NO_PING) && System.nanoTime() < deadline);
+            assertEquals("no ping", Integer.valueOf(Client.CONNECTING_NO_PING), code);
+            assertTrue("reconnected", secondConnected.await(5, TimeUnit.SECONDS));
+            deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(3);
+            while (relay.open() != 1 && System.nanoTime() < deadline) {
+                Thread.sleep(20);
+            }
+            assertEquals("only the new connection's socket is open", 1, relay.open());
+        } finally {
+            relay.close();
+        }
+    }
+
+    /** A TCP relay that counts the client connections it currently relays. */
+    private static final class CountingRelay {
+        private final ServerSocket listener = new ServerSocket(0);
+        private final java.util.concurrent.atomic.AtomicInteger open = new java.util.concurrent.atomic.AtomicInteger();
+        private final List<java.util.concurrent.atomic.AtomicBoolean> holes = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+        /** Existing connections drop everything from now on; new connections work. */
+        void blackholeExisting() {
+            for (java.util.concurrent.atomic.AtomicBoolean hole : holes) {
+                hole.set(true);
+            }
+        }
+
+        CountingRelay(String host, int port) throws IOException {
+            Thread acceptor = new Thread(() -> {
+                try {
+                    while (true) {
+                        Socket client = listener.accept();
+                        Socket upstream = new Socket(host, port);
+                        open.incrementAndGet();
+                        java.util.concurrent.atomic.AtomicBoolean closed = new java.util.concurrent.atomic.AtomicBoolean();
+                        Runnable done = () -> {
+                            if (closed.compareAndSet(false, true)) {
+                                open.decrementAndGet();
+                                try {
+                                    client.close();
+                                } catch (IOException ignored) {
+                                }
+                                try {
+                                    upstream.close();
+                                } catch (IOException ignored) {
+                                }
+                            }
+                        };
+                        java.util.concurrent.atomic.AtomicBoolean hole = new java.util.concurrent.atomic.AtomicBoolean();
+                        holes.add(hole);
+                        pump(client, upstream, done, hole);
+                        pump(upstream, client, done, hole);
+                    }
+                } catch (IOException ignored) {
+                }
+            });
+            acceptor.setDaemon(true);
+            acceptor.start();
+        }
+
+        private static void pump(Socket from, Socket to, Runnable done, java.util.concurrent.atomic.AtomicBoolean hole) {
+            Thread t = new Thread(() -> {
+                byte[] buf = new byte[8192];
+                try {
+                    InputStream in = from.getInputStream();
+                    java.io.OutputStream out = to.getOutputStream();
+                    int n;
+                    while ((n = in.read(buf)) >= 0) {
+                        // Blackholed: keep reading (to see the client close), forward nothing.
+                        if (!hole.get()) {
+                            out.write(buf, 0, n);
+                            out.flush();
+                        }
+                    }
+                } catch (IOException ignored) {
+                }
+                done.run();
+            });
+            t.setDaemon(true);
+            t.start();
+        }
+
+        int port() {
+            return listener.getLocalPort();
+        }
+
+        int open() {
+            return open.get();
+        }
+
+        void close() throws IOException {
+            listener.close();
+        }
     }
 
     private int startSilentServer() throws IOException {

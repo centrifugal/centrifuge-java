@@ -556,7 +556,14 @@ public class Subscription {
     }
 
     void startResubscribing() {
-        this.client.getExecutor().submit(this::sendSubscribe);
+        this.client.getExecutor().submit(() -> {
+            // The retry timer may have fired just before the app's unsubscribe() (or a
+            // subscribe reply) ran: it then belongs to an attempt that ended.
+            if (Subscription.this.getState() != SubscriptionState.SUBSCRIBING) {
+                return;
+            }
+            Subscription.this.sendSubscribe();
+        });
     }
 
     boolean getRecover() {
