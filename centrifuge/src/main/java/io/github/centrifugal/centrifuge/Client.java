@@ -410,6 +410,15 @@ public class Client {
                 super.onOpen(webSocket, response);
                 try {
                     Client.this.executor.submit(() -> {
+                        // Callbacks of a socket that has since been replaced (e.g.
+                        // disconnect() then connect() cancels a socket still closing)
+                        // belong to a connection the client already gave up on - they
+                        // must not act on the new one. Checked on the executor, where
+                        // ws is guaranteed to be assigned. Matches centrifuge-js,
+                        // which ignores callbacks from a non-actual transport.
+                        if (Client.this.ws != webSocket) {
+                            return;
+                        }
                         try {
                             Client.this.handleConnectionOpen();
                         } catch (Throwable e) {
@@ -433,6 +442,9 @@ public class Client {
                 super.onMessage(webSocket, bytes);
                 try {
                     Client.this.executor.submit(() -> {
+                        if (Client.this.ws != webSocket) {
+                            return;
+                        }
                         if (Client.this.getState() != ClientState.CONNECTING && Client.this.getState() != ClientState.CONNECTED) {
                             return;
                         }
@@ -481,6 +493,9 @@ public class Client {
                 super.onClosed(webSocket, code, reason);
                 try {
                     Client.this.executor.submit(() -> {
+                        if (Client.this.ws != webSocket) {
+                            return;
+                        }
                         boolean reconnect = code < 3500 || code >= 5000 || (code >= 4000 && code < 4500);
                         int disconnectCode = code;
                         String disconnectReason = reason;
@@ -512,6 +527,9 @@ public class Client {
                 super.onFailure(webSocket, t, response);
                 try {
                     Client.this.executor.submit(() -> {
+                        if (Client.this.ws != webSocket) {
+                            return;
+                        }
                         Integer responseCode = (response != null) ? response.code() : null;
                         listener.onError(Client.this, new ErrorEvent(t, responseCode));
                         Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
