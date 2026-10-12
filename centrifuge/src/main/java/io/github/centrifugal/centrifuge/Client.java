@@ -1026,16 +1026,22 @@ public class Client {
 
     /**
      * Say Client that Subscription should be removed from internal registry. Subscription will be
-     * automatically unsubscribed before removing.
+     * automatically unsubscribed before removing. The channel is free for a new subscription at
+     * once. A Subscription this client doesn't hold (e.g. one removed before, whose channel has a
+     * new subscription now) is ignored. A removed Subscription can't subscribe again.
      *
      * @param sub: Subscription to remove from registry.
      */
     public void removeSubscription(Subscription sub) {
         synchronized (this.subs) {
-            sub.unsubscribe();
-            if (this.subs.get(sub.getChannel()) != null) {
-                this.subs.remove(sub.getChannel());
+            // A subscription removed before must not remove a newer one of its channel
+            // (as centrifuge-js).
+            if (this.subs.get(sub.getChannel()) != sub) {
+                return;
             }
+            this.subs.remove(sub.getChannel());
+            sub.markRemoved();
+            sub.unsubscribe();
         }
     }
 

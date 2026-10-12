@@ -43,6 +43,8 @@ public class Subscription {
     // unsubscribe (and possibly a new subscribe) happened meanwhile: that reply
     // belongs to a subscribe the server was told to end.
     private long unsubscribeCount = 0;
+    // Removed from the client's registry: it can't subscribe again.
+    private volatile boolean removed = false;
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener, final SubscriptionOptions options) {
         this.client = client;
@@ -66,6 +68,10 @@ public class Subscription {
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener) {
         this(client, channel, listener, new SubscriptionOptions());
+    }
+
+    void markRemoved() {
+        this.removed = true;
     }
 
     long getUnsubscribeCount() {
@@ -320,8 +326,21 @@ public class Subscription {
         this.tagsFilter = tagsFilter;
     }
 
+    /**
+     * Subscribe to the channel.
+     *
+     * @throws IllegalStateException if the subscription was removed from the client: the
+     *                               client no longer tracks it, so the server would keep a
+     *                               subscription whose publications are dropped.
+     */
     public void subscribe() {
+        if (this.removed) {
+            throw new IllegalStateException("subscription to the channel " + this.channel + " was removed from the client");
+        }
         this.client.getExecutor().submit(() -> {
+            if (Subscription.this.removed) {
+                return;
+            }
             if (Subscription.this.getState() == SubscriptionState.SUBSCRIBED || Subscription.this.getState() == SubscriptionState.SUBSCRIBING) {
                 return;
             }
