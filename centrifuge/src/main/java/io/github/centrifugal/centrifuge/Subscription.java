@@ -118,7 +118,7 @@ public class Subscription {
         }
         this.client.getExecutor().submit(() -> {
             final long epoch = ++Subscription.this.subscribeEpoch;
-            Subscription.this.opts.getTokenGetter().getSubscriptionToken(new SubscriptionTokenEvent(Subscription.this.getChannel()), (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
+            Client.fetchSubscriptionToken(Subscription.this.opts.getTokenGetter(), new SubscriptionTokenEvent(Subscription.this.getChannel()), (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
                 if (Subscription.this.subscribeEpoch != epoch) {
                     return;
                 }
@@ -326,8 +326,13 @@ public class Subscription {
                 return;
             }
             Subscription.this.setState(SubscriptionState.SUBSCRIBING);
-            Subscription.this.listener.onSubscribing(Subscription.this, new SubscribingEvent(Client.SUBSCRIBING_SUBSCRIBE_CALLED, "subscribe called"));
-            Subscription.this.sendSubscribe();
+            try {
+                Subscription.this.listener.onSubscribing(Subscription.this, new SubscribingEvent(Client.SUBSCRIBING_SUBSCRIBE_CALLED, "subscribe called"));
+            } finally {
+                // A handler that throws doesn't stop the subscribe; one that called
+                // unsubscribe() queued it after this step.
+                Subscription.this.sendSubscribe();
+            }
         });
     }
 
@@ -383,7 +388,7 @@ public class Subscription {
         if (this.opts.getStateGetter() != null && !this.getRecover()) {
             final long epoch = ++this.subscribeEpoch;
             SubscriptionGetStateEvent getStateEvent = new SubscriptionGetStateEvent(this.channel);
-            this.opts.getStateGetter().getSubscriptionState(getStateEvent, (err, position) -> Subscription.this.client.getExecutor().submit(() -> {
+            Client.fetchSubscriptionState(this.opts.getStateGetter(), getStateEvent, (err, position) -> Subscription.this.client.getExecutor().submit(() -> {
                 if (Subscription.this.subscribeEpoch != epoch) {
                     return;
                 }
@@ -410,7 +415,7 @@ public class Subscription {
         if (this.token.equals("") && this.opts.getTokenGetter() != null) {
             final long epoch = ++this.subscribeEpoch;
             SubscriptionTokenEvent subscriptionTokenEvent = new SubscriptionTokenEvent(this.channel);
-            this.opts.getTokenGetter().getSubscriptionToken(subscriptionTokenEvent, (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
+            Client.fetchSubscriptionToken(this.opts.getTokenGetter(), subscriptionTokenEvent, (err, token) -> Subscription.this.client.getExecutor().submit(() -> {
                 if (Subscription.this.subscribeEpoch != epoch) {
                     return;
                 }

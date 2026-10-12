@@ -64,7 +64,31 @@ public class Client {
     private final Map<String, ServerSubscription> serverSubs = new ConcurrentHashMap<>();
     private final Backoff backoff;
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    // Runs every step of the client. An exception escaping a step (e.g. thrown by an app
+    // event handler) is reported through onError instead of vanishing in the task's
+    // Future, which left the rest of the step silently undone.
+    private final ExecutorService executor = new java.util.concurrent.ThreadPoolExecutor(
+            1, 1, 0L, TimeUnit.MILLISECONDS, new java.util.concurrent.LinkedBlockingQueue<Runnable>()) {
+        @Override
+        protected void afterExecute(Runnable r, Throwable t) {
+            super.afterExecute(r, t);
+            if (t == null && r instanceof java.util.concurrent.Future<?>) {
+                java.util.concurrent.Future<?> future = (java.util.concurrent.Future<?>) r;
+                if (future.isDone() && !future.isCancelled()) {
+                    try {
+                        future.get();
+                    } catch (java.util.concurrent.ExecutionException e) {
+                        t = e.getCause();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+            if (t != null) {
+                Client.this.reportUncaught(t);
+            }
+        }
+    };
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private int pingInterval;
     private boolean sendPong;
@@ -165,6 +189,74 @@ public class Client {
 
     private int _id = 0;
 
+    /** Reports an exception that escaped a step, e.g. thrown by an event handler. */
+    void reportUncaught(Throwable t) {
+        try {
+            this.listener.onError(this, new ErrorEvent(new UnclassifiedError(t)));
+        } catch (Throwable e) {
+            // The error handler threw too: nothing left to report to.
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * An exception while handling data from the server (a reply or a push, including an
+     * app handler run for it): reported, then the client stops visibly with "bad
+     * protocol", as for a frame that fails to dispatch. Before, exceptions inside reply
+     * handling were only printed, leaving e.g. a connected client without its
+     * resubscribes and ping timer.
+     */
+    private void handleDispatchError(Throwable e) {
+        e.printStackTrace();
+        this.reportUncaught(e);
+        this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+    }
+
+    /**
+     * Calls an app token getter. A getter that throws instead of calling back is treated
+     * as calling back with that error; only the first callback counts.
+     */
+    static void fetchConnectionToken(ConnectionTokenGetter getter, ConnectionTokenEvent event, TokenCallback cb) {
+        TokenCallback once = onceToken(cb);
+        try {
+            getter.getConnectionToken(event, once);
+        } catch (Throwable t) {
+            once.Done(t, null);
+        }
+    }
+
+    static void fetchSubscriptionToken(SubscriptionTokenGetter getter, SubscriptionTokenEvent event, TokenCallback cb) {
+        TokenCallback once = onceToken(cb);
+        try {
+            getter.getSubscriptionToken(event, once);
+        } catch (Throwable t) {
+            once.Done(t, null);
+        }
+    }
+
+    static void fetchSubscriptionState(SubscriptionStateGetter getter, SubscriptionGetStateEvent event, StateCallback cb) {
+        java.util.concurrent.atomic.AtomicBoolean done = new java.util.concurrent.atomic.AtomicBoolean();
+        StateCallback once = (e, position) -> {
+            if (done.compareAndSet(false, true)) {
+                cb.Done(e, position);
+            }
+        };
+        try {
+            getter.getSubscriptionState(event, once);
+        } catch (Throwable t) {
+            once.Done(t, null);
+        }
+    }
+
+    private static TokenCallback onceToken(TokenCallback cb) {
+        java.util.concurrent.atomic.AtomicBoolean done = new java.util.concurrent.atomic.AtomicBoolean();
+        return (e, token) -> {
+            if (done.compareAndSet(false, true)) {
+                cb.Done(e, token);
+            }
+        };
+    }
+
     private int getNextId() {
         return ++_id;
     }
@@ -180,8 +272,13 @@ public class Client {
             Client.this.reconnectAttempts = 0;
             Client.this.setState(ClientState.CONNECTING);
             ConnectingEvent event = new ConnectingEvent(CONNECTING_CONNECT_CALLED, "connect called");
-            Client.this.listener.onConnecting(Client.this, event);
-            Client.this._connect();
+            try {
+                Client.this.listener.onConnecting(Client.this, event);
+            } finally {
+                // A handler that throws doesn't stop the connect; one that called
+                // disconnect() queued it after this step.
+                Client.this._connect();
+            }
         });
     }
 
@@ -324,13 +421,30 @@ public class Client {
         // subscribe reply regardless of whether the server reuses the same ID.
         this.subsById.clear();
 
+        try {
+            this.finishTeardown(code, reason, shouldReconnect, previousState, needEvent);
+        } finally {
+            if (shouldReconnect) {
+                // Also when a handler threw. A handler may have called disconnect()
+                // meanwhile: scheduleReconnect checks the state.
+                this.scheduleReconnect();
+            }
+        }
+    }
+
+    /** The part of processDisconnect that emits events: a handler may throw in it. */
+    private void finishTeardown(int code, String reason, boolean shouldReconnect, ClientState previousState, boolean needEvent) {
         synchronized (this.subs) {
-            for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
-                Subscription sub = entry.getValue();
+            for (Subscription sub : new ArrayList<>(this.subs.values())) {
                 if (sub.getState() == SubscriptionState.UNSUBSCRIBED) {
                     continue;
                 }
-                sub.moveToSubscribing(SUBSCRIBING_TRANSPORT_CLOSED, "transport closed");
+                try {
+                    sub.moveToSubscribing(SUBSCRIBING_TRANSPORT_CLOSED, "transport closed");
+                } catch (Throwable t) {
+                    // A handler threw: the other subscriptions must still move.
+                    this.reportUncaught(t);
+                }
             }
         }
 
@@ -348,8 +462,12 @@ public class Client {
         this.futures.clear();
 
         if (previousState == ClientState.CONNECTED) {
-            for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
-                this.listener.onSubscribing(this, new ServerSubscribingEvent(entry.getKey()));
+            for (String channel : new ArrayList<>(this.serverSubs.keySet())) {
+                try {
+                    this.listener.onSubscribing(this, new ServerSubscribingEvent(channel));
+                } catch (Throwable t) {
+                    this.reportUncaught(t);
+                }
             }
         }
 
@@ -361,11 +479,6 @@ public class Client {
                 DisconnectedEvent event = new DisconnectedEvent(code, reason);
                 this.listener.onDisconnected(this, event);
             }
-        }
-
-        if (shouldReconnect) {
-            // A handler may have called disconnect() meanwhile: scheduleReconnect checks.
-            this.scheduleReconnect();
         }
     }
 
@@ -660,7 +773,7 @@ public class Client {
                 return;
             }
             final WebSocket connectionWs = this.ws;
-            this.opts.getTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
+            Client.fetchConnectionToken(this.opts.getTokenGetter(), connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
                 // If the connection has been replaced (reconnect, disconnect)
                 // since this token request was issued, the callback is stale.
                 if (Client.this.ws != connectionWs) {
@@ -734,9 +847,8 @@ public class Client {
             }
             try {
                 this.handleSubscribeReply(sub, unsubscribeCount, reply);
-            } catch (Exception e) {
-                // Should never happen.
-                e.printStackTrace();
+            } catch (Throwable e) {
+                this.handleDispatchError(e);
             }
             this.futures.remove(cmd.getId());
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
@@ -1092,7 +1204,7 @@ public class Client {
         }
         this.executor.submit(() -> {
             final WebSocket refreshWs = Client.this.ws;
-            Client.this.opts.getTokenGetter().getConnectionToken(new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
+            Client.fetchConnectionToken(Client.this.opts.getTokenGetter(), new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
             // If the connection has been replaced since this refresh was
             // issued, the callback (and any token it carries) is stale.
             if (Client.this.ws != refreshWs) {
@@ -1190,9 +1302,8 @@ public class Client {
             this.futures.remove(cmd.getId());
             try {
                 this.handleConnectReply(reply);
-            } catch (Exception e) {
-                // Should never happen.
-                e.printStackTrace();
+            } catch (Throwable e) {
+                this.handleDispatchError(e);
             }
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             // A timeout completes the future on the CompletableFuture delay
