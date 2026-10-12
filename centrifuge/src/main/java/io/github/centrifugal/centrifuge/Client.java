@@ -772,11 +772,17 @@ public class Client {
                 .setUnsubscribe(req)
                 .build();
 
+        final WebSocket unsubscribeWs = this.ws;
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
         f.thenAccept(reply -> {
-            // No need to handle reply for now.
             this.futures.remove(cmd.getId());
+            if (reply.getError().getCode() != 0 && this.ws == unsubscribeWs && this.getState() == ClientState.CONNECTED) {
+                // The server may still hold the subscription: its publications would
+                // reach an unsubscribed subscription, and a new subscribe would get 105.
+                // A new connection starts from a clean server state (as centrifuge-js).
+                this.processDisconnect(CONNECTING_UNSUBSCRIBE_ERROR, "unsubscribe error", true);
+            }
         }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
             this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTED) {
@@ -822,11 +828,21 @@ public class Client {
     // Resolve a client-side subscription for a push: by numeric channel ID when
     // channel compaction is in use (the push then has no channel name), by channel
     // name otherwise.
+    /**
+     * The client-side subscription a push is for. While a server-side subscription holds
+     * the channel and the client-side one isn't subscribed, the push belongs to the
+     * server-side one: the server allows one subscription per channel (as
+     * centrifuge-js _getSubForPush).
+     */
     private Subscription getSubForPush(String channel, long id) {
         if (id > 0) {
             return this.subsById.get(id);
         }
-        return this.subs.get(channel);
+        Subscription sub = this.subs.get(channel);
+        if (sub != null && sub.getState() != SubscriptionState.SUBSCRIBED && this.serverSubs.containsKey(channel)) {
+            return null;
+        }
+        return sub;
     }
 
     private ServerSubscription getServerSub(String channel) {
@@ -1209,6 +1225,12 @@ public class Client {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
         Subscription sub = this.getSubForPush(channel, id);
         if (sub != null) {
+            if (sub.getState() != SubscriptionState.SUBSCRIBED) {
+                // E.g. a publication already on its way when the app called
+                // unsubscribe(), or one sent before a resubscribe: the app doesn't
+                // expect it, and the stored position must not move past it.
+                return;
+            }
             sub.handlePublication(pub);
         } else if (id > 0) {
             // Compacted push with unknown ID (e.g. already unsubscribed) — drop.
@@ -1245,8 +1267,17 @@ public class Client {
     }
 
     private void handleUnsubscribe(String channel, Protocol.Unsubscribe unsubscribe) {
-        Subscription sub = this.getSub(channel);
+        Subscription sub = this.getSubForPush(channel, 0);
         if (sub != null) {
+            if (sub.getState() != SubscriptionState.SUBSCRIBED) {
+                // It ends a previous subscription: one the app unsubscribed, or one that
+                // raced unsubscribe() and subscribe() of the app. The server unsubscribes
+                // a subscription in progress only after replying to its subscribe, and
+                // sends the push also when the subscription is already gone. A resubscribe
+                // code must not subscribe again, nor invalidate the state of a subscribe
+                // in progress (as centrifuge-js).
+                return;
+            }
             if (unsubscribe.getCode() < 2500) {
                 sub.moveToUnsubscribed(false, unsubscribe.getCode(), unsubscribe.getReason());
             } else {
@@ -1271,6 +1302,9 @@ public class Client {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(join.getInfo());
         Subscription sub = this.getSubForPush(channel, id);
         if (sub != null) {
+            if (sub.getState() != SubscriptionState.SUBSCRIBED) {
+                return;
+            }
             JoinEvent event = new JoinEvent();
             event.setInfo(info);
             sub.getListener().onJoin(sub, event);
@@ -1291,6 +1325,9 @@ public class Client {
 
         Subscription sub = this.getSubForPush(channel, id);
         if (sub != null) {
+            if (sub.getState() != SubscriptionState.SUBSCRIBED) {
+                return;
+            }
             event.setInfo(info);
             sub.getListener().onLeave(sub, event);
         } else if (id > 0) {
