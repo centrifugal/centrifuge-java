@@ -621,7 +621,8 @@ public class Client {
         this.reconnectAttempts++;
     }
 
-    private void sendSubscribeSynchronized(String channel, Protocol.SubscribeRequest req) {
+    private void sendSubscribeSynchronized(Subscription sub, Protocol.SubscribeRequest req) {
+        final long unsubscribeCount = sub.getUnsubscribeCount();
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
                 .setSubscribe(req)
@@ -634,7 +635,7 @@ public class Client {
                 return;
             }
             try {
-                this.handleSubscribeReply(channel, reply);
+                this.handleSubscribeReply(sub, unsubscribeCount, reply);
             } catch (Exception e) {
                 // Should never happen.
                 e.printStackTrace();
@@ -659,11 +660,19 @@ public class Client {
             // client will be connected.
             return;
         }
-        this.sendSubscribeSynchronized(sub.getChannel(), req);
+        this.sendSubscribeSynchronized(sub, req);
     }
 
+    /**
+     * Writes the unsubscribe command at once. Called on the executor before the
+     * unsubscribed event is emitted, so a subscribe() made after unsubscribe() — or
+     * from its handler — always reaches the server after the unsubscribe. Deferring
+     * the write to another executor task let an already queued subscribe() go first:
+     * the server answered 105 (already subscribed) and the late unsubscribe then
+     * removed the new subscription (as centrifuge-js writes first).
+     */
     void sendUnsubscribe(String channel) {
-        this.executor.submit(() -> Client.this.sendUnsubscribeSynchronized(channel));
+        this.sendUnsubscribeSynchronized(channel);
     }
 
     private void sendUnsubscribeSynchronized(String channel) {
@@ -804,9 +813,14 @@ public class Client {
         }
     }
 
-    private void handleSubscribeReply(String channel, Protocol.Reply reply) throws Exception {
-        Subscription sub = this.getSub(channel);
-        if (sub != null) {
+    private void handleSubscribeReply(Subscription sub, long unsubscribeCount, Protocol.Reply reply) throws Exception {
+        if (this.getSub(sub.getChannel()) != sub || sub.getUnsubscribeCount() != unsubscribeCount) {
+            // The subscription was unsubscribed (and maybe subscribed again) or removed
+            // since this subscribe was sent: the reply belongs to a subscribe the server
+            // was told to end, not to the attempt in progress now.
+            return;
+        }
+        {
             if (sub.getState() != SubscriptionState.SUBSCRIBING) {
                 // The subscription left SUBSCRIBING while the subscribe command was
                 // still in flight — e.g. unsubscribe() called right after subscribe(),

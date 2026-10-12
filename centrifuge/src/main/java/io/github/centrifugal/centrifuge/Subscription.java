@@ -38,6 +38,11 @@ public class Subscription {
     // callbacks capture the epoch at issue time and bail if it has moved on,
     // so a stale token from an earlier attempt cannot land on a later one.
     private long subscribeEpoch = 0;
+    // Bumped each time the subscription becomes unsubscribed. A subscribe command
+    // carries the value it was sent with, so its reply is dropped when an
+    // unsubscribe (and possibly a new subscribe) happened meanwhile: that reply
+    // belongs to a subscribe the server was told to end.
+    private long unsubscribeCount = 0;
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener, final SubscriptionOptions options) {
         this.client = client;
@@ -61,6 +66,10 @@ public class Subscription {
 
     Subscription(final Client client, final String channel, final SubscriptionEventListener listener) {
         this(client, channel, listener, new SubscriptionOptions());
+    }
+
+    long getUnsubscribeCount() {
+        return unsubscribeCount;
     }
 
     void setState(SubscriptionState state) {
@@ -454,6 +463,7 @@ public class Subscription {
             this.clearSubscribingState();
         }
         this.setState(SubscriptionState.UNSUBSCRIBED);
+        this.unsubscribeCount++;
         // Channel compaction ID is no longer valid once unsubscribed.
         this.setPushId(0);
         if (sendUnsubscribe) {
