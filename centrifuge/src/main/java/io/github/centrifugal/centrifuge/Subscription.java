@@ -542,14 +542,14 @@ public class Subscription {
         CompletableFuture<Throwable> f = new CompletableFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
-        f.thenAccept(err -> {
+        this.client.settle(f, err -> {
             if (err != null) {
                 cb.onDone(err, null);
                 return;
             }
             this.futures.remove(uuid);
             this.client.publish(this.getChannel(), data, cb);
-        }).orTimeout(this.client.getOpts().getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             Subscription.this.futures.remove(uuid);
             cb.onDone(e, null);
             return null;
@@ -567,14 +567,14 @@ public class Subscription {
         CompletableFuture<Throwable> f = new CompletableFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
-        f.thenAccept(err -> {
+        this.client.settle(f, err -> {
             if (err != null) {
                 cb.onDone(err, null);
                 return;
             }
             this.futures.remove(uuid);
             this.client.history(this.getChannel(), opts, cb);
-        }).orTimeout(this.client.getOpts().getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             Subscription.this.futures.remove(uuid);
             cb.onDone(e, null);
             return null;
@@ -592,14 +592,14 @@ public class Subscription {
         CompletableFuture<Throwable> f = new CompletableFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
-        f.thenAccept(err -> {
+        this.client.settle(f, err -> {
             if (err != null) {
                 cb.onDone(err, null);
                 return;
             }
             this.futures.remove(uuid);
             this.client.presence(this.getChannel(), cb);
-        }).orTimeout(this.client.getOpts().getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             Subscription.this.futures.remove(uuid);
             cb.onDone(e, null);
             return null;
@@ -617,14 +617,14 @@ public class Subscription {
         CompletableFuture<Throwable> f = new CompletableFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
-        f.thenAccept(err -> {
+        this.client.settle(f, err -> {
             if (err != null) {
                 cb.onDone(err, null);
                 return;
             }
             this.futures.remove(uuid);
             this.client.presenceStats(this.getChannel(), cb);
-        }).orTimeout(this.client.getOpts().getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             Subscription.this.futures.remove(uuid);
             cb.onDone(e, null);
             return null;

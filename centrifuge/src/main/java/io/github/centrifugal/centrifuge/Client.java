@@ -356,6 +356,12 @@ public class Client {
 
     void processDisconnect(int code, String reason, Boolean shouldReconnect) {
         if (this.getState() == ClientState.DISCONNECTED || this.getState() == ClientState.CLOSED) {
+            if (!shouldReconnect) {
+                // Calls made while disconnected wait for a connection: disconnect() and
+                // close() end that wait. Before, they waited for their timeout, and after
+                // close() (whose scheduler no longer runs timers) forever.
+                this.failPendingCalls();
+            }
             return;
         }
 
@@ -432,6 +438,13 @@ public class Client {
         }
     }
 
+    private void failPendingCalls() {
+        // From a copy: a failure handler may register a new call.
+        for (CompletableFuture<Protocol.Reply> f : new ArrayList<>(this.futures.values())) {
+            f.completeExceptionally(new IOException());
+        }
+    }
+
     /** The part of processDisconnect that emits events: a handler may throw in it. */
     private void finishTeardown(int code, String reason, boolean shouldReconnect, ClientState previousState, boolean needEvent) {
         synchronized (this.subs) {
@@ -448,10 +461,7 @@ public class Client {
             }
         }
 
-        for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
-            CompletableFuture<Protocol.Reply> f = entry.getValue();
-            f.completeExceptionally(new IOException());
-        }
+        this.failPendingCalls();
         // Drop the pending command registry along with the futures: no reply can
         // arrive for a connection that is gone, and command IDs are never reused.
         // Failure handlers do remove their own entry, but only after re-checking
@@ -753,6 +763,67 @@ public class Client {
         }), this.opts.getTimeout(), TimeUnit.MILLISECONDS);
     }
 
+    private static long nowMs() {
+        return System.nanoTime() / 1_000_000;
+    }
+
+    /**
+     * Settles a call exactly once: with its result, or with an error — a failure of the
+     * connection, or a TimeoutException after the client timeout. Both handlers run on the
+     * executor.
+     *
+     * <p>The timer hops to the executor before failing the call, so a reply already received
+     * and queued is handled first; a timer running far too late (the process was suspended)
+     * first gives a reply still in the socket a grace period. Before, the
+     * timeout was armed on the stage after the result handler, so a slow or throwing
+     * handler got the timeout as a second callback, and it failed a call on
+     * its own thread although the reply was already waiting.
+     */
+    <T> void settle(CompletableFuture<T> f, java8.util.function.Consumer<T> onResult,
+                    java8.util.function.Function<Throwable, Void> onError) {
+        final long due = nowMs() + this.opts.getTimeout();
+        ScheduledFuture<?> timer;
+        try {
+            timer = this.scheduler.schedule(() -> this.submitOrDrop(() -> this.expire(f, due)),
+                    this.opts.getTimeout(), TimeUnit.MILLISECONDS);
+        } catch (RejectedExecutionException e) {
+            timer = null;
+        }
+        final ScheduledFuture<?> armed = timer;
+        f.whenComplete((result, error) -> {
+            if (armed != null) {
+                armed.cancel(false);
+            }
+            try {
+                if (error == null) {
+                    onResult.accept(result);
+                } else {
+                    onError.apply(error instanceof java8.util.concurrent.CompletionException && error.getCause() != null
+                            ? error.getCause() : error);
+                }
+            } catch (Throwable t) {
+                // E.g. an app callback that threw: reported, never called again.
+                this.reportUncaught(t);
+            }
+        });
+    }
+
+    private <T> void expire(CompletableFuture<T> f, long due) {
+        if (f.isDone()) {
+            return;
+        }
+        if (nowMs() - due >= LATE_TIMER_MS) {
+            try {
+                this.scheduler.schedule(() -> this.submitOrDrop(() -> f.completeExceptionally(new java.util.concurrent.TimeoutException())),
+                        LATE_TIMER_GRACE_MS, TimeUnit.MILLISECONDS);
+                return;
+            } catch (RejectedExecutionException ignored) {
+                // Closed: fail now.
+            }
+        }
+        f.completeExceptionally(new java.util.concurrent.TimeoutException());
+    }
+
     /** Submits to the executor, dropping the task once the client is closed. */
     private void submitOrDrop(Runnable task) {
         try {
@@ -841,7 +912,7 @@ public class Client {
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             if (Client.this.getState() != ClientState.CONNECTED) {
                 return;
             }
@@ -851,7 +922,7 @@ public class Client {
                 this.handleDispatchError(e);
             }
             this.futures.remove(cmd.getId());
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
@@ -901,7 +972,7 @@ public class Client {
         final WebSocket unsubscribeWs = this.ws;
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.futures.remove(cmd.getId());
             if (reply.getError().getCode() != 0 && this.ws == unsubscribeWs && this.getState() == ClientState.CONNECTED) {
                 // The server may still hold the subscription: its publications would
@@ -909,7 +980,7 @@ public class Client {
                 // A new connection starts from a clean server state (as centrifuge-js).
                 this.processDisconnect(CONNECTING_UNSUBSCRIBE_ERROR, "unsubscribe error", true);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
@@ -1304,14 +1375,14 @@ public class Client {
         final WebSocket connectWs = this.ws;
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.futures.remove(cmd.getId());
             try {
                 this.handleConnectReply(reply);
             } catch (Throwable e) {
                 this.handleDispatchError(e);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             // A timeout completes the future on the CompletableFuture delay
             // scheduler thread - hop to the executor like other command failures.
             this.executor.submit(() -> {
@@ -1543,10 +1614,10 @@ public class Client {
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             cb.onDone(null);
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 this.cleanCommandFuture(cmd);
                 cb.onDone(e);
@@ -1615,7 +1686,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1625,7 +1696,7 @@ public class Client {
                 result.setData(rpcResult.getData().toByteArray());
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1660,7 +1731,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1668,7 +1739,7 @@ public class Client {
                 PublishResult result = new PublishResult();
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1706,7 +1777,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1728,7 +1799,7 @@ public class Client {
                 result.setEpoch(replyResult.getEpoch());
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1754,7 +1825,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1769,7 +1840,7 @@ public class Client {
                 PresenceResult result = new PresenceResult(presence);
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1795,7 +1866,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1806,7 +1877,7 @@ public class Client {
                 result.setNumUsers(replyResult.getNumUsers());
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1828,7 +1899,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1836,7 +1907,7 @@ public class Client {
                 Protocol.RefreshResult replyResult = reply.getRefresh();
                 cb.onDone(null, replyResult);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1859,7 +1930,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1867,7 +1938,7 @@ public class Client {
                 Protocol.SubRefreshResult replyResult = reply.getSubRefresh();
                 cb.onDone(null, replyResult);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
