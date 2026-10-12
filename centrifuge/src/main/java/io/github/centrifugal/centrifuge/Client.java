@@ -34,6 +34,10 @@ import okio.ByteString;
 
 public class Client {
     private WebSocket ws;
+    // Whether the current ws completed its handshake (executor-owned).
+    private boolean wsOpen;
+    // Fails the current ws if it doesn't open within the timeout (executor-owned).
+    private ScheduledFuture<?> openTimeoutTask;
     private OkHttpClient httpClient;
     // Whether httpClient was built from scratch (no user-supplied base client),
     // meaning its Dispatcher and ConnectionPool are ours to dispose. Recorded
@@ -83,6 +87,11 @@ public class Client {
     }
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
+    // A timer running at least this late means the process didn't run meanwhile (e.g.
+    // it was suspended): data that arrived meanwhile gets LATE_TIMER_GRACE_MS to be
+    // handled first, as centrifuge-js lateCallTimer / lateCallGrace.
+    static final long LATE_TIMER_MS = 1000;
+    static final long LATE_TIMER_GRACE_MS = 1000;
     private static final int MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS = 1009;
 
     static final int DISCONNECTED_DISCONNECT_CALLED = 0;
@@ -211,10 +220,12 @@ public class Client {
                 // so any future-cleanup tasks scheduled by processDisconnect
                 // (e.g. orTimeout/exceptionally re-submits) get queued before
                 // we mark the executor shutdown.
+                WebSocket last = Client.this.ws;
                 Client.this.processDisconnect(DISCONNECTED_DISCONNECT_CALLED, "client closed", false);
                 Client.this.setState(ClientState.CLOSED);
-                if (Client.this.ws != null) {
-                    Client.this.ws.cancel();
+                if (last != null) {
+                    // The teardown sent a close frame; don't wait for the peer.
+                    last.cancel();
                 }
                 // Release dispatcher threads + pooled connections on transports
                 // we built from scratch. When the user supplied a base client,
@@ -287,6 +298,12 @@ public class Client {
             this.setState(ClientState.DISCONNECTED);
         }
 
+        // Drop the transport before any event: a handler may connect again. Its
+        // callbacks are ignored from now on, and the reconnect below doesn't wait for
+        // its close callback, which OkHttp delivers only once the peer answers the
+        // close frame — up to 60s later on a dead or half-open link.
+        this.closeTransport();
+
         // Channel compaction IDs are scoped to a server session — drop the routing
         // registry; each resubscribe re-registers a fresh ID. The per-subscription
         // pushId field is left as-is: moveToSubscribed re-registers it on the next
@@ -332,7 +349,43 @@ public class Client {
             }
         }
 
-        this.ws.close(NORMAL_CLOSURE_STATUS, null);
+        if (shouldReconnect) {
+            // A handler may have called disconnect() meanwhile: scheduleReconnect checks.
+            this.scheduleReconnect();
+        }
+    }
+
+    /**
+     * Closes the current transport and forgets it. An open socket gets a normal close
+     * frame; a socket still in its handshake is cancelled, so its handshake doesn't
+     * outlive the attempt.
+     */
+    private void closeTransport() {
+        if (this.openTimeoutTask != null) {
+            this.openTimeoutTask.cancel(false);
+            this.openTimeoutTask = null;
+        }
+        WebSocket transport = this.ws;
+        boolean open = this.wsOpen;
+        this.ws = null;
+        this.wsOpen = false;
+        if (transport == null) {
+            return;
+        }
+        if (open) {
+            transport.close(NORMAL_CLOSURE_STATUS, null);
+        } else {
+            transport.cancel();
+        }
+    }
+
+    /**
+     * Fails the current attempt: an error event, then a teardown that reconnects with
+     * backoff (as centrifuge-js failTransport).
+     */
+    private void failTransport(Throwable error) {
+        this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
+        this.listener.onError(this, new ErrorEvent(error));
     }
 
     private void _connect() {
@@ -349,9 +402,7 @@ public class Client {
                 .addHeader("Sec-WebSocket-Protocol", "centrifuge-protobuf")
                 .build();
 
-        if (this.ws != null) {
-            this.ws.cancel();
-        }
+        this.closeTransport();
 
         // If we previously built our own OkHttpClient from scratch, release its
         // dispatcher threads and pooled connections before building a new one.
@@ -417,7 +468,15 @@ public class Client {
                         // ws is guaranteed to be assigned. Matches centrifuge-js,
                         // which ignores callbacks from a non-actual transport.
                         if (Client.this.ws != webSocket) {
+                            // A replaced socket that completed its handshake late:
+                            // nothing else will close it.
+                            webSocket.close(NORMAL_CLOSURE_STATUS, null);
                             return;
+                        }
+                        Client.this.wsOpen = true;
+                        if (Client.this.openTimeoutTask != null) {
+                            Client.this.openTimeoutTask.cancel(false);
+                            Client.this.openTimeoutTask = null;
                         }
                         try {
                             Client.this.handleConnectionOpen();
@@ -514,9 +573,6 @@ public class Client {
                         if (Client.this.getState() != ClientState.DISCONNECTED) {
                             Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
                         }
-                        if (Client.this.getState() == ClientState.CONNECTING) {
-                            Client.this.scheduleReconnect();
-                        }
                     });
                 } catch (RejectedExecutionException ignored) {
                 }
@@ -533,11 +589,6 @@ public class Client {
                         Integer responseCode = (response != null) ? response.code() : null;
                         listener.onError(Client.this, new ErrorEvent(t, responseCode));
                         Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
-                        if (Client.this.getState() == ClientState.CONNECTING) {
-                            // We need to schedule reconnect from here, since onClosed won't be called
-                            // after onFailure.
-                            Client.this.scheduleReconnect();
-                        }
                     });
                 } catch (RejectedExecutionException ignored) {
                 }
@@ -550,6 +601,36 @@ public class Client {
             // pooled connections are released.
             previousHttpClient.dispatcher().executorService().shutdown();
             previousHttpClient.connectionPool().evictAll();
+        }
+
+        // Bound the handshake by the client timeout, as the connect reply is: OkHttp's
+        // own limits (10s connect and read by default, or none in an app-supplied
+        // OkHttpClient) are not the SDK's. A timer that runs late (the process was
+        // suspended) first lets an open callback already queued run.
+        final WebSocket openingWs = this.ws;
+        final long openDue = System.nanoTime() / 1_000_000 + this.opts.getTimeout();
+        this.openTimeoutTask = this.scheduler.schedule(() -> this.submitOrDrop(() -> {
+            if (Client.this.ws != openingWs || Client.this.wsOpen) {
+                return;
+            }
+            long late = System.nanoTime() / 1_000_000 - openDue;
+            if (late >= LATE_TIMER_MS) {
+                Client.this.openTimeoutTask = Client.this.scheduler.schedule(() -> Client.this.submitOrDrop(() -> {
+                    if (Client.this.ws == openingWs && !Client.this.wsOpen) {
+                        Client.this.failTransport(new java.util.concurrent.TimeoutException("connect timeout"));
+                    }
+                }), LATE_TIMER_GRACE_MS, TimeUnit.MILLISECONDS);
+                return;
+            }
+            Client.this.failTransport(new java.util.concurrent.TimeoutException("connect timeout"));
+        }), this.opts.getTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    /** Submits to the executor, dropping the task once the client is closed. */
+    private void submitOrDrop(Runnable task) {
+        try {
+            this.executor.submit(task);
+        } catch (RejectedExecutionException ignored) {
         }
     }
 
@@ -580,7 +661,7 @@ public class Client {
                         return;
                     }
                     Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
-                    this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                    Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
                     return;
                 }
                 if (token == null) {
@@ -612,6 +693,9 @@ public class Client {
     private void scheduleReconnect() {
         if (this.getState() != ClientState.CONNECTING) {
             return;
+        }
+        if (this.reconnectTask != null) {
+            this.reconnectTask.cancel(false);
         }
         this.reconnectTask = this.scheduler.schedule(
                 Client.this::startReconnecting,
@@ -862,9 +946,9 @@ public class Client {
             this.handleConnectionError(new ReplyError(reply.getError().getCode(), reply.getError().getMessage(), reply.getError().getTemporary()));
             if (reply.getError().getCode() == 109) { // Token expired.
                 this.refreshRequired = true;
-                this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
             } else if (reply.getError().getTemporary()) {
-                this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
             } else {
                 this.processDisconnect(reply.getError().getCode(), reply.getError().getMessage(), false);
             }
@@ -1092,7 +1176,7 @@ public class Client {
                     return;
                 }
                 Client.this.handleConnectionError(e);
-                Client.this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
             });
             return null;
         });
