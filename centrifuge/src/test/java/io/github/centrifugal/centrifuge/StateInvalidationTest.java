@@ -54,7 +54,7 @@ public class StateInvalidationTest {
     }
 
     @Test
-    public void testUnsubscribe2502ClearsSubTokenAndResubscribes() throws Exception {
+    public void testUnsubscribe2502KeepsStaticSubTokenAndResubscribes() throws Exception {
         LinkedBlockingQueue<SubscribedEvent> subscribedQ = new LinkedBlockingQueue<>();
         CountDownLatch connected = new CountDownLatch(1);
         Options opts = new Options();
@@ -75,12 +75,13 @@ public class StateInvalidationTest {
             assertNotNull("subscribed", subscribedQ.poll(5, TimeUnit.SECONDS));
             assertEquals("initial subscribe carries the token", "sub-token-0", lastSubscribe().getToken());
 
-            // Server sends "state invalidated" unsubscribe — the subscription must
-            // drop its token and resubscribe with an empty token (no token getter
-            // configured, so nothing repopulates it).
+            // Server sends "state invalidated" unsubscribe. Without a token getter
+            // nothing could replace the token, so the subscription keeps its static
+            // token and resubscribes with it: a resubscribe without a token would be
+            // rejected (103) and end the subscription for good.
             server.unsubscribePush("ch", Client.UNSUBSCRIBED_STATE_INVALIDATED, "state invalidated");
             assertNotNull("resubscribed after 2502", subscribedQ.poll(5, TimeUnit.SECONDS));
-            assertEquals("token cleared by 2502", "", lastSubscribe().getToken());
+            assertEquals("static token kept after 2502", "sub-token-0", lastSubscribe().getToken());
         } finally {
             client.close(1000);
         }
@@ -156,7 +157,8 @@ public class StateInvalidationTest {
 
             // Server sends "state invalidated" disconnect — the client must clear
             // its connection token, fetch a fresh one via the token getter on
-            // reconnect, and invalidate the subscription (resubscribe w/o token).
+            // reconnect, and invalidate the subscription. The subscription has a
+            // static token and no getter: it keeps the token.
             server.disconnect(Client.DISCONNECTED_STATE_INVALIDATED, "state invalidated");
 
             assertNotNull("reconnected after 3014", connectedQ.poll(5, TimeUnit.SECONDS));
@@ -164,7 +166,7 @@ public class StateInvalidationTest {
             assertEquals("reconnect uses freshly fetched token", "conn-token-1", lastConnect().getToken());
 
             assertNotNull("resubscribed after 3014", subscribedQ.poll(5, TimeUnit.SECONDS));
-            assertEquals("sub token cleared by 3014", "", lastSubscribe().getToken());
+            assertEquals("static sub token kept after 3014", "sub-token-0", lastSubscribe().getToken());
         } finally {
             client.close(1000);
         }

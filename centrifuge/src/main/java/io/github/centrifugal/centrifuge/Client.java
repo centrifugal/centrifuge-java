@@ -34,6 +34,10 @@ import okio.ByteString;
 
 public class Client {
     private WebSocket ws;
+    // Whether the current ws completed its handshake (executor-owned).
+    private boolean wsOpen;
+    // Fails the current ws if it doesn't open within the timeout (executor-owned).
+    private ScheduledFuture<?> openTimeoutTask;
     private OkHttpClient httpClient;
     // Whether httpClient was built from scratch (no user-supplied base client),
     // meaning its Dispatcher and ConnectionPool are ours to dispose. Recorded
@@ -60,8 +64,78 @@ public class Client {
     private final Map<String, ServerSubscription> serverSubs = new ConcurrentHashMap<>();
     private final Backoff backoff;
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    // Runs every step of the client. An exception escaping a step (e.g. thrown by an app
+    // event handler) is reported through onError instead of vanishing in the task's
+    // Future, which left the rest of the step silently undone. The worker
+    // thread references only the inner executor, which shuts itself down once the client
+    // is unreachable: a client that is disconnected but never closed is still collected.
+    private final ExecutorService executor = new ReportingExecutor(Executors.newSingleThreadExecutor());
+
+    /** Wraps every task so an exception it throws is reported, then delegates. */
+    private final class ReportingExecutor extends java.util.concurrent.AbstractExecutorService {
+        private final ExecutorService delegate;
+
+        ReportingExecutor(ExecutorService delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void execute(Runnable task) {
+            this.delegate.execute(() -> {
+                try {
+                    task.run();
+                } catch (Throwable t) {
+                    Client.this.reportUncaught(t);
+                }
+            });
+        }
+
+        @Override
+        protected <T> java.util.concurrent.RunnableFuture<T> newTaskFor(Runnable task, T value) {
+            // submit(): report from inside the task, before FutureTask stores the exception.
+            return super.newTaskFor(() -> {
+                try {
+                    task.run();
+                } catch (Throwable t) {
+                    Client.this.reportUncaught(t);
+                }
+            }, value);
+        }
+
+        @Override
+        public void shutdown() {
+            this.delegate.shutdown();
+        }
+
+        @Override
+        public List<Runnable> shutdownNow() {
+            return this.delegate.shutdownNow();
+        }
+
+        @Override
+        public boolean isShutdown() {
+            return this.delegate.isShutdown();
+        }
+
+        @Override
+        public boolean isTerminated() {
+            return this.delegate.isTerminated();
+        }
+
+        @Override
+        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+            return this.delegate.awaitTermination(timeout, unit);
+        }
+    }
+    // Timers. A cancelled timer is removed from the queue at once: kept until its delay
+    // passed (e.g. the no-ping timer, ping interval + max delay), it held the client.
+    private final ScheduledExecutorService scheduler = newScheduler();
+
+    private static ScheduledExecutorService newScheduler() {
+        java.util.concurrent.ScheduledThreadPoolExecutor scheduler = new java.util.concurrent.ScheduledThreadPoolExecutor(1);
+        scheduler.setRemoveOnCancelPolicy(true);
+        return scheduler;
+    }
     private int pingInterval;
     private boolean sendPong;
     private ScheduledFuture<?> pingTask;
@@ -83,6 +157,13 @@ public class Client {
     }
 
     private static final int NORMAL_CLOSURE_STATUS = 1000;
+    // A timer running at least this late means the process didn't run meanwhile (e.g.
+    // it was suspended): data that arrived meanwhile gets LATE_TIMER_GRACE_MS to be
+    // handled first, as centrifuge-js lateCallTimer / lateCallGrace.
+    static final long LATE_TIMER_MS = 1000;
+    static final long LATE_TIMER_GRACE_MS = 1000;
+    // How long a closed socket may wait for the peer's close frame before it's cancelled.
+    static final long CLOSE_GRACE_MS = 1000;
     private static final int MESSAGE_SIZE_LIMIT_EXCEEDED_STATUS = 1009;
 
     static final int DISCONNECTED_DISCONNECT_CALLED = 0;
@@ -156,6 +237,74 @@ public class Client {
 
     private int _id = 0;
 
+    /** Reports an exception that escaped a step, e.g. thrown by an event handler. */
+    void reportUncaught(Throwable t) {
+        try {
+            this.listener.onError(this, new ErrorEvent(new UnclassifiedError(t)));
+        } catch (Throwable e) {
+            // The error handler threw too: nothing left to report to.
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * An exception while handling data from the server (a reply or a push, including an
+     * app handler run for it): reported, then the client stops visibly with "bad
+     * protocol", as for a frame that fails to dispatch. Before, exceptions inside reply
+     * handling were only printed, leaving e.g. a connected client without its
+     * resubscribes and ping timer.
+     */
+    private void handleDispatchError(Throwable e) {
+        e.printStackTrace();
+        this.reportUncaught(e);
+        this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
+    }
+
+    /**
+     * Calls an app token getter. A getter that throws instead of calling back is treated
+     * as calling back with that error; only the first callback counts.
+     */
+    static void fetchConnectionToken(ConnectionTokenGetter getter, ConnectionTokenEvent event, TokenCallback cb) {
+        TokenCallback once = onceToken(cb);
+        try {
+            getter.getConnectionToken(event, once);
+        } catch (Throwable t) {
+            once.Done(t, null);
+        }
+    }
+
+    static void fetchSubscriptionToken(SubscriptionTokenGetter getter, SubscriptionTokenEvent event, TokenCallback cb) {
+        TokenCallback once = onceToken(cb);
+        try {
+            getter.getSubscriptionToken(event, once);
+        } catch (Throwable t) {
+            once.Done(t, null);
+        }
+    }
+
+    static void fetchSubscriptionState(SubscriptionStateGetter getter, SubscriptionGetStateEvent event, StateCallback cb) {
+        java.util.concurrent.atomic.AtomicBoolean done = new java.util.concurrent.atomic.AtomicBoolean();
+        StateCallback once = (e, position) -> {
+            if (done.compareAndSet(false, true)) {
+                cb.Done(e, position);
+            }
+        };
+        try {
+            getter.getSubscriptionState(event, once);
+        } catch (Throwable t) {
+            once.Done(t, null);
+        }
+    }
+
+    private static TokenCallback onceToken(TokenCallback cb) {
+        java.util.concurrent.atomic.AtomicBoolean done = new java.util.concurrent.atomic.AtomicBoolean();
+        return (e, token) -> {
+            if (done.compareAndSet(false, true)) {
+                cb.Done(e, token);
+            }
+        };
+    }
+
     private int getNextId() {
         return ++_id;
     }
@@ -168,11 +317,25 @@ public class Client {
             if (Client.this.getState() == ClientState.CONNECTED || Client.this.getState() == ClientState.CONNECTING) {
                 return;
             }
+            try {
+                new Request.Builder().url(Client.this.endpoint);
+            } catch (IllegalArgumentException e) {
+                // No retry can fix an endpoint OkHttp can't open: report it and stay
+                // disconnected. Before, the client stayed connecting with nothing
+                // scheduled.
+                Client.this.listener.onError(Client.this, new ErrorEvent(new ConfigurationError(e)));
+                return;
+            }
             Client.this.reconnectAttempts = 0;
             Client.this.setState(ClientState.CONNECTING);
             ConnectingEvent event = new ConnectingEvent(CONNECTING_CONNECT_CALLED, "connect called");
-            Client.this.listener.onConnecting(Client.this, event);
-            Client.this._connect();
+            try {
+                Client.this.listener.onConnecting(Client.this, event);
+            } finally {
+                // A handler that throws doesn't stop the connect; one that called
+                // disconnect() queued it after this step.
+                Client.this._connect();
+            }
         });
     }
 
@@ -191,6 +354,14 @@ public class Client {
     public void setToken(String token) {
         this.executor.submit(() -> {
             Client.this.token = token;
+            if (Client.this.opts.getTokenGetter() == null) {
+                // The token expired (109) and the app set a new one: without a token
+                // getter there is no other way to get it, so the next attempt uses it
+                // instead of failing on a configuration error. With a getter, the next
+                // attempt still fetches a new token: the one set meanwhile may be the
+                // expired one (as centrifuge-js).
+                Client.this.refreshRequired = false;
+            }
         });
     }
 
@@ -211,10 +382,12 @@ public class Client {
                 // so any future-cleanup tasks scheduled by processDisconnect
                 // (e.g. orTimeout/exceptionally re-submits) get queued before
                 // we mark the executor shutdown.
+                WebSocket last = Client.this.ws;
                 Client.this.processDisconnect(DISCONNECTED_DISCONNECT_CALLED, "client closed", false);
                 Client.this.setState(ClientState.CLOSED);
-                if (Client.this.ws != null) {
-                    Client.this.ws.cancel();
+                if (last != null) {
+                    // The teardown sent a close frame; don't wait for the peer.
+                    last.cancel();
                 }
                 // Release dispatcher threads + pooled connections on transports
                 // we built from scratch. When the user supplied a base client,
@@ -240,6 +413,12 @@ public class Client {
 
     void processDisconnect(int code, String reason, Boolean shouldReconnect) {
         if (this.getState() == ClientState.DISCONNECTED || this.getState() == ClientState.CLOSED) {
+            if (!shouldReconnect) {
+                // Calls made while disconnected wait for a connection: disconnect() and
+                // close() end that wait. Before, they waited for their timeout, and after
+                // close() (whose scheduler no longer runs timers) forever.
+                this.failPendingCalls();
+            }
             return;
         }
 
@@ -248,8 +427,14 @@ public class Client {
             // push, both funnel here): drop the connection token so the next connect
             // fetches a fresh one via the token getter, and invalidate every
             // subscription's cached state before reconnecting.
-            this.token = "";
-            this.refreshRequired = true;
+            // Without a token getter there is no new token to get: keep the token the
+            // client has (or none) and reconnect with it. The server rejects it if it's
+            // no longer valid, instead of the client stopping on a local configuration
+            // error (as centrifuge-js).
+            if (this.opts.getTokenGetter() != null) {
+                this.token = "";
+                this.refreshRequired = true;
+            }
             for (Subscription sub : this.subs.values()) {
                 sub.invalidateState();
             }
@@ -287,26 +472,53 @@ public class Client {
             this.setState(ClientState.DISCONNECTED);
         }
 
+        // Drop the transport before any event: a handler may connect again. Its
+        // callbacks are ignored from now on, and the reconnect below doesn't wait for
+        // its close callback, which OkHttp delivers only once the peer answers the
+        // close frame — up to 60s later on a dead or half-open link.
+        this.closeTransport();
+
         // Channel compaction IDs are scoped to a server session — drop the routing
         // registry; each resubscribe re-registers a fresh ID. The per-subscription
         // pushId field is left as-is: moveToSubscribed re-registers it on the next
         // subscribe reply regardless of whether the server reuses the same ID.
         this.subsById.clear();
 
+        try {
+            this.finishTeardown(code, reason, shouldReconnect, previousState, needEvent);
+        } finally {
+            if (shouldReconnect) {
+                // Also when a handler threw. A handler may have called disconnect()
+                // meanwhile: scheduleReconnect checks the state.
+                this.scheduleReconnect();
+            }
+        }
+    }
+
+    private void failPendingCalls() {
+        // From a copy: a failure handler may register a new call.
+        for (CompletableFuture<Protocol.Reply> f : new ArrayList<>(this.futures.values())) {
+            f.completeExceptionally(new IOException());
+        }
+    }
+
+    /** The part of processDisconnect that emits events: a handler may throw in it. */
+    private void finishTeardown(int code, String reason, boolean shouldReconnect, ClientState previousState, boolean needEvent) {
         synchronized (this.subs) {
-            for (Map.Entry<String, Subscription> entry : this.subs.entrySet()) {
-                Subscription sub = entry.getValue();
+            for (Subscription sub : new ArrayList<>(this.subs.values())) {
                 if (sub.getState() == SubscriptionState.UNSUBSCRIBED) {
                     continue;
                 }
-                sub.moveToSubscribing(SUBSCRIBING_TRANSPORT_CLOSED, "transport closed");
+                try {
+                    sub.moveToSubscribing(SUBSCRIBING_TRANSPORT_CLOSED, "transport closed");
+                } catch (Throwable t) {
+                    // A handler threw: the other subscriptions must still move.
+                    this.reportUncaught(t);
+                }
             }
         }
 
-        for (Map.Entry<Integer, CompletableFuture<Protocol.Reply>> entry : this.futures.entrySet()) {
-            CompletableFuture<Protocol.Reply> f = entry.getValue();
-            f.completeExceptionally(new IOException());
-        }
+        this.failPendingCalls();
         // Drop the pending command registry along with the futures: no reply can
         // arrive for a connection that is gone, and command IDs are never reused.
         // Failure handlers do remove their own entry, but only after re-checking
@@ -317,8 +529,12 @@ public class Client {
         this.futures.clear();
 
         if (previousState == ClientState.CONNECTED) {
-            for (Map.Entry<String, ServerSubscription> entry : this.serverSubs.entrySet()) {
-                this.listener.onSubscribing(this, new ServerSubscribingEvent(entry.getKey()));
+            for (String channel : new ArrayList<>(this.serverSubs.keySet())) {
+                try {
+                    this.listener.onSubscribing(this, new ServerSubscribingEvent(channel));
+                } catch (Throwable t) {
+                    this.reportUncaught(t);
+                }
             }
         }
 
@@ -331,8 +547,47 @@ public class Client {
                 this.listener.onDisconnected(this, event);
             }
         }
+    }
 
-        this.ws.close(NORMAL_CLOSURE_STATUS, null);
+    /**
+     * Closes the current transport and forgets it. An open socket gets a normal close
+     * frame; a socket still in its handshake is cancelled, so its handshake doesn't
+     * outlive the attempt.
+     */
+    private void closeTransport() {
+        if (this.openTimeoutTask != null) {
+            this.openTimeoutTask.cancel(false);
+            this.openTimeoutTask = null;
+        }
+        WebSocket transport = this.ws;
+        boolean open = this.wsOpen;
+        this.ws = null;
+        this.wsOpen = false;
+        if (transport == null) {
+            return;
+        }
+        if (open) {
+            transport.close(NORMAL_CLOSURE_STATUS, null);
+            // A peer on a dead or half-open link never answers the close frame: OkHttp would
+            // keep the socket for 60s next to the next connection. A healthy peer answers
+            // within the grace period, and cancel() of a closed socket does nothing.
+            try {
+                this.scheduler.schedule(transport::cancel, CLOSE_GRACE_MS, TimeUnit.MILLISECONDS);
+            } catch (RejectedExecutionException e) {
+                transport.cancel();
+            }
+        } else {
+            transport.cancel();
+        }
+    }
+
+    /**
+     * Fails the current attempt: an error event, then a teardown that reconnects with
+     * backoff (as centrifuge-js failTransport).
+     */
+    private void failTransport(Throwable error) {
+        this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
+        this.listener.onError(this, new ErrorEvent(error));
     }
 
     private void _connect() {
@@ -349,9 +604,7 @@ public class Client {
                 .addHeader("Sec-WebSocket-Protocol", "centrifuge-protobuf")
                 .build();
 
-        if (this.ws != null) {
-            this.ws.cancel();
-        }
+        this.closeTransport();
 
         // If we previously built our own OkHttpClient from scratch, release its
         // dispatcher threads and pooled connections before building a new one.
@@ -417,7 +670,15 @@ public class Client {
                         // ws is guaranteed to be assigned. Matches centrifuge-js,
                         // which ignores callbacks from a non-actual transport.
                         if (Client.this.ws != webSocket) {
+                            // A replaced socket that completed its handshake late:
+                            // nothing else will close it.
+                            webSocket.close(NORMAL_CLOSURE_STATUS, null);
                             return;
+                        }
+                        Client.this.wsOpen = true;
+                        if (Client.this.openTimeoutTask != null) {
+                            Client.this.openTimeoutTask.cancel(false);
+                            Client.this.openTimeoutTask = null;
                         }
                         try {
                             Client.this.handleConnectionOpen();
@@ -476,6 +737,14 @@ public class Client {
                                 Client.this.processDisconnect(DISCONNECTED_BAD_PROTOCOL, "bad protocol (message)", false);
                                 break;
                             }
+                            if (Client.this.ws != webSocket) {
+                                // A message of this frame tore the transport down (e.g. a
+                                // disconnect push, a reconnect on an error reply): the rest
+                                // of the frame belongs to the connection that ended, e.g. a
+                                // ping that must not be answered or re-arm the ping timer on
+                                // the next one (as centrifuge-js).
+                                break;
+                            }
                         }
                     });
                 } catch (RejectedExecutionException ignored) {
@@ -514,9 +783,6 @@ public class Client {
                         if (Client.this.getState() != ClientState.DISCONNECTED) {
                             Client.this.processDisconnect(disconnectCode, disconnectReason, reconnect);
                         }
-                        if (Client.this.getState() == ClientState.CONNECTING) {
-                            Client.this.scheduleReconnect();
-                        }
                     });
                 } catch (RejectedExecutionException ignored) {
                 }
@@ -533,11 +799,6 @@ public class Client {
                         Integer responseCode = (response != null) ? response.code() : null;
                         listener.onError(Client.this, new ErrorEvent(t, responseCode));
                         Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
-                        if (Client.this.getState() == ClientState.CONNECTING) {
-                            // We need to schedule reconnect from here, since onClosed won't be called
-                            // after onFailure.
-                            Client.this.scheduleReconnect();
-                        }
                     });
                 } catch (RejectedExecutionException ignored) {
                 }
@@ -550,6 +811,97 @@ public class Client {
             // pooled connections are released.
             previousHttpClient.dispatcher().executorService().shutdown();
             previousHttpClient.connectionPool().evictAll();
+        }
+
+        // Bound the handshake by the client timeout, as the connect reply is: OkHttp's
+        // own limits (10s connect and read by default, or none in an app-supplied
+        // OkHttpClient) are not the SDK's. A timer that runs late (the process was
+        // suspended) first lets an open callback already queued run.
+        final WebSocket openingWs = this.ws;
+        final long openDue = System.nanoTime() / 1_000_000 + this.opts.getTimeout();
+        this.openTimeoutTask = this.scheduler.schedule(() -> this.submitOrDrop(() -> {
+            if (Client.this.ws != openingWs || Client.this.wsOpen) {
+                return;
+            }
+            long late = System.nanoTime() / 1_000_000 - openDue;
+            if (late >= LATE_TIMER_MS) {
+                Client.this.openTimeoutTask = Client.this.scheduler.schedule(() -> Client.this.submitOrDrop(() -> {
+                    if (Client.this.ws == openingWs && !Client.this.wsOpen) {
+                        Client.this.failTransport(new java.util.concurrent.TimeoutException("connect timeout"));
+                    }
+                }), LATE_TIMER_GRACE_MS, TimeUnit.MILLISECONDS);
+                return;
+            }
+            Client.this.failTransport(new java.util.concurrent.TimeoutException("connect timeout"));
+        }), this.opts.getTimeout(), TimeUnit.MILLISECONDS);
+    }
+
+    private static long nowMs() {
+        return System.nanoTime() / 1_000_000;
+    }
+
+    /**
+     * Settles a call exactly once: with its result, or with an error — a failure of the
+     * connection, or a TimeoutException after the client timeout. Both handlers run on the
+     * executor.
+     *
+     * <p>The timer hops to the executor before failing the call, so a reply already received
+     * and queued is handled first; a timer running far too late (the process was suspended)
+     * first gives a reply still in the socket a grace period. Before, the
+     * timeout was armed on the stage after the result handler, so a slow or throwing
+     * handler got the timeout as a second callback, and it failed a call on
+     * its own thread although the reply was already waiting.
+     */
+    <T> void settle(CompletableFuture<T> f, java8.util.function.Consumer<T> onResult,
+                    java8.util.function.Function<Throwable, Void> onError) {
+        final long due = nowMs() + this.opts.getTimeout();
+        ScheduledFuture<?> timer;
+        try {
+            timer = this.scheduler.schedule(() -> this.submitOrDrop(() -> this.expire(f, due)),
+                    this.opts.getTimeout(), TimeUnit.MILLISECONDS);
+        } catch (RejectedExecutionException e) {
+            timer = null;
+        }
+        final ScheduledFuture<?> armed = timer;
+        f.whenComplete((result, error) -> {
+            if (armed != null) {
+                armed.cancel(false);
+            }
+            try {
+                if (error == null) {
+                    onResult.accept(result);
+                } else {
+                    onError.apply(error instanceof java8.util.concurrent.CompletionException && error.getCause() != null
+                            ? error.getCause() : error);
+                }
+            } catch (Throwable t) {
+                // E.g. an app callback that threw: reported, never called again.
+                this.reportUncaught(t);
+            }
+        });
+    }
+
+    private <T> void expire(CompletableFuture<T> f, long due) {
+        if (f.isDone()) {
+            return;
+        }
+        if (nowMs() - due >= LATE_TIMER_MS) {
+            try {
+                this.scheduler.schedule(() -> this.submitOrDrop(() -> f.completeExceptionally(new java.util.concurrent.TimeoutException())),
+                        LATE_TIMER_GRACE_MS, TimeUnit.MILLISECONDS);
+                return;
+            } catch (RejectedExecutionException ignored) {
+                // Closed: fail now.
+            }
+        }
+        f.completeExceptionally(new java.util.concurrent.TimeoutException());
+    }
+
+    /** Submits to the executor, dropping the task once the client is closed. */
+    private void submitOrDrop(Runnable task) {
+        try {
+            this.executor.submit(task);
+        } catch (RejectedExecutionException ignored) {
         }
     }
 
@@ -565,7 +917,7 @@ public class Client {
                 return;
             }
             final WebSocket connectionWs = this.ws;
-            this.opts.getTokenGetter().getConnectionToken(connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
+            Client.fetchConnectionToken(this.opts.getTokenGetter(), connectionTokenEvent, (err, token) -> this.executor.submit(() -> {
                 // If the connection has been replaced (reconnect, disconnect)
                 // since this token request was issued, the callback is stale.
                 if (Client.this.ws != connectionWs) {
@@ -580,7 +932,7 @@ public class Client {
                         return;
                     }
                     Client.this.listener.onError(Client.this, new ErrorEvent(new TokenError(err)));
-                    this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                    Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
                     return;
                 }
                 if (token == null) {
@@ -613,6 +965,9 @@ public class Client {
         if (this.getState() != ClientState.CONNECTING) {
             return;
         }
+        if (this.reconnectTask != null) {
+            this.reconnectTask.cancel(false);
+        }
         this.reconnectTask = this.scheduler.schedule(
                 Client.this::startReconnecting,
                 Client.this.backoff.duration(this.reconnectAttempts, this.opts.getMinReconnectDelay(), this.opts.getMaxReconnectDelay()),
@@ -621,7 +976,8 @@ public class Client {
         this.reconnectAttempts++;
     }
 
-    private void sendSubscribeSynchronized(String channel, Protocol.SubscribeRequest req) {
+    private void sendSubscribeSynchronized(Subscription sub, Protocol.SubscribeRequest req) {
+        final long unsubscribeCount = sub.getUnsubscribeCount();
         Protocol.Command cmd = Protocol.Command.newBuilder()
                 .setId(this.getNextId())
                 .setSubscribe(req)
@@ -629,18 +985,17 @@ public class Client {
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             if (Client.this.getState() != ClientState.CONNECTED) {
                 return;
             }
             try {
-                this.handleSubscribeReply(channel, reply);
-            } catch (Exception e) {
-                // Should never happen.
-                e.printStackTrace();
+                this.handleSubscribeReply(sub, unsubscribeCount, reply);
+            } catch (Throwable e) {
+                this.handleDispatchError(e);
             }
             this.futures.remove(cmd.getId());
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
@@ -659,11 +1014,19 @@ public class Client {
             // client will be connected.
             return;
         }
-        this.sendSubscribeSynchronized(sub.getChannel(), req);
+        this.sendSubscribeSynchronized(sub, req);
     }
 
+    /**
+     * Writes the unsubscribe command at once. Called on the executor before the
+     * unsubscribed event is emitted, so a subscribe() made after unsubscribe() — or
+     * from its handler — always reaches the server after the unsubscribe. Deferring
+     * the write to another executor task let an already queued subscribe() go first:
+     * the server answered 105 (already subscribed) and the late unsubscribe then
+     * removed the new subscription (as centrifuge-js writes first).
+     */
     void sendUnsubscribe(String channel) {
-        this.executor.submit(() -> Client.this.sendUnsubscribeSynchronized(channel));
+        this.sendUnsubscribeSynchronized(channel);
     }
 
     private void sendUnsubscribeSynchronized(String channel) {
@@ -679,12 +1042,18 @@ public class Client {
                 .setUnsubscribe(req)
                 .build();
 
+        final WebSocket unsubscribeWs = this.ws;
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
-        f.thenAccept(reply -> {
-            // No need to handle reply for now.
+        this.settle(f, reply -> {
             this.futures.remove(cmd.getId());
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+            if (reply.getError().getCode() != 0 && this.ws == unsubscribeWs && this.getState() == ClientState.CONNECTED) {
+                // The server may still hold the subscription: its publications would
+                // reach an unsubscribed subscription, and a new subscribe would get 105.
+                // A new connection starts from a clean server state (as centrifuge-js).
+                this.processDisconnect(CONNECTING_UNSUBSCRIBE_ERROR, "unsubscribe error", true);
+            }
+        }, e -> {
             this.executor.submit(() -> {
                 if (Client.this.getState() != ClientState.CONNECTED) {
                     return;
@@ -729,11 +1098,21 @@ public class Client {
     // Resolve a client-side subscription for a push: by numeric channel ID when
     // channel compaction is in use (the push then has no channel name), by channel
     // name otherwise.
+    /**
+     * The client-side subscription a push is for. While a server-side subscription holds
+     * the channel and the client-side one isn't subscribed, the push belongs to the
+     * server-side one: the server allows one subscription per channel (as
+     * centrifuge-js _getSubForPush).
+     */
     private Subscription getSubForPush(String channel, long id) {
         if (id > 0) {
             return this.subsById.get(id);
         }
-        return this.subs.get(channel);
+        Subscription sub = this.subs.get(channel);
+        if (sub != null && sub.getState() != SubscriptionState.SUBSCRIBED && this.serverSubs.containsKey(channel)) {
+            return null;
+        }
+        return sub;
     }
 
     private ServerSubscription getServerSub(String channel) {
@@ -791,22 +1170,33 @@ public class Client {
 
     /**
      * Say Client that Subscription should be removed from internal registry. Subscription will be
-     * automatically unsubscribed before removing.
+     * automatically unsubscribed before removing. The channel is free for a new subscription at
+     * once. A Subscription this client doesn't hold (e.g. one removed before, whose channel has a
+     * new subscription now) is ignored. A removed Subscription can't subscribe again.
      *
      * @param sub: Subscription to remove from registry.
      */
     public void removeSubscription(Subscription sub) {
         synchronized (this.subs) {
-            sub.unsubscribe();
-            if (this.subs.get(sub.getChannel()) != null) {
-                this.subs.remove(sub.getChannel());
+            // A subscription removed before must not remove a newer one of its channel
+            // (as centrifuge-js).
+            if (this.subs.get(sub.getChannel()) != sub) {
+                return;
             }
+            this.subs.remove(sub.getChannel());
+            sub.markRemoved();
+            sub.unsubscribe();
         }
     }
 
-    private void handleSubscribeReply(String channel, Protocol.Reply reply) throws Exception {
-        Subscription sub = this.getSub(channel);
-        if (sub != null) {
+    private void handleSubscribeReply(Subscription sub, long unsubscribeCount, Protocol.Reply reply) throws Exception {
+        if (this.getSub(sub.getChannel()) != sub || sub.getUnsubscribeCount() != unsubscribeCount) {
+            // The subscription was unsubscribed (and maybe subscribed again) or removed
+            // since this subscribe was sent: the reply belongs to a subscribe the server
+            // was told to end, not to the attempt in progress now.
+            return;
+        }
+        {
             if (sub.getState() != SubscriptionState.SUBSCRIBING) {
                 // The subscription left SUBSCRIBING while the subscribe command was
                 // still in flight — e.g. unsubscribe() called right after subscribe(),
@@ -848,9 +1238,9 @@ public class Client {
             this.handleConnectionError(new ReplyError(reply.getError().getCode(), reply.getError().getMessage(), reply.getError().getTemporary()));
             if (reply.getError().getCode() == 109) { // Token expired.
                 this.refreshRequired = true;
-                this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
             } else if (reply.getError().getTemporary()) {
-                this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
             } else {
                 this.processDisconnect(reply.getError().getCode(), reply.getError().getMessage(), false);
             }
@@ -950,6 +1340,10 @@ public class Client {
         }
         this.connectAsyncCommands.clear();
 
+        if (this.pingTask != null) {
+            // One no-ping timer per connection: never leave an earlier one armed.
+            this.pingTask.cancel(true);
+        }
         this.pingTask = this.scheduler.schedule(Client.this::waitServerPing, this.pingInterval + this.opts.getMaxServerPingDelay(), TimeUnit.MILLISECONDS);
 
         if (result.getExpires()) {
@@ -964,7 +1358,7 @@ public class Client {
         }
         this.executor.submit(() -> {
             final WebSocket refreshWs = Client.this.ws;
-            Client.this.opts.getTokenGetter().getConnectionToken(new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
+            Client.fetchConnectionToken(Client.this.opts.getTokenGetter(), new ConnectionTokenEvent(), (err, token) -> Client.this.executor.submit(() -> {
             // If the connection has been replaced since this refresh was
             // issued, the callback (and any token it carries) is stale.
             if (Client.this.ws != refreshWs) {
@@ -1058,15 +1452,14 @@ public class Client {
         final WebSocket connectWs = this.ws;
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.futures.remove(cmd.getId());
             try {
                 this.handleConnectReply(reply);
-            } catch (Exception e) {
-                // Should never happen.
-                e.printStackTrace();
+            } catch (Throwable e) {
+                this.handleDispatchError(e);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             // A timeout completes the future on the CompletableFuture delay
             // scheduler thread - hop to the executor like other command failures.
             this.executor.submit(() -> {
@@ -1078,7 +1471,7 @@ public class Client {
                     return;
                 }
                 Client.this.handleConnectionError(e);
-                Client.this.ws.close(NORMAL_CLOSURE_STATUS, "");
+                Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
             });
             return null;
         });
@@ -1111,6 +1504,12 @@ public class Client {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(pub.getInfo());
         Subscription sub = this.getSubForPush(channel, id);
         if (sub != null) {
+            if (sub.getState() != SubscriptionState.SUBSCRIBED) {
+                // E.g. a publication already on its way when the app called
+                // unsubscribe(), or one sent before a resubscribe: the app doesn't
+                // expect it, and the stored position must not move past it.
+                return;
+            }
             sub.handlePublication(pub);
         } else if (id > 0) {
             // Compacted push with unknown ID (e.g. already unsubscribed) — drop.
@@ -1127,6 +1526,11 @@ public class Client {
                 event.setTags(pub.getTagsMap());
                 if (pub.getOffset() > 0) {
                     serverSub.setLastOffset(pub.getOffset());
+                    // As for client-side subscriptions.
+                    String knownEpoch = serverSub.getEpoch();
+                    if ((knownEpoch == null || knownEpoch.isEmpty()) && !pub.getEpoch().isEmpty()) {
+                        serverSub.setLastEpoch(pub.getEpoch());
+                    }
                 }
                 this.listener.onPublication(this, event);
             }
@@ -1147,8 +1551,17 @@ public class Client {
     }
 
     private void handleUnsubscribe(String channel, Protocol.Unsubscribe unsubscribe) {
-        Subscription sub = this.getSub(channel);
+        Subscription sub = this.getSubForPush(channel, 0);
         if (sub != null) {
+            if (sub.getState() != SubscriptionState.SUBSCRIBED) {
+                // It ends a previous subscription: one the app unsubscribed, or one that
+                // raced unsubscribe() and subscribe() of the app. The server unsubscribes
+                // a subscription in progress only after replying to its subscribe, and
+                // sends the push also when the subscription is already gone. A resubscribe
+                // code must not subscribe again, nor invalidate the state of a subscribe
+                // in progress (as centrifuge-js).
+                return;
+            }
             if (unsubscribe.getCode() < 2500) {
                 sub.moveToUnsubscribed(false, unsubscribe.getCode(), unsubscribe.getReason());
             } else {
@@ -1173,6 +1586,9 @@ public class Client {
         ClientInfo info = ClientInfo.fromProtocolClientInfo(join.getInfo());
         Subscription sub = this.getSubForPush(channel, id);
         if (sub != null) {
+            if (sub.getState() != SubscriptionState.SUBSCRIBED) {
+                return;
+            }
             JoinEvent event = new JoinEvent();
             event.setInfo(info);
             sub.getListener().onJoin(sub, event);
@@ -1193,6 +1609,9 @@ public class Client {
 
         Subscription sub = this.getSubForPush(channel, id);
         if (sub != null) {
+            if (sub.getState() != SubscriptionState.SUBSCRIBED) {
+                return;
+            }
             event.setInfo(info);
             sub.getListener().onLeave(sub, event);
         } else if (id > 0) {
@@ -1277,10 +1696,10 @@ public class Client {
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
         this.futures.put(cmd.getId(), f);
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             cb.onDone(null);
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 this.cleanCommandFuture(cmd);
                 cb.onDone(e);
@@ -1349,7 +1768,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1359,7 +1778,7 @@ public class Client {
                 result.setData(rpcResult.getData().toByteArray());
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1394,7 +1813,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1402,7 +1821,7 @@ public class Client {
                 PublishResult result = new PublishResult();
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1440,7 +1859,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1462,7 +1881,7 @@ public class Client {
                 result.setEpoch(replyResult.getEpoch());
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1488,7 +1907,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1503,7 +1922,7 @@ public class Client {
                 PresenceResult result = new PresenceResult(presence);
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1529,7 +1948,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1540,7 +1959,7 @@ public class Client {
                 result.setNumUsers(replyResult.getNumUsers());
                 cb.onDone(null, result);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1562,7 +1981,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1570,7 +1989,7 @@ public class Client {
                 Protocol.RefreshResult replyResult = reply.getRefresh();
                 cb.onDone(null, replyResult);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
@@ -1593,7 +2012,7 @@ public class Client {
                 .build();
 
         CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
-        f.thenAccept(reply -> {
+        this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
                 cb.onDone(getReplyError(reply), null);
@@ -1601,7 +2020,7 @@ public class Client {
                 Protocol.SubRefreshResult replyResult = reply.getSubRefresh();
                 cb.onDone(null, replyResult);
             }
-        }).orTimeout(this.opts.getTimeout(), TimeUnit.MILLISECONDS).exceptionally(e -> {
+        }, e -> {
             this.executor.submit(() -> {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);

@@ -57,6 +57,27 @@ To use with Android don't forget to set INTERNET permission to `AndroidManifest.
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
+## Threads and event listeners
+
+Each `Client` runs its work on one thread of its own: connection and subscription logic, timers, and the calls of
+your `EventListener` and `SubscriptionEventListener` methods and of result callbacks. So listeners and callbacks are
+never called concurrently, and they are called in the order things happened.
+
+- **Client methods are asynchronous.** `connect()`, `disconnect()`, `subscribe()`, `unsubscribe()`, `publish()` and
+  the other calls queue their work on that thread and return at once. A call made from a listener takes effect after
+  the listener returns.
+- **Don't block in a listener or callback.** While it runs, the client handles nothing else: no replies, no pings, no
+  timers. Waiting inside a listener for the result of a call (e.g. on a future completed by a callback) can't
+  succeed before the call's timeout, and `close(awaitMilliseconds)` called from a listener can't wait for the client
+  thread it runs on: it returns `false` after the wait. Move blocking work to your own thread.
+- **Exceptions.** An exception thrown by a listener or callback is reported through `EventListener.onError`
+  (`UnclassifiedError`) and doesn't stop the client's own work. An exception thrown while the client handles data
+  from the server — e.g. by an `onConnected`, `onSubscribed` or `onPublication` listener — also disconnects the client
+  with code 2 ("bad protocol"), as centrifuge-js does; call `connect()` to start again. A token or state getter that
+  throws is treated as if it called back with that error.
+- **Call `close()` when the client is no longer needed.** `disconnect()` keeps the client's thread for a later
+  `connect()`.
+
 ## Usage in background
 
 When a mobile application goes to the background there are OS-specific limitations for established persistent connections - which can be silently closed shortly. Thus in most cases you need to disconnect from a server when app moves to the background and connect again when app goes to the foreground.
