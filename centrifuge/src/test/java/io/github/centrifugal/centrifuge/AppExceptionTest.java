@@ -88,6 +88,46 @@ public class AppExceptionTest {
         assertEquals(2, calls.get());
     }
 
+    /**
+     * A subscribed handler that throws stops the client. The position its event reported
+     * is kept: the next subscribe recovers from it, not from an older position, which
+     * delivered publications from before the subscription.
+     */
+    @Test
+    public void testThrowingSubscribedHandlerKeepsThePosition() throws Exception {
+        server.onSubscribe = (channel, req) -> io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeResult.newBuilder()
+                .setRecoverable(true).setEpoch("e").setOffset(5).setRecovered(req.getRecover()).setWasRecovering(req.getRecover())
+                .build();
+        client = new Client(server.url(), fastOptions(), new EventListener() {
+            @Override
+            public void onDisconnected(Client c, DisconnectedEvent e) {
+                events.add("disconnected:" + e.getCode());
+            }
+        });
+        SubscriptionOptions subOpts = new SubscriptionOptions();
+        subOpts.setRecoverable(true);
+        AtomicInteger subscribed = new AtomicInteger();
+        Subscription sub = client.newSubscription("ch", subOpts, new SubscriptionEventListener() {
+            @Override
+            public void onSubscribed(Subscription s, SubscribedEvent e) {
+                events.add("subscribed");
+                if (subscribed.incrementAndGet() == 1) {
+                    throw new IllegalStateException("handler bug");
+                }
+            }
+        });
+        sub.subscribe();
+        client.connect();
+        assertNotNull(nextEvent("subscribed"));
+        assertNotNull("the exception stops the client", nextEvent("disconnected:"));
+
+        client.connect();
+        assertNotNull("subscribed again", nextEvent("subscribed"));
+        io.github.centrifugal.centrifuge.internal.protocol.Protocol.SubscribeRequest last = server.lastSubscribe();
+        assertTrue("recovers", last.getRecover());
+        assertEquals("from the position the subscribed event reported", 5, last.getOffset());
+    }
+
     /** A subscription token getter that throws: a token error, then the resubscribe succeeds. */
     @Test
     public void testThrowingSubscriptionTokenGetterRetries() throws Exception {
