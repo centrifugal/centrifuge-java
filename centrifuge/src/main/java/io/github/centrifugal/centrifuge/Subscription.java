@@ -227,11 +227,15 @@ public class Subscription {
         PublicationEvent event = new PublicationEvent();
         byte[] pubData = pub.getData().toByteArray();
         if (this.deltaNegotiated) {
-            byte[] prevData = this.getPrevData();
-            if (prevData != null && pub.getDelta()) {
+            if (pub.getDelta()) {
+                byte[] prevData = this.getPrevData();
+                if (prevData == null) {
+                    throw new Exception("delta publication without a base");
+                }
                 pubData = Fossil.applyDelta(prevData, pubData);
             }
-            this.setPrevData(pubData);
+            // The app gets its own copy: changing it must not change the next delta's base.
+            this.setPrevData(pubData.clone());
         }
         event.setData(pubData);
         event.setInfo(info);
