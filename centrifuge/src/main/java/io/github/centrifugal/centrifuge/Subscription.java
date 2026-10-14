@@ -227,11 +227,15 @@ public class Subscription {
         PublicationEvent event = new PublicationEvent();
         byte[] pubData = pub.getData().toByteArray();
         if (this.deltaNegotiated) {
-            byte[] prevData = this.getPrevData();
-            if (prevData != null && pub.getDelta()) {
+            if (pub.getDelta()) {
+                byte[] prevData = this.getPrevData();
+                if (prevData == null) {
+                    throw new Exception("delta publication without a base");
+                }
                 pubData = Fossil.applyDelta(prevData, pubData);
             }
-            this.setPrevData(pubData);
+            // The app gets its own copy: changing it must not change the next delta's base.
+            this.setPrevData(pubData.clone());
         }
         event.setData(pubData);
         event.setInfo(info);
@@ -272,15 +276,17 @@ public class Subscription {
         if (result.getData() != null) {
             data = result.getData().toByteArray();
         }
+        // The position of the reply is stored before the subscribed event, as in
+        // centrifuge-js: the event reports it, and a handler that throws stops the
+        // client before anything after the event runs, which made the next recovery
+        // start from an older position. After a recovery it is the position recovered
+        // from, which the recovered publications below move.
+        this.setOffset(result.getOffset());
         SubscribedEvent event = new SubscribedEvent(result.getWasRecovering(), result.getRecovered(), result.getPositioned(), result.getRecoverable(), result.getPositioned() || result.getRecoverable() ? new StreamPosition(result.getOffset(), result.getEpoch()) : null, data);
         this.listener.onSubscribed(this, event);
 
-        if (result.getPublicationsCount() > 0) {
-            for (Protocol.Publication publication : result.getPublicationsList()) {
-                this.client.handlePub(this.channel, publication);
-            }
-        } else {
-            this.setOffset(result.getOffset());
+        for (Protocol.Publication publication : result.getPublicationsList()) {
+            this.client.handlePub(this.channel, publication);
         }
 
         for(Map.Entry<String, CompletableFuture<Throwable>> entry: this.futures.entrySet()) {

@@ -1343,8 +1343,13 @@ public class Client {
         if (this.pingTask != null) {
             // One no-ping timer per connection: never leave an earlier one armed.
             this.pingTask.cancel(true);
+            this.pingTask = null;
         }
-        this.pingTask = this.scheduler.schedule(Client.this::waitServerPing, this.pingInterval + this.opts.getMaxServerPingDelay(), TimeUnit.MILLISECONDS);
+        // A server with pings disabled sends no ping interval: there is nothing to wait
+        // for, and waiting would end every connection after maxServerPingDelay.
+        if (this.pingInterval > 0) {
+            this.pingTask = this.scheduler.schedule(Client.this::waitServerPing, this.pingInterval + this.opts.getMaxServerPingDelay(), TimeUnit.MILLISECONDS);
+        }
 
         if (result.getExpires()) {
             int ttl = result.getTtl();
@@ -1664,8 +1669,11 @@ public class Client {
     private void handlePing() {
         if (this.pingTask != null) {
             this.pingTask.cancel(true);
+            this.pingTask = null;
         }
-        this.pingTask = this.scheduler.schedule(Client.this::waitServerPing, this.pingInterval + this.opts.getMaxServerPingDelay(), TimeUnit.MILLISECONDS);
+        if (this.pingInterval > 0) {
+            this.pingTask = this.scheduler.schedule(Client.this::waitServerPing, this.pingInterval + this.opts.getMaxServerPingDelay(), TimeUnit.MILLISECONDS);
+        }
         if (this.sendPong) {
             // Empty command as a ping.
             Protocol.Command cmd = Protocol.Command.newBuilder().build();
