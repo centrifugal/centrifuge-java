@@ -1,3 +1,8 @@
+Unreleased
+==========
+
+* Remove the `streamsupport-minifuture` dependency (GPL-2.0 with Classpath Exception). Pending calls now use a small internal future. The public API and the supported Android versions do not change.
+
 0.3.1
 =====
 

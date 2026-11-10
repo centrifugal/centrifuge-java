@@ -15,9 +15,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Regression test for the unsubscribe-timeout race: {@link java.util.concurrent.CompletableFuture#orTimeout}
- * fails the pending future from a JDK-internal thread, not the client's dedicated
- * single-thread executor. The {@code exceptionally} callback used to call
+ * Regression test for the unsubscribe-timeout race: the call timeout used to fail
+ * the pending future from a timer thread, not the client's dedicated
+ * single-thread executor. The failure callback used to call
  * {@code processDisconnect} directly on that thread, racing with everything else
  * the client does on its own executor. The fix re-submits the callback onto the
  * client's executor (mirroring the existing subscribe-timeout handling).

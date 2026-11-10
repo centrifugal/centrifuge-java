@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
  * A connect command that never gets a reply fails either by timing out or by the
  * connection going away. Both outcomes are handled by the connect future's
  * failure handler, which must run on the client executor like every other state
- * transition — the timeout fires on the CompletableFuture delay scheduler thread —
+ * transition — the timeout fires on the client's scheduler thread —
  * and must not report a connect error once the client has already left CONNECTING.
  */
 public class ConnectFailureHandlingTest {

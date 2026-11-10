@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
-import java8.util.concurrent.CompletableFuture;
 
 public class Subscription {
 
@@ -20,7 +19,7 @@ public class Subscription {
     private String epoch;
     final private SubscriptionEventListener listener;
     private volatile SubscriptionState state = SubscriptionState.UNSUBSCRIBED;
-    final private Map<String, CompletableFuture<Throwable>> futures = new ConcurrentHashMap<>();
+    final private Map<String, CallFuture<Throwable>> futures = new ConcurrentHashMap<>();
     private final Backoff backoff;
     private ScheduledFuture<?> refreshTask;
     private ScheduledFuture<?> resubscribeTask;
@@ -289,8 +288,8 @@ public class Subscription {
             this.client.handlePub(this.channel, publication);
         }
 
-        for(Map.Entry<String, CompletableFuture<Throwable>> entry: this.futures.entrySet()) {
-            CompletableFuture<Throwable> f = entry.getValue();
+        for(Map.Entry<String, CallFuture<Throwable>> entry: this.futures.entrySet()) {
+            CallFuture<Throwable> f = entry.getValue();
             f.complete(null);
         }
         this.futures.clear();
@@ -536,8 +535,8 @@ public class Subscription {
         if (sendUnsubscribe) {
             this.client.sendUnsubscribe(this.getChannel());
         }
-        for(Map.Entry<String, CompletableFuture<Throwable>> entry: this.futures.entrySet()) {
-            CompletableFuture<Throwable> f = entry.getValue();
+        for(Map.Entry<String, CallFuture<Throwable>> entry: this.futures.entrySet()) {
+            CallFuture<Throwable> f = entry.getValue();
             f.complete(new SubscriptionStateError(this.getState()));
         }
         this.futures.clear();
@@ -585,7 +584,7 @@ public class Subscription {
     }
 
     private void publishSynchronized(byte[] data, ResultCallback<PublishResult> cb) {
-        CompletableFuture<Throwable> f = new CompletableFuture<>();
+        CallFuture<Throwable> f = new CallFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
         this.client.settle(f, err -> {
@@ -610,7 +609,7 @@ public class Subscription {
     }
 
     private void historySynchronized(HistoryOptions opts, ResultCallback<HistoryResult> cb) {
-        CompletableFuture<Throwable> f = new CompletableFuture<>();
+        CallFuture<Throwable> f = new CallFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
         this.client.settle(f, err -> {
@@ -635,7 +634,7 @@ public class Subscription {
     }
 
     private void presenceSynchronized(ResultCallback<PresenceResult> cb) {
-        CompletableFuture<Throwable> f = new CompletableFuture<>();
+        CallFuture<Throwable> f = new CallFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
         this.client.settle(f, err -> {
@@ -660,7 +659,7 @@ public class Subscription {
     }
 
     private void presenceStatsSynchronized(ResultCallback<PresenceStatsResult> cb) {
-        CompletableFuture<Throwable> f = new CompletableFuture<>();
+        CallFuture<Throwable> f = new CallFuture<>();
         String uuid = UUID.randomUUID().toString();
         this.futures.put(uuid, f);
         this.client.settle(f, err -> {

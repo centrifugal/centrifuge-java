@@ -47,7 +47,6 @@ configurations {
 dependencies {
     api 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'com.google.protobuf:protobuf-javalite:3.25.5'
-    implementation 'net.sourceforge.streamsupport:streamsupport-minifuture:1.7.4'
 
     testImplementation 'junit:junit:4.13.2'
     // In-process WebSocket server for channel compaction tests (the feature is
