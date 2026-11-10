@@ -11,10 +11,6 @@ final class CallFuture<T> {
         void accept(T value);
     }
 
-    interface Function<T, R> {
-        R apply(T value);
-    }
-
     interface Listener<T> {
         void onDone(T result, Throwable error);
     }

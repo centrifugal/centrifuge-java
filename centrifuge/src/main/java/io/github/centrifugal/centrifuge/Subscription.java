@@ -597,7 +597,6 @@ public class Subscription {
         }, e -> {
             Subscription.this.futures.remove(uuid);
             cb.onDone(e, null);
-            return null;
         });
         if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
@@ -622,7 +621,6 @@ public class Subscription {
         }, e -> {
             Subscription.this.futures.remove(uuid);
             cb.onDone(e, null);
-            return null;
         });
         if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
@@ -647,7 +645,6 @@ public class Subscription {
         }, e -> {
             Subscription.this.futures.remove(uuid);
             cb.onDone(e, null);
-            return null;
         });
         if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
@@ -672,7 +669,6 @@ public class Subscription {
         }, e -> {
             Subscription.this.futures.remove(uuid);
             cb.onDone(e, null);
-            return null;
         });
         if (this.getState() == SubscriptionState.SUBSCRIBED) {
             f.complete(null);
