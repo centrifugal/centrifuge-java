@@ -11,10 +11,6 @@ final class CallFuture<T> {
         void accept(T value);
     }
 
-    interface Function<T, R> {
-        R apply(T value);
-    }
-
     interface Listener<T> {
         void onDone(T result, Throwable error);
     }
@@ -23,6 +19,7 @@ final class CallFuture<T> {
     private T result;
     private Throwable error;
     private Listener<T> listener;
+    private boolean listenerSet;
 
     boolean complete(T result) {
         return this.settle(result, null);
@@ -41,9 +38,10 @@ final class CallFuture<T> {
 
     void whenComplete(Listener<T> listener) {
         synchronized (this) {
-            if (this.listener != null) {
+            if (this.listenerSet) {
                 throw new IllegalStateException("listener already set");
             }
+            this.listenerSet = true;
             if (!this.done) {
                 this.listener = listener;
                 return;

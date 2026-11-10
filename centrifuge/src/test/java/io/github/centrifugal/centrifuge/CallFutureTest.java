@@ -97,6 +97,34 @@ public class CallFutureTest {
         assertEquals("first", results.get(0));
     }
 
+    /** A second listener is rejected whether the future was pending or done. */
+    @Test
+    public void testSecondListenerRejected() {
+        CallFuture<String> pending = new CallFuture<>();
+        pending.whenComplete((result, error) -> {
+        });
+        pending.complete("ok");
+        assertRejectsListener(pending);
+
+        CallFuture<String> done = new CallFuture<>();
+        done.complete("ok");
+        AtomicInteger calls = new AtomicInteger();
+        done.whenComplete((result, error) -> calls.incrementAndGet());
+        assertEquals(1, calls.get());
+        assertRejectsListener(done);
+        assertEquals(1, calls.get());
+    }
+
+    private static void assertRejectsListener(CallFuture<String> f) {
+        try {
+            f.whenComplete((result, error) -> {
+                throw new AssertionError("second listener ran");
+            });
+            throw new AssertionError("second listener accepted");
+        } catch (IllegalStateException expected) {
+        }
+    }
+
     /** Concurrent complete and completeExceptionally settle the future exactly once. */
     @Test
     public void testConcurrentCompletionSettlesOnce() throws Exception {

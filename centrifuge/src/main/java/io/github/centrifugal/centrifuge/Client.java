@@ -852,7 +852,7 @@ public class Client {
      * its own thread although the reply was already waiting.
      */
     <T> void settle(CallFuture<T> f, CallFuture.Consumer<T> onResult,
-                    CallFuture.Function<Throwable, Void> onError) {
+                    CallFuture.Consumer<Throwable> onError) {
         final long due = nowMs() + this.opts.getTimeout();
         ScheduledFuture<?> timer;
         try {
@@ -870,7 +870,7 @@ public class Client {
                 if (error == null) {
                     onResult.accept(result);
                 } else {
-                    onError.apply(error);
+                    onError.accept(error);
                 }
             } catch (Throwable t) {
                 // E.g. an app callback that threw: reported, never called again.
@@ -1001,7 +1001,6 @@ public class Client {
                 Client.this.futures.remove(cmd.getId());
                 Client.this.processDisconnect(CONNECTING_SUBSCRIBE_TIMEOUT, "subscribe timeout", true);
             });
-            return null;
         });
         this.ws.send(ByteString.of(this.serializeCommand(cmd)));
     }
@@ -1059,7 +1058,6 @@ public class Client {
                 Client.this.futures.remove(cmd.getId());
                 Client.this.processDisconnect(CONNECTING_UNSUBSCRIBE_ERROR, "unsubscribe error", true);
             });
-            return null;
         });
 
         this.ws.send(ByteString.of(this.serializeCommand(cmd)));
@@ -1463,7 +1461,9 @@ public class Client {
                 this.handleDispatchError(e);
             }
         }, e -> {
-            // Handle the failure in a separate executor task.
+            // Deferred to a separate executor task: a failure from failPendingCalls()
+            // arrives in the middle of processDisconnect, which must finish before
+            // this handler reports the error and disconnects again.
             this.executor.submit(() -> {
                 Client.this.futures.remove(cmd.getId());
                 // Failed because the connection was already torn down (disconnect
@@ -1475,7 +1475,6 @@ public class Client {
                 Client.this.handleConnectionError(e);
                 Client.this.processDisconnect(CONNECTING_TRANSPORT_CLOSED, "transport closed", true);
             });
-            return null;
         });
 
         this.ws.send(ByteString.of(this.serializeCommand(cmd)));
@@ -1709,7 +1708,6 @@ public class Client {
                 this.cleanCommandFuture(cmd);
                 cb.onDone(e);
             });
-            return null;
         });
 
         if (this.getState() != ClientState.CONNECTED) {
@@ -1788,7 +1786,6 @@ public class Client {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
             });
-            return null;
         });
 
         this.enqueueCommandFuture(cmd, f);
@@ -1831,7 +1828,6 @@ public class Client {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
             });
-            return null;
         });
 
         this.enqueueCommandFuture(cmd, f);
@@ -1891,7 +1887,6 @@ public class Client {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
             });
-            return null;
         });
 
         this.enqueueCommandFuture(cmd, f);
@@ -1932,7 +1927,6 @@ public class Client {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
             });
-            return null;
         });
 
         this.enqueueCommandFuture(cmd, f);
@@ -1969,7 +1963,6 @@ public class Client {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
             });
-            return null;
         });
 
         this.enqueueCommandFuture(cmd, f);
@@ -1999,7 +1992,6 @@ public class Client {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
             });
-            return null;
         });
 
         this.enqueueCommandFuture(cmd, f);
@@ -2030,7 +2022,6 @@ public class Client {
                 Client.this.cleanCommandFuture(cmd);
                 cb.onDone(e, null);
             });
-            return null;
         });
 
         this.enqueueCommandFuture(cmd, f);
