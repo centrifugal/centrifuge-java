@@ -22,7 +22,6 @@ import javax.net.ssl.X509TrustManager;
 import io.github.centrifugal.centrifuge.internal.backoff.Backoff;
 import io.github.centrifugal.centrifuge.internal.protocol.Protocol;
 
-import java8.util.concurrent.CompletableFuture;
 import okhttp3.Credentials;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -49,7 +48,7 @@ public class Client {
     private String token;
     private com.google.protobuf.ByteString data;
     private final EventListener listener;
-    private final Map<Integer, CompletableFuture<Protocol.Reply>> futures = new ConcurrentHashMap<>();
+    private final Map<Integer, CallFuture<Protocol.Reply>> futures = new ConcurrentHashMap<>();
     private final Map<Integer, Protocol.Command> connectCommands = new ConcurrentHashMap<>();
     private final Map<Integer, Protocol.Command> connectAsyncCommands = new ConcurrentHashMap<>();
 
@@ -380,7 +379,7 @@ public class Client {
             this.executor.submit(() -> {
                 // Tear down the connection synchronously on the executor thread
                 // so any future-cleanup tasks scheduled by processDisconnect
-                // (e.g. orTimeout/exceptionally re-submits) get queued before
+                // (e.g. re-submits from call error handlers) get queued before
                 // we mark the executor shutdown.
                 WebSocket last = Client.this.ws;
                 Client.this.processDisconnect(DISCONNECTED_DISCONNECT_CALLED, "client closed", false);
@@ -497,7 +496,7 @@ public class Client {
 
     private void failPendingCalls() {
         // From a copy: a failure handler may register a new call.
-        for (CompletableFuture<Protocol.Reply> f : new ArrayList<>(this.futures.values())) {
+        for (CallFuture<Protocol.Reply> f : new ArrayList<>(this.futures.values())) {
             f.completeExceptionally(new IOException());
         }
     }
@@ -852,8 +851,8 @@ public class Client {
      * handler got the timeout as a second callback, and it failed a call on
      * its own thread although the reply was already waiting.
      */
-    <T> void settle(CompletableFuture<T> f, java8.util.function.Consumer<T> onResult,
-                    java8.util.function.Function<Throwable, Void> onError) {
+    <T> void settle(CallFuture<T> f, CallFuture.Consumer<T> onResult,
+                    CallFuture.Function<Throwable, Void> onError) {
         final long due = nowMs() + this.opts.getTimeout();
         ScheduledFuture<?> timer;
         try {
@@ -871,8 +870,7 @@ public class Client {
                 if (error == null) {
                     onResult.accept(result);
                 } else {
-                    onError.apply(error instanceof java8.util.concurrent.CompletionException && error.getCause() != null
-                            ? error.getCause() : error);
+                    onError.apply(error);
                 }
             } catch (Throwable t) {
                 // E.g. an app callback that threw: reported, never called again.
@@ -881,7 +879,7 @@ public class Client {
         });
     }
 
-    private <T> void expire(CompletableFuture<T> f, long due) {
+    private <T> void expire(CallFuture<T> f, long due) {
         if (f.isDone()) {
             return;
         }
@@ -983,7 +981,7 @@ public class Client {
                 .setSubscribe(req)
                 .build();
 
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.futures.put(cmd.getId(), f);
         this.settle(f, reply -> {
             if (Client.this.getState() != ClientState.CONNECTED) {
@@ -1043,7 +1041,7 @@ public class Client {
                 .build();
 
         final WebSocket unsubscribeWs = this.ws;
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.futures.put(cmd.getId(), f);
         this.settle(f, reply -> {
             this.futures.remove(cmd.getId());
@@ -1315,7 +1313,7 @@ public class Client {
             Protocol.Command cmd = entry.getValue();
             boolean sent = this.ws.send(ByteString.of(this.serializeCommand(cmd)));
             if (!sent) {
-                CompletableFuture<Protocol.Reply> f = this.futures.get(cmd.getId());
+                CallFuture<Protocol.Reply> f = this.futures.get(cmd.getId());
                 if (f != null) {
                     f.completeExceptionally(new IOException());
                 }
@@ -1326,7 +1324,7 @@ public class Client {
 
         for (Map.Entry<Integer, Protocol.Command> entry : this.connectAsyncCommands.entrySet()) {
             Protocol.Command cmd = entry.getValue();
-            CompletableFuture<Protocol.Reply> f = this.futures.get(cmd.getId());
+            CallFuture<Protocol.Reply> f = this.futures.get(cmd.getId());
             boolean sent = this.ws.send(ByteString.of(this.serializeCommand(cmd)));
             if (!sent) {
                 if (f != null) {
@@ -1455,7 +1453,7 @@ public class Client {
                 .build();
 
         final WebSocket connectWs = this.ws;
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.futures.put(cmd.getId(), f);
         this.settle(f, reply -> {
             this.futures.remove(cmd.getId());
@@ -1465,8 +1463,7 @@ public class Client {
                 this.handleDispatchError(e);
             }
         }, e -> {
-            // A timeout completes the future on the CompletableFuture delay
-            // scheduler thread - hop to the executor like other command failures.
+            // Handle the failure in a separate executor task.
             this.executor.submit(() -> {
                 Client.this.futures.remove(cmd.getId());
                 // Failed because the connection was already torn down (disconnect
@@ -1490,7 +1487,7 @@ public class Client {
 
     private void processReply(Protocol.Reply reply) throws Exception {
         if (reply.getId() > 0) {
-            CompletableFuture<Protocol.Reply> cf = this.futures.get(reply.getId());
+            CallFuture<Protocol.Reply> cf = this.futures.get(reply.getId());
             if (cf != null) cf.complete(reply);
         } else {
             if (reply.hasPush()) {
@@ -1702,7 +1699,7 @@ public class Client {
                 .setSend(req)
                 .build();
 
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.futures.put(cmd.getId(), f);
         this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
@@ -1727,7 +1724,7 @@ public class Client {
         }
     }
 
-    private void enqueueCommandFuture(Protocol.Command cmd, CompletableFuture<Protocol.Reply> f) {
+    private void enqueueCommandFuture(Protocol.Command cmd, CallFuture<Protocol.Reply> f) {
         this.futures.put(cmd.getId(), f);
         if (this.getState() != ClientState.CONNECTED) {
             this.connectCommands.put(cmd.getId(), cmd);
@@ -1775,7 +1772,7 @@ public class Client {
                 .setRpc(req)
                 .build();
 
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
@@ -1820,7 +1817,7 @@ public class Client {
                 .setPublish(req)
                 .build();
 
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
@@ -1866,7 +1863,7 @@ public class Client {
                 .setHistory(req)
                 .build();
 
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
@@ -1914,7 +1911,7 @@ public class Client {
                 .setPresence(req)
                 .build();
 
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
@@ -1955,7 +1952,7 @@ public class Client {
                 .setPresenceStats(req)
                 .build();
 
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
@@ -1988,7 +1985,7 @@ public class Client {
                 .setRefresh(req)
                 .build();
 
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
@@ -2019,7 +2016,7 @@ public class Client {
                 .setSubRefresh(req)
                 .build();
 
-        CompletableFuture<Protocol.Reply> f = new CompletableFuture<>();
+        CallFuture<Protocol.Reply> f = new CallFuture<>();
         this.settle(f, reply -> {
             this.cleanCommandFuture(cmd);
             if (reply.getError().getCode() != 0) {
